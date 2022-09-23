@@ -1,7 +1,12 @@
 import React from 'react'
+import { Button } from '@mui/material'
 
 const App = () => {
-	return <div className='App'>alow</div>
+	return (
+		<div>
+			<Button>fafa</Button>
+		</div>
+	)
 }
 
 export default App
