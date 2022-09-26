@@ -11,4 +11,16 @@ const saveAccessBitrixByUserId = async (access_token, refresh_token, scope, user
 	)
 }
 
-module.exports = { saveAccessBitrixByUserId }
+const getUserAuth = async (userId) => {
+	const { rows } = await pool.query(
+		`
+      	SELECT * FROM user_account 
+		WHERE id = $1
+    `,
+		[userId]
+	)
+
+	return rows[0]
+}
+
+module.exports = { saveAccessBitrixByUserId, getUserAuth }
