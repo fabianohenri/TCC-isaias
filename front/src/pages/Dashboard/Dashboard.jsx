@@ -1,48 +1,54 @@
 import { Button } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import api from 'service/service'
 
 const Dashboard = () => {
-	const [userAuth, setUserAuth] = useState(null)
-	const [loading, setLoading] = useState(true)
+	// const [userAuth, setUserAuth] = useState(null)
+	// const [loading, setLoading] = useState(true)
 
-	const [metric, setMetric] = useState(null)
-	const [loadingMetric, setLoadingMetric] = useState(false)
+	// useEffect(() => {
+	// 	api.get('/get-user-auth')
+	// 		.then((res) => {
+	// 			setLoading(false)
+	// 			setUserAuth(res.data)
+	// 		})
+	// 		.catch((e) => console.error(e.response.data))
+	// }, [])
 
-	useEffect(() => {
-		api.get('/get-user-auth')
+	const getTotalTicketsMonth = () => {
+		api.get('/task/get-total-per-month')
 			.then((res) => {
-				setLoading(false)
-				setUserAuth(res.data)
-			})
-			.catch((e) => console.error(e.response.data))
-	}, [])
-
-	useEffect(() => {
-		console.log(userAuth)
-	}, [userAuth])
-
-	const getMetric = () => {
-		setLoadingMetric(true)
-		api.get('/get-metric')
-			.then((res) => {
-				setLoadingMetric(false)
-				setMetric(res.data)
+				console.log(res.data)
 			})
 			.catch((e) => console.error(e.response.data))
 	}
 
-	useEffect(() => {
-		console.log(userAuth)
-	}, [metric])
+	const getTotalTicketsPerson = (taskStatus) => {
+		let baseUrl = '/task/get-total-per-person'
+		if (taskStatus) {
+			baseUrl += `?taskStatus=${taskStatus}`
+		}
+		api.get(baseUrl)
+			.then((res) => {
+				console.log(res.data)
+			})
+			.catch((e) => console.error(e.response.data))
+	}
 
 	return (
-		<>
-			<h2>{loading ? 'Carregando dados' : 'Dados carregados'}</h2>
-			<Button disabled={loading || loadingMetric} onClick={getMetric}>
-				{loadingMetric ? 'Carregando métricas' : 'Buscar métrica teste'}
-			</Button>
-		</>
+		<div style={{ justifyContent: 'center', display: 'flex', height: '100vh', alignItems: 'center' }}>
+			<div style={{ display: 'block' }}>
+				<div>
+					<Button onClick={getTotalTicketsMonth}>Buscar total de tickets abertos por mês</Button>
+				</div>
+				<div>
+					Buscar total de tickets por pessoa
+					<Button onClick={() => getTotalTicketsPerson('OPENED')}>Abertos</Button>
+					<Button onClick={() => getTotalTicketsPerson('CLOSED')}>Fechados</Button>
+					<Button onClick={() => getTotalTicketsPerson()}>Todos</Button>
+				</div>
+			</div>
+		</div>
 	)
 }
 
