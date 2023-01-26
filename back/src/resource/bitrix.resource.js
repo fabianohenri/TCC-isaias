@@ -2,7 +2,8 @@ const BitrixService = require('../service/bitrix.service')
 
 const getUrlAuth = async (req, res) => {
 	try {
-		const data = await BitrixService.getUrlAuth()
+		const domainBitrix = req.params.domainBitrix
+		const data = await BitrixService.getUrlAuth(domainBitrix)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -10,12 +11,12 @@ const getUrlAuth = async (req, res) => {
 	}
 }
 
-const getFinalAccessUrl = async (req, res) => {
+const loginOrCreateAccount = async (req, res) => {
 	const authCode = req.query.authCode
 	const scope = req.query.scope
 
 	try {
-		const data = await BitrixService.getFinalAccessUrl(authCode, scope)
+		const data = await BitrixService.loginOrCreateAccount(authCode, scope)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -45,7 +46,7 @@ const getMetric = async (req, res) => {
 
 module.exports = {
 	getUrlAuth,
-	getFinalAccessUrl,
+	loginOrCreateAccount,
 	getUserAuth,
 	getMetric
 }

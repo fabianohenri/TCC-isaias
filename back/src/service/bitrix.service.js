@@ -1,14 +1,24 @@
 const BitrixIntegration = require('../integration/bitrix.integration')
 const BitrixRepository = require('../repository/bitrix.repository')
 
-const getUrlAuth = async () => {
-	return await BitrixIntegration.getUrlAuth()
+const getUrlAuth = async (domainBitrix) => {
+	return await BitrixIntegration.getUrlAuth(domainBitrix)
 }
 
-const getFinalAccessUrl = async (authCode, scope) => {
-	const userId = 1
+const loginOrCreateAccount = async (authCode, scope) => {
 	const accessBitrix = await BitrixIntegration.getFinalAccessUrl(authCode, scope)
-	await BitrixRepository.saveAccessBitrixByUserId(accessBitrix.access_token, accessBitrix.refresh_token, accessBitrix.scope, userId)
+	const accountExists = await BitrixRepository.findByUserIdBitrixAndDomain(accessBitrix.user_id, accessBitrix.domain)
+	if (accountExists) {
+		await BitrixRepository.saveNewAccess(accessBitrix.access_token, accessBitrix.refresh_token, accessBitrix.scope, accountExists.id)
+	} else {
+		await BitrixRepository.createAccount(
+			accessBitrix.access_token,
+			accessBitrix.refresh_token,
+			accessBitrix.scope,
+			accessBitrix.user_id,
+			accessBitrix.domain
+		)
+	}
 }
 
 const getUserAuth = async () => {
@@ -24,7 +34,7 @@ const getMetric = async () => {
 
 module.exports = {
 	getUrlAuth,
-	getFinalAccessUrl,
+	loginOrCreateAccount,
 	getUserAuth,
 	getMetric
 }

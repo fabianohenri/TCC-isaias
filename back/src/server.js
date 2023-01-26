@@ -14,8 +14,8 @@ app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.get(PREFIX + '/get-url-auth', BitrixResource.getUrlAuth)
-app.get(PREFIX + '/get-url-final-auth', BitrixResource.getFinalAccessUrl)
+app.get(PREFIX + '/get-url-auth/:domainBitrix', BitrixResource.getUrlAuth)
+app.get(PREFIX + '/get-url-final-auth', BitrixResource.loginOrCreateAccount)
 app.get(PREFIX + '/get-user-auth', BitrixResource.getUserAuth)
 app.get(PREFIX + '/get-metric', BitrixResource.getMetric)
 
