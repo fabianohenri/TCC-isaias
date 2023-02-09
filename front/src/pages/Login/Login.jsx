@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import api from 'service/service'
 import { connect } from 'react-redux'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { Button, TextField } from '@mui/material'
 import { loginAction } from 'storage/redux/actions/user.actions'
 
-const Login = ({ loginActionDispatch }) => {
+const Login = () => {
 	let [searchParams] = useSearchParams()
-	let navigate = useNavigate()
 	const [loading, setLoading] = useState(false)
 	const [domainBitrix, setdomainBitrix] = useState('')
 
