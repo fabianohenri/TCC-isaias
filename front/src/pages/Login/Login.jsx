@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import api from 'service/service'
+import { connect } from 'react-redux'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { Button, TextField } from '@mui/material'
+import { loginAction } from 'storage/redux/actions/user.actions'
 
-const Login = () => {
+const Login = ({ loginActionDispatch }) => {
 	let [searchParams] = useSearchParams()
 	let navigate = useNavigate()
 	const [loading, setLoading] = useState(false)
@@ -21,10 +23,10 @@ const Login = () => {
 	useEffect(() => {
 		if (searchParams.get('code') && searchParams.get('scope')) {
 			setLoading(true)
-			api.get(`/get-url-final-auth?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}`)
-				.then(() => {
+			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}`)
+				.then((res) => {
 					setLoading(false)
-					navigate('/dashboard')
+					// loginActionDispatch(res.data)
 				})
 				.catch((e) => console.error(e.response.data))
 		}
@@ -49,4 +51,8 @@ const Login = () => {
 	)
 }
 
-export default Login
+const mapDispatchToProps = (dispatch) => ({
+	loginActionDispatch: (user) => dispatch(loginAction(user))
+})
+
+export default connect(null, mapDispatchToProps)(Login)

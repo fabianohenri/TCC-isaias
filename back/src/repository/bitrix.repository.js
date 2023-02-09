@@ -1,23 +1,28 @@
 const { pool } = require('../db')
 
 const saveNewAccess = async (access_token, refresh_token, scope, accountId) => {
-	await pool.query(
+	const { rows } = await pool.query(
 		`
         UPDATE user_account 
         SET access_key_bitrix = $1, refresh_token_bitrix = $2, scope_bitrix = $3
         WHERE id = $4
+		RETURNING *
     `,
 		[access_token, refresh_token, scope, accountId]
 	)
+	return rows[0]
 }
 const createAccount = async (access_token, refresh_token, scope, userIdBitrix, domainBitrix) => {
-	await pool.query(
+	const { rows } = await pool.query(
 		`
         INSERT INTO user_account(access_key_bitrix, refresh_token_bitrix, scope_bitrix, user_id_bitrix, domain_bitrix)
-        VALUES ($1,$2,$3,$4,$5)
+        VALUES ($1,$2,$3,$4,$5),
+		RETURNING *
     `,
 		[access_token, refresh_token, scope, userIdBitrix, domainBitrix]
 	)
+
+	return rows[0]
 }
 
 const findByUserIdBitrixAndDomain = async (userId, domain) => {

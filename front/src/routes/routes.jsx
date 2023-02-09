@@ -1,26 +1,55 @@
-import React from 'react'
-import { BrowserRouter, Routes as Switch, Route } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { BrowserRouter, Routes as Switch, Route, Navigate } from 'react-router-dom'
+import { connect } from 'react-redux'
 //page components
 import Login from 'pages/Login/Login'
 import Dashboard from 'pages/Dashboard/Dashboard'
+import { restoreLoggedUserAction } from 'storage/redux/actions/user.actions'
 
 const routes = [
 	//Public
-	// { path: '/', component: HOME!!!, exact: true, isPrivate: false }, //sem home no momento
+	// { path: '/', element: HOME!!!, exact: true, isPrivate: false }, //sem home no momento
 	{ path: '/', label: 'Login', element: <Login />, exact: true, isPrivate: false },
-	{ path: '/dashboard', label: 'Dashboard', element: <Dashboard />, exact: true, isPrivate: false }
-	// { component: Erro, exact: true, isPrivate: false }
+	//private
+	{ path: '/dashboard', label: 'Dashboard', element: <Dashboard />, exact: true, isPrivate: true }
 ]
 
-const Routes = () => (
-	<BrowserRouter>
-		<Switch>
-			{/* <Route path='/' element={<Login />} /> */}
-			{routes.map((route) => {
-				return <Route key={route.path + route.label} path={route.path} element={route.element} />
-			})}
-		</Switch>
-	</BrowserRouter>
-)
+const checkRoute = (route, user) => {
+	let navigate = ''
+	if (user && route.path === '/') {
+		navigate = <Navigate to='/dashboard' />
+	} else if ((user && route.isPrivate) || !route.isPrivate) {
+		navigate = route.element
+	} else {
+		navigate = <Navigate to='/' />
+	}
 
-export default Routes
+	return navigate
+}
+
+const Routes = ({ user, restoreLoggedUserDispatch }) => {
+	useEffect(() => {
+		restoreLoggedUserDispatch(user)
+	}, [])
+
+	return (
+		<BrowserRouter>
+			<Switch>
+				{routes.map((route) => (
+					<Route key={route.path + route.label} path={route.path} element={checkRoute(route, user)} />
+				))}
+				<Route path='*' element={<Navigate to='/' />} />
+			</Switch>
+		</BrowserRouter>
+	)
+}
+
+const mapStateToProps = ({ store }) => ({
+	user: store?.user
+})
+
+const mapDispatchToProps = (dispatch) => ({
+	restoreLoggedUserDispatch: () => dispatch(restoreLoggedUserAction())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Routes)

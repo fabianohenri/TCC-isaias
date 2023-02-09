@@ -9,9 +9,9 @@ const loginOrCreateAccount = async (authCode, scope) => {
 	const accessBitrix = await BitrixIntegration.getFinalAccessUrl(authCode, scope)
 	const accountExists = await BitrixRepository.findByUserIdBitrixAndDomain(accessBitrix.user_id, accessBitrix.domain)
 	if (accountExists) {
-		await BitrixRepository.saveNewAccess(accessBitrix.access_token, accessBitrix.refresh_token, accessBitrix.scope, accountExists.id)
+		return await BitrixRepository.saveNewAccess(accessBitrix.access_token, accessBitrix.refresh_token, accessBitrix.scope, accountExists.id)
 	} else {
-		await BitrixRepository.createAccount(
+		return await BitrixRepository.createAccount(
 			accessBitrix.access_token,
 			accessBitrix.refresh_token,
 			accessBitrix.scope,
