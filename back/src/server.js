@@ -20,7 +20,7 @@ app.get(PREFIX + '/get-user-auth', BitrixResource.getUserAuth)
 app.get(PREFIX + '/get-metric', BitrixResource.getMetric)
 
 app.get(PREFIX + '/task/get-total-per-month', TaskResource.getTotalPerMonth)
-app.get(PREFIX + '/task/get-total-per-person', TaskResource.getTotalTicketsPerson)
+app.get(PREFIX + '/task/get-overview-metrics', TaskResource.getOverviewMetrics)
 
 app.listen(port, () => {
 	console.info(`---- API funcionando na porta ${port} -----`)

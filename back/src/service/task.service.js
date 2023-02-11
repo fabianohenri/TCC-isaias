@@ -8,6 +8,32 @@ const BitrixIntegration = require('../integration/bitrix.integration')
 // 3-colocar as tarefas de cada pessoa
 // projeto > pessoa > tarefa
 
+const getAllTasksWithFilters = async (fromDate, toDate) => {
+	const restUrl = BitrixIntegration.getRestUrl()
+	let totalTickets = []
+
+	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json?&filter[>CREATED_DATE]=2023-01-15&filter[<CREATED_DATE]=2023-01-20
+
+	const limit = 50
+	let start = 0
+	let iterations = null
+
+	do {
+		let res = await axios.get(restUrl + `&start=${start}`)
+		if (!iterations) {
+			iterations = Math.ceil(res.data.total / limit)
+		}
+		start += limit
+		iterations--
+		totalTickets.push(...res.data?.result?.tasks)
+	} while (iterations > 0)
+}
+
+const getOverviewMetrics = async () => {
+	getAllTasksWithFilters(null, null)
+	return {}
+}
+
 const getTotalPerMonth = async () => {
 	const restUrl = BitrixIntegration.getRestUrl()
 	return axios
@@ -22,26 +48,9 @@ const getTotalPerMonth = async () => {
 		.catch((e) => console.error(e))
 }
 
-const getTotalTicketsPerson = async () => {
-	const restUrl = BitrixIntegration.getRestUrl()
-	let totalTickets = []
-
-	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json?&filter[>CREATED_DATE]=2023-01-15&filter[<CREATED_DATE]=2023-01-20
-
-	const limit = 50
-	let start = 0
-	let res = await axios.get(restUrl + `&start=${start}`)
-	let iterations = Math.ceil(res.data.total / limit)
-
-	while (iterations > 0) {
-		let res = await axios.get(restUrl + `&start=${start}`)
-		start += limit
-		iterations--
-		totalTickets.push(...res.data?.result?.tasks)
-	}
-
+const getSomeMetric = async () => {
 	let taskCreators = []
-	let taskClosers = []
+	// let taskClosers = []
 	let taskCreatorsFormatted = []
 	let taskResponsibles = []
 	let taskGroups = []
@@ -62,19 +71,19 @@ const getTotalTicketsPerson = async () => {
 			taskCreators[creatorIndex].dates.push(it.createdDate)
 		}
 
-		let closerIndex = null
-		const closerFound = taskClosers.find((item, index) => {
-			if (it.closedBy === item.user.id) {
-				closerIndex = index
-				return true
-			}
-		})
+		// let closerIndex = null
+		// const closerFound = taskClosers.find((item, index) => {
+		// 	if (it.closedBy === item.user.id) {
+		// 		closerIndex = index
+		// 		return true
+		// 	}
+		// })
 
-		if (!closerFound) {
-			taskClosers.push({ user: { id: it.closedBy }, dates: [it.closedDate] })
-		} else {
-			taskClosers[closerIndex].dates.push(it.closedDate)
-		}
+		// if (!closerFound) {
+		// 	taskClosers.push({ user: { id: it.closedBy }, dates: [it.closedDate] })
+		// } else {
+		// 	taskClosers[closerIndex].dates.push(it.closedDate)
+		// }
 
 		let responsibleIndex = null
 		const responsibleFound = taskResponsibles.find((item, index) => {
@@ -140,5 +149,5 @@ const getTotalTicketsPerson = async () => {
 
 module.exports = {
 	getTotalPerMonth,
-	getTotalTicketsPerson
+	getOverviewMetrics
 }

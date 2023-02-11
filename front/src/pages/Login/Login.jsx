@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Button, TextField } from '@mui/material'
 import { loginAction } from 'storage/redux/actions/user.actions'
 
-const Login = () => {
+const Login = ({ loginActionDispatch }) => {
 	let [searchParams] = useSearchParams()
 	const [loading, setLoading] = useState(false)
 	const [domainBitrix, setdomainBitrix] = useState('')
@@ -25,7 +25,7 @@ const Login = () => {
 			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}`)
 				.then((res) => {
 					setLoading(false)
-					// loginActionDispatch(res.data)
+					loginActionDispatch(res.data)
 				})
 				.catch((e) => console.error(e.response.data))
 		}

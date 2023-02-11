@@ -10,10 +10,10 @@ const getTotalPerMonth = async (req, res) => {
 	}
 }
 
-const getTotalTicketsPerson = async (req, res) => {
+const getOverviewMetrics = async (req, res) => {
 	const status = req.query.taskStatus
 	try {
-		const data = await TaskService.getTotalTicketsPerson(status)
+		const data = await TaskService.getOverviewMetrics(status)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -23,5 +23,5 @@ const getTotalTicketsPerson = async (req, res) => {
 
 module.exports = {
 	getTotalPerMonth,
-	getTotalTicketsPerson
+	getOverviewMetrics
 }
