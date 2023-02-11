@@ -33,6 +33,7 @@ const Dashboard = () => {
 	return (
 		<div className={`page ${OverviewStyles.overviewContainer}`}>
 			<Grid>
+				<Button onClick={getMetrics}>Buscar</Button>
 				<Typography sx={{ fontSize: '2.5em' }} gutterBottom>
 					Visão Geral
 				</Typography>
@@ -41,7 +42,6 @@ const Dashboard = () => {
 				<CardMetric title='Tarefas Totais' number={10} xs={4} />
 				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
 				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-				<Button onClick={getMetrics}>Buscar</Button>
 			</Grid>
 			<Grid container>
 				<CardMetric title='Tarefas Totais' number={10} xs={4} />

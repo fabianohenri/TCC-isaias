@@ -15,8 +15,7 @@ const CardMetric = ({ title, number, xs }) => {
 							display: 'flex',
 							justifyContent: 'center',
 							alignItems: 'center',
-							height: '3em',
-							width: '10em'
+							height: '3em'
 						}}
 					>
 						<Typography variant='h4'>{number}</Typography>

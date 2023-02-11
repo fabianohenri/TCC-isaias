@@ -3,4 +3,25 @@
 	display: flex;
 	height: 100%;
 	width: 16.5%;
+	background-color: rgba(5, 20, 60, 0.973) !important;
+}
+
+.titleMenu {
+	color: rgba(125, 170, 248, 0.753);
+	margin-left: 0.2em;
+}
+
+.titleApp {
+	color: rgb(247, 247, 247);
+	margin-left: 1em;
+	margin-top: 1em;
+}
+
+.divider {
+	width: 80%;
+	border-color: rgb(15, 72, 170);
+}
+
+.item {
+	color: rgb(247, 247, 247);
 }
