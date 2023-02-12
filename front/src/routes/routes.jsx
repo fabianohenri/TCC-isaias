@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import { BrowserRouter, Routes as Switch, Route, Navigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 //page components
@@ -52,4 +52,4 @@ const mapDispatchToProps = (dispatch) => ({
 	restoreLoggedUserDispatch: () => dispatch(restoreLoggedUserAction())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Routes)
+export default connect(mapStateToProps, mapDispatchToProps)(memo(Routes))

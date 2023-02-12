@@ -20,7 +20,9 @@ app.get(PREFIX + '/get-user-auth', BitrixResource.getUserAuth)
 app.get(PREFIX + '/get-metric', BitrixResource.getMetric)
 
 //dashboard
-app.get(PREFIX + '/dashboard/get-all-groups-and-members/:fromDate/:toDate', TaskResource.getAllGroupsAndMembers)
+app.get(PREFIX + '/dashboard/get-all-groups-with-members/:fromDate/:toDate', TaskResource.getAllGroupsAndMembers)
+// app.get(PREFIX + '/dashboard/get-all-groups/:fromDate/:toDate', TaskResource.getGroups)
+// app.get(PREFIX + '/dashboard/get-all-members/:fromDate/:toDate', TaskResource.getMembers)
 app.get(PREFIX + '/task/get-overview-metrics', TaskResource.getOverviewMetrics)
 
 app.listen(port, () => {

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, memo } from 'react'
 import { Button, Card, Typography, Unstable_Grid2 as Grid } from '@mui/material'
 import api from 'service/service'
 import CardMetric from 'components/CardMetric/CardMetric'
 import OverviewStyles from './OverviewStyles.module.css'
+import FiltersDashboard from 'components/FiltersDashboard/FiltersDashboard'
 
-const Dashboard = () => {
+const Overview = () => {
 	const [metrics, setMetrics] = useState({})
 
 	const getMetrics = async (taskStatus) => {
@@ -23,20 +24,21 @@ const Dashboard = () => {
 	}
 
 	useEffect(() => {
-		buildMetrics()
+		// buildMetrics()
 	}, [])
 
-	useEffect(() => {
-		console.log(metrics)
-	}, [metrics])
+	// useEffect(() => {
+	// 	console.log(metrics)
+	// }, [metrics])
 
 	return (
 		<div className={`page ${OverviewStyles.overviewContainer}`}>
 			<Grid>
-				<Button onClick={getMetrics}>Buscar</Button>
 				<Typography sx={{ fontSize: '2.5em' }} gutterBottom>
 					Visão Geral
+					<Button onClick={getMetrics}>Buscar</Button>
 				</Typography>
+				<FiltersDashboard />
 			</Grid>
 			<Grid container>
 				<CardMetric title='Tarefas Totais' number={10} xs={4} />
@@ -87,4 +89,4 @@ const Dashboard = () => {
 	)
 }
 
-export default Dashboard
+export default memo(Overview)

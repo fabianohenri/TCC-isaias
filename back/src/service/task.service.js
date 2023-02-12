@@ -11,12 +11,12 @@ const BitrixIntegration = require('../integration/bitrix.integration')
 const getAllTasksWithFilters = async (fromDate, toDate) => {
 	const restUrl = BitrixIntegration.getRestUrl()
 	let totalTickets = []
-	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json?&filter[>CREATED_DATE]=2023-01-15&filter[<CREATED_DATE]=2023-01-20
+	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20
 	const limit = 50
 	let start = 0
 	let iterations = null
 	do {
-		let res = await axios.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20`)
+		let res = await axios.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}`)
 		if (!iterations) {
 			iterations = Math.ceil(res.data.total / limit)
 		}
@@ -48,7 +48,7 @@ const getAllGroupsAndMembers = async (fromDate, toDate) => {
 		}
 	})
 
-	return { groups }
+	return groups
 }
 
 const getOverviewMetrics = async (fromDate, toDate, usersFilter, groupsFilter, openTasksFilter, closedTasksFilter) => {
@@ -97,8 +97,46 @@ const getTotalPerMonth = async () => {
 		.catch((e) => console.error(e))
 }
 
+// const getGroups = async (fromDate, toDate, membersIds) => {
+// 	const allTasks = await getAllTasksWithFilters(fromDate, toDate)
+// 	let groups = [] //tem os usuários dentro dele
+
+// 	allTasks.forEach((task) => {
+// 		//Grupo (projeto)
+// 		let groupFound = groups.find((g) => g.id === task.group.id)
+// 		if (!groupFound) {
+// 			//Usuários dentro do grupo
+// 			if (membersIds) {
+// 			}
+// 			let taskUsers = task.auditors.map((ta) => task.auditorsData[ta])
+// 			let additionalUsers = [task.creator, task.responsible].filter((mu) => !taskUsers.find((tu) => tu.id === mu.id))
+// 			if (!groupFound) {
+// 				groups.push(task.group)
+// 			}
+// 		}
+// 	})
+
+// 	return { groups }
+// }
+
+// const getMembers = async () => {
+// 	const restUrl = BitrixIntegration.getRestUrl()
+// 	return axios
+// 		.get(restUrl)
+// 		.then((res) => {
+// 			const taskMonths = res.data?.result?.tasks.map((it) => moment(it.createdDate, 'YYYY-MM-DD HH:mm:ss ZZ').format('YYYY-MM'))
+// 			const groupedTaskMonths = lodash.groupBy(taskMonths)
+// 			const formattedTaskMonths = Object.keys(groupedTaskMonths).map((key) => ({ date: key, value: groupedTaskMonths[key].length }))
+// 			const total = formattedTaskMonths.map((it) => it.value).reduce((a, b) => a + b)
+// 			return { tasksPerMonth: formattedTaskMonths, total }
+// 		})
+// 		.catch((e) => console.error(e))
+// }
+
 module.exports = {
 	getAllGroupsAndMembers,
 	getTotalPerMonth,
 	getOverviewMetrics
+	// getGroups,
+	// getMembers
 }

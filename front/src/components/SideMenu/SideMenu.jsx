@@ -1,4 +1,4 @@
-import { Unstable_Grid2 as Grid, Card, Typography, MenuList, MenuItem, ListItemIcon, Divider } from '@mui/material'
+import { Unstable_Grid2 as Grid, Typography, MenuList, MenuItem, ListItemIcon } from '@mui/material'
 import React from 'react'
 import SideMenuStyles from './SideMenuStyles.module.css'
 import { Dashboard, AccountBox } from '@mui/icons-material/'

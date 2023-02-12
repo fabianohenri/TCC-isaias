@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, memo } from 'react'
 import SideMenu from 'components/SideMenu/SideMenu'
 import Overview from './modules/Overview/Overview'
 import { Unstable_Grid2 as Grid } from '@mui/material'
-import FiltersDashboard from './components/FiltersDashboard/FiltersDashboard'
 
 const Dashboard = () => {
 	const [selectedItem, setSelectedItem] = useState('overview')
@@ -16,12 +15,9 @@ const Dashboard = () => {
 			<Grid xs={2} style={{ position: 'relative' }}>
 				<SideMenu onSelectItem={onSelectItem} />
 			</Grid>
-			<Grid xs={10}>
-				<FiltersDashboard />
-				{selectedItem === 'overview' && <Overview />}
-			</Grid>
+			<Grid xs={10}>{selectedItem === 'overview' && <Overview />}</Grid>
 		</Grid>
 	)
 }
 
-export default Dashboard
+export default memo(Dashboard)
