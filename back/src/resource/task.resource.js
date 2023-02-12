@@ -1,5 +1,18 @@
 const TaskService = require('../service/task.service')
 
+const getAllGroupsAndMembers = async (req, res) => {
+	const fromDate = req.params.fromDate
+	const toDate = req.params.toDate
+
+	try {
+		const data = await TaskService.getAllGroupsAndMembers(fromDate, toDate)
+		return res.status(200).send(data)
+	} catch (e) {
+		console.error(e)
+		return res.status(500).send('Erro ao buscar métricas')
+	}
+}
+
 const getTotalPerMonth = async (req, res) => {
 	try {
 		const data = await TaskService.getTotalPerMonth()
@@ -23,5 +36,6 @@ const getOverviewMetrics = async (req, res) => {
 
 module.exports = {
 	getTotalPerMonth,
-	getOverviewMetrics
+	getOverviewMetrics,
+	getAllGroupsAndMembers
 }

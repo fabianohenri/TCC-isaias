@@ -19,7 +19,8 @@ app.get(PREFIX + '/login', BitrixResource.loginOrCreateAccount)
 app.get(PREFIX + '/get-user-auth', BitrixResource.getUserAuth)
 app.get(PREFIX + '/get-metric', BitrixResource.getMetric)
 
-app.get(PREFIX + '/task/get-total-per-month', TaskResource.getTotalPerMonth)
+//dashboard
+app.get(PREFIX + '/dashboard/get-all-groups-and-members/:fromDate/:toDate', TaskResource.getAllGroupsAndMembers)
 app.get(PREFIX + '/task/get-overview-metrics', TaskResource.getOverviewMetrics)
 
 app.listen(port, () => {

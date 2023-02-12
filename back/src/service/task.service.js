@@ -11,15 +11,12 @@ const BitrixIntegration = require('../integration/bitrix.integration')
 const getAllTasksWithFilters = async (fromDate, toDate) => {
 	const restUrl = BitrixIntegration.getRestUrl()
 	let totalTickets = []
-
 	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json?&filter[>CREATED_DATE]=2023-01-15&filter[<CREATED_DATE]=2023-01-20
-
 	const limit = 50
 	let start = 0
 	let iterations = null
-
 	do {
-		let res = await axios.get(restUrl + `&start=${start}`)
+		let res = await axios.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20`)
 		if (!iterations) {
 			iterations = Math.ceil(res.data.total / limit)
 		}
@@ -27,11 +24,63 @@ const getAllTasksWithFilters = async (fromDate, toDate) => {
 		iterations--
 		totalTickets.push(...res.data?.result?.tasks)
 	} while (iterations > 0)
+	return totalTickets
 }
 
-const getOverviewMetrics = async () => {
-	getAllTasksWithFilters(null, null)
-	return {}
+const getAllGroupsAndMembers = async (fromDate, toDate) => {
+	const allTasks = await getAllTasksWithFilters(fromDate, toDate)
+	let groups = [] //tem os usuários dentro dele
+	allTasks.forEach((task) => {
+		//Grupo (projeto)
+		let groupFoundIndex = groups.findIndex((g) => g.id === task.group.id)
+		let groupIndex = groupFoundIndex
+		if (groupFoundIndex === -1) {
+			groups.push({ ...task.group, members: [] })
+			groupIndex = groups.length - 1
+		}
+		//Usuários dentro do grupo
+		let taskUsers = task.auditors.map((ta) => task.auditorsData[ta])
+		// responsible e creator adicionando se não existir, mas acho difícil, retirar após validar se for o caso
+		let additionalUsers = [task.creator, task.responsible].filter((mu) => !taskUsers.find((tu) => tu.id === mu.id))
+		let taskUsersFormatted = [...taskUsers, ...additionalUsers].filter((a) => !groups[groupIndex].members.find((member) => member.id === a.id))
+		if (taskUsers.length > 0) {
+			groups[groupIndex].members.push(...taskUsersFormatted)
+		}
+	})
+
+	return { groups }
+}
+
+const getOverviewMetrics = async (fromDate, toDate, usersFilter, groupsFilter, openTasksFilter, closedTasksFilter) => {
+	const allTasks = await getAllTasksWithFilters(null, null)
+	let totalTasks = allTasks.length
+	let groups = [] //tem os usuários dentro dele
+	let openTasks = 0
+	let closedTasks = 0
+	allTasks.forEach((task) => {
+		//Métricas das tarefas
+		if (task.closedDate) {
+			closedTasks += 1
+		} else {
+			openTasks += 1
+		}
+		//Grupo (projeto)
+		let groupFoundIndex = groups.findIndex((g) => g.id === task.group.id)
+		let groupIndex = groupFoundIndex
+		if (groupFoundIndex === -1) {
+			groups.push({ ...task.group, members: [] })
+			groupIndex = groups.length - 1
+		}
+		//Usuários dentro do grupo
+		let taskUsers = task.auditors.map((ta) => task.auditorsData[ta])
+		// responsible e creator adicionando se não existir, mas acho difícil, retirar após validar se for o caso
+		let additionalUsers = [task.creator, task.responsible].filter((mu) => !taskUsers.find((tu) => tu.id === mu.id))
+		let taskUsersFormatted = [...taskUsers, ...additionalUsers].filter((a) => !groups[groupIndex].members.find((member) => member.id === a.id))
+		if (taskUsers.length > 0) {
+			groups[groupIndex].members.push(...taskUsersFormatted)
+		}
+	})
+	return { totalTasks, openTasks, closedTasks }
 }
 
 const getTotalPerMonth = async () => {
@@ -48,106 +97,8 @@ const getTotalPerMonth = async () => {
 		.catch((e) => console.error(e))
 }
 
-const getSomeMetric = async () => {
-	let taskCreators = []
-	// let taskClosers = []
-	let taskCreatorsFormatted = []
-	let taskResponsibles = []
-	let taskGroups = []
-	let totalComments = 0
-
-	totalTickets.forEach((it) => {
-		let creatorIndex = null
-		const creatorFound = taskCreators.find((item, index) => {
-			if (it.creator.id === item.user.id) {
-				creatorIndex = index
-				return true
-			}
-		})
-
-		if (!creatorFound) {
-			taskCreators.push({ user: it.creator, dates: [it.createdDate] })
-		} else {
-			taskCreators[creatorIndex].dates.push(it.createdDate)
-		}
-
-		// let closerIndex = null
-		// const closerFound = taskClosers.find((item, index) => {
-		// 	if (it.closedBy === item.user.id) {
-		// 		closerIndex = index
-		// 		return true
-		// 	}
-		// })
-
-		// if (!closerFound) {
-		// 	taskClosers.push({ user: { id: it.closedBy }, dates: [it.closedDate] })
-		// } else {
-		// 	taskClosers[closerIndex].dates.push(it.closedDate)
-		// }
-
-		let responsibleIndex = null
-		const responsibleFound = taskResponsibles.find((item, index) => {
-			if (it.responsible.id === item.user.id) {
-				responsibleIndex = index
-				return true
-			}
-		})
-
-		if (!responsibleFound) {
-			taskResponsibles.push({ user: it.responsible, tasksIds: [it.id] })
-		} else {
-			taskResponsibles[responsibleIndex].tasksIds.push(it.id)
-		}
-
-		let groupIndex = null
-		const groupFound = taskGroups.find((item, index) => {
-			if (it.group.id === item.group.id) {
-				groupIndex = index
-				return true
-			}
-		})
-
-		if (!groupFound) {
-			taskGroups.push({ group: it.group, tasksIds: [it.id] })
-		} else {
-			taskGroups[groupIndex].tasksIds.push(it.id)
-		}
-
-		totalComments += Number(it.commentsCount)
-	})
-
-	taskCreators.forEach((it) => {
-		let indexToChange = taskCreatorsFormatted.findIndex((tc) => Number(tc.creatorId) === Number(it.creator.id))
-		if (indexToChange >= 0) {
-			let index = taskCreatorsFormatted[indexToChange].createdTasks.findIndex((ct) => ct.date === it.createdDate)
-			if (index >= 0) {
-				taskCreatorsFormatted[indexToChange].createdTasks[index].value += 1
-			} else {
-				taskCreatorsFormatted[indexToChange].createdTasks.push({ date: it.createdDate, value: 1 })
-			}
-		} else {
-			taskCreatorsFormatted.push({ creatorId: Number(it.creator.id), createdTasks: [{ date: it.createdDate, value: 1 }] })
-		}
-	})
-
-	const groupedResponsibles = lodash.groupBy(taskResponsibles, (responsible) => responsible.id)
-	const groupedGroups = lodash.groupBy(taskGroups, (group) => group.id)
-
-	const formattedResponsibles = Object.keys(groupedResponsibles).map((key) => {
-		let ticketsPerMonthOpened = taskCreatorsFormatted.find((tcf) => tcf.creatorId === key)
-		return {
-			user: groupedResponsibles[key][0],
-			totalTickets: groupedResponsibles[key].length,
-			ticketsPerMonthOpened,
-			groupedCreators: 2,
-			groupedGroups
-		}
-	})
-
-	return formattedResponsibles
-}
-
 module.exports = {
+	getAllGroupsAndMembers,
 	getTotalPerMonth,
 	getOverviewMetrics
 }
