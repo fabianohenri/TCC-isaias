@@ -3,6 +3,7 @@ import { DateRangePicker, defaultStaticRanges, defaultInputRanges } from 'react-
 import { pt } from 'date-fns/locale'
 import 'react-date-range/dist/styles.css' // main style file
 import 'react-date-range/dist/theme/default.css' // theme css file
+import { Button } from '@mui/material'
 
 const defaultSelection = {
 	startDate: new Date(),
@@ -11,6 +12,7 @@ const defaultSelection = {
 }
 
 const DatePicker = ({ onChange, selectionValue }) => {
+	const [selectionRange, setSelectionRange] = useState(selectionValue || defaultSelection)
 	//Traduzindo pra pt
 	const [staticRanges] = useState(
 		['Hoje', 'Ontem', 'Semana atual', 'Semana passada', 'Mês atual', 'Mês passado'].map((it, idx) => ({
@@ -25,14 +27,20 @@ const DatePicker = ({ onChange, selectionValue }) => {
 			label: it
 		}))
 	)
-	const [selectionRange, setSelectionRange] = useState(selectionValue || defaultSelection)
 
 	const handleSelect = ({ selection }) => {
 		setSelectionRange(selection)
-		onChange(selection.startDate, selection.endDate)
+	}
+	const onApply = () => {
+		onChange(selectionRange.startDate, selectionRange.endDate)
 	}
 
-	return <DateRangePicker ranges={[selectionRange]} onChange={handleSelect} locale={pt} staticRanges={staticRanges} inputRanges={inputRanges} />
+	return (
+		<>
+			<DateRangePicker ranges={[selectionRange]} onChange={handleSelect} locale={pt} staticRanges={staticRanges} inputRanges={inputRanges} />{' '}
+			<Button onClick={onApply}>Aplicar</Button>
+		</>
+	)
 }
 
 export default DatePicker

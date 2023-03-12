@@ -1,10 +1,14 @@
 import React, { useState, useEffect, memo } from 'react'
+import { connect } from 'react-redux'
+import { CalendarMonth } from '@mui/icons-material'
+import { Button, Card, Modal, Collapse, IconButton, Paper, Typography } from '@mui/material'
+import moment from 'moment-timezone'
+//system libs
 import api from 'service/service'
 import DatePicker from 'components/DatePicker/DatePicker'
 import SelectTag from 'components/SelectTag/SelectTag'
-import { Button, Card, Modal, Collapse, IconButton, Paper, TextField, Typography } from '@mui/material'
-import { CalendarMonth } from '@mui/icons-material'
-import moment from 'moment-timezone'
+import { changeFiltersAction } from 'storage/redux/actions/dashboard.actions'
+import { DEFAULT_DASHBOARD_FILTERS } from 'storage/redux/reducer/main.reducer'
 
 const style = {
 	position: 'absolute',
@@ -16,15 +20,8 @@ const style = {
 	p: 10
 }
 
-const DEFAULT_FILTERS = {
-	fromDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-	toDate: moment().format('YYYY-MM-DD'),
-	members: [],
-	groups: []
-}
-
-const FiltersDashboard = () => {
-	const [filters, setFilters] = useState(DEFAULT_FILTERS)
+const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDispatch }) => {
+	const [filters, setFilters] = useState(filtersRedux)
 	const [groups, setGroups] = useState([])
 	const [members, setMembers] = useState([])
 	const [canRenderMembers, setCanRenderMembers] = useState([])
@@ -94,10 +91,21 @@ const FiltersDashboard = () => {
 			members: [],
 			groups: []
 		})
+		setIsOpenDatePicker(false)
 	}
 
 	const handleOpen = () => setOpen(true)
 	const handleClose = () => setOpen(false)
+
+	const applyFilters = (defaultFilters) => {
+		changeFiltersDispatch(defaultFilters || filters)
+		setOpen(false)
+	}
+
+	const resetFilters = () => {
+		setFilters(DEFAULT_DASHBOARD_FILTERS)
+		applyFilters(DEFAULT_DASHBOARD_FILTERS)
+	}
 
 	return (
 		<>
@@ -127,10 +135,20 @@ const FiltersDashboard = () => {
 					</Collapse>
 					<SelectTag label='Grupos' options={canRenderGroups} onChange={onChangeGroups} selected={filters.groups} />
 					<SelectTag label='Membros' options={canRenderMembers} onChange={onChangeMembers} selected={filters.members} />
+					<Button onClick={() => applyFilters()}>Aplicar</Button>
+					<Button onClick={resetFilters}>Resetar</Button>
 				</Card>
 			</Modal>
 		</>
 	)
 }
 
-export default memo(FiltersDashboard)
+const mapStateToProps = ({ store }) => ({
+	filtersRedux: store?.dashboard?.filters
+})
+
+const mapDispatchToProps = (dispatch) => ({
+	changeFiltersDispatch: (filters) => dispatch(changeFiltersAction(filters))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(memo(FiltersDashboard))
