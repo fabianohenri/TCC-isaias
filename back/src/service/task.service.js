@@ -2,6 +2,7 @@ const axios = require('axios')
 const moment = require('moment-timezone')
 const lodash = require('lodash')
 const BitrixIntegration = require('../integration/bitrix.integration')
+const UserService = require('./user.service')
 
 // 1-pegar todas as pessoas do sistema
 // 2-separar elas pelos projetos
@@ -9,7 +10,7 @@ const BitrixIntegration = require('../integration/bitrix.integration')
 // projeto > pessoa > tarefa
 
 const getAllTasksWithFilters = async (fromDate, toDate) => {
-	const restUrl = BitrixIntegration.getRestUrl()
+	const restUrl = BitrixIntegration.getRestUrlTask()
 	let totalTickets = []
 	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20
 	const limit = 50
@@ -29,25 +30,33 @@ const getAllTasksWithFilters = async (fromDate, toDate) => {
 
 const getAllGroupsAndMembers = async (fromDate, toDate) => {
 	const allTasks = await getAllTasksWithFilters(fromDate, toDate)
+
 	let groups = [] //tem os usuários dentro dele
 	allTasks.forEach((task) => {
 		//Grupo (projeto)
-		let groupFoundIndex = groups.findIndex((g) => g.id === task.group.id)
+		const groupFoundIndex = groups.findIndex((g) => g.id === task.group.id)
 		let groupIndex = groupFoundIndex
 		if (groupFoundIndex === -1) {
 			groups.push({ ...task.group, members: [] })
 			groupIndex = groups.length - 1
 		}
 		//Usuários dentro do grupo
-		let taskUsers = task.auditors.map((ta) => task.auditorsData[ta])
-		// responsible e creator adicionando se não existir, mas acho difícil, retirar após validar se for o caso
-		let additionalUsers = [task.creator, task.responsible].filter((mu) => !taskUsers.find((tu) => tu.id === mu.id))
-		let taskUsersFormatted = [...taskUsers, ...additionalUsers].filter((a) => !groups[groupIndex].members.find((member) => member.id === a.id))
+		const taskUsers = task.auditors
+		const taskCreator = task.createdBy
+		const taskResponsible = task.responsibleId
+		const taskClosedBy = task.closedBy
+		const taskAccomplices = task.accomplices
+		const allTaskUsers = lodash.uniq([...taskUsers, taskCreator, taskResponsible, taskClosedBy, ...taskAccomplices])
+		const taskUsersFormatted = allTaskUsers.filter((taskUserId) => !groups[groupIndex].members.find((memberId) => memberId === taskUserId))
 		if (taskUsers.length > 0) {
 			groups[groupIndex].members.push(...taskUsersFormatted)
 		}
 	})
 
+	for (let group of groups) {
+		const users = await UserService.getAllUsers(group.members)
+		group.members = users.map((u) => ({ id: u.ID, name: u.NAME + ' ' + u.LAST_NAME }))
+	}
 	return groups
 }
 
@@ -84,7 +93,7 @@ const getOverviewMetrics = async (fromDate, toDate, usersFilter, groupsFilter, o
 }
 
 const getTotalPerMonth = async () => {
-	const restUrl = BitrixIntegration.getRestUrl()
+	const restUrl = BitrixIntegration.getRestUrlTask()
 	return axios
 		.get(restUrl)
 		.then((res) => {
@@ -120,7 +129,7 @@ const getTotalPerMonth = async () => {
 // }
 
 // const getMembers = async () => {
-// 	const restUrl = BitrixIntegration.getRestUrl()
+// 	const restUrl = BitrixIntegration.getRestUrlTask()
 // 	return axios
 // 		.get(restUrl)
 // 		.then((res) => {

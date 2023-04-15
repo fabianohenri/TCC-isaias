@@ -4,7 +4,7 @@ const clientSecret = 'D2cD35UXLlLCHeQgSjR5VBpy9YX5N3WPdyVBWIJJlZ3gFAxof6'
 const redirectUrl = 'http://localhost:3000'
 const buildBaseAppBitrixUrl = (domain) => `https://${domain}.bitrix24.com.br` //retirar do hardcode depois projetusti
 const baseAppBitrixUrl = 'https://projetusti.bitrix24.com.br'
-let accessKeyBitrix = '13fd0d64005e7b1b0058b7df0000012aa0ab0758def66497959411363ec618ddc46039'
+let accessKeyBitrix = 'fc063b64005e7b1b0058b7df0000012aa0ab0766457215e095f4352b9f6f999655c9d1'
 
 //1 passo login
 const getUrlAuth = async (domainBitrix) =>
@@ -28,24 +28,29 @@ const getFinalAccessUrl = async (authCode, scope) => {
 // userid = 298
 
 //Metricas
-const baseAppBitrixRestUrl = `${baseAppBitrixUrl}/rest/tasks.task.list.json?auth=${accessKeyBitrix}`
+const baseAppBitrixRestUrlTask = `${baseAppBitrixUrl}/rest/tasks.task.list.json?auth=${accessKeyBitrix}`
+const baseAppBitrixRestUrlUser = `${baseAppBitrixUrl}/rest/user.get.json?auth=${accessKeyBitrix}`
 
 const getMetric = async () => {
 	return axios
-		.get(baseAppBitrixRestUrl)
+		.get(baseAppBitrixRestUrlTask)
 		.then((res) => {
 			return res.data
 		})
 		.catch((e) => console.error(e))
 }
 
-const getRestUrl = () => {
-	return baseAppBitrixRestUrl
+const getRestUrlTask = () => {
+	return baseAppBitrixRestUrlTask
+}
+const getRestUrlUser = () => {
+	return baseAppBitrixRestUrlUser
 }
 
 module.exports = {
 	getUrlAuth,
 	getFinalAccessUrl,
 	getMetric,
-	getRestUrl
+	getRestUrlTask,
+	getRestUrlUser
 }
