@@ -53,9 +53,10 @@ const formatMemberChecked = (member) => {
 	if (member.auditor.checked) {
 		memberString += `&filter[AUDITOR][]=${member.id}`
 	}
-	if (member.closer.checked) {
-		memberString += `&filter[CLOSED_BY][]=${member.id}`
-	}
+	//Não tem filtro de closed by na api
+	// if (member.closer.checked) {
+	// 	memberString += `&filter[CLOSED_BY][]=${member.id}`
+	// }
 	if (member.creator.checked) {
 		memberString += `&filter[CREATED_BY][]=${member.id}`
 	}

@@ -7,8 +7,8 @@ import {
 	BorderColorOutlined,
 	Person,
 	PersonOutlined,
-	Cancel,
-	CancelOutlined,
+	// Cancel,
+	// CancelOutlined,
 	LocalLibraryOutlined,
 	LocalLibrary
 } from '@mui/icons-material'
@@ -26,7 +26,7 @@ const MembersFiltersCheckList = ({ data, onChange }) => {
 		if (
 			newUsers[foundMemberIndex].accomplice.checked ||
 			newUsers[foundMemberIndex].auditor.checked ||
-			newUsers[foundMemberIndex].closer.checked ||
+			// newUsers[foundMemberIndex].closer.checked ||
 			newUsers[foundMemberIndex].creator.checked ||
 			newUsers[foundMemberIndex].responsible.checked
 		) {
@@ -39,7 +39,11 @@ const MembersFiltersCheckList = ({ data, onChange }) => {
 			{thisData?.map((d) => (
 				<div key={d.id}>
 					<div>{d.name}</div>
-					<Tooltip title={`Observador em ${d.accomplice.value} tarefa${(d.accomplice.value > 1 && 's') || ''}`}>
+					<Tooltip
+						title={`Observador em ${d.accomplice.value} tarefa${
+							(d.accomplice.value > 1 && 's') || ''
+						} para o intervalo de tempo escolhido`}
+					>
 						<Checkbox
 							icon={<RemoveRedEyeOutlined />}
 							checkedIcon={<RemoveRedEye />}
@@ -49,7 +53,7 @@ const MembersFiltersCheckList = ({ data, onChange }) => {
 							onChange={(e) => handleOnChangeCheck(e.target.checked, d.id, 'accomplice')}
 						/>
 					</Tooltip>
-					<Tooltip title={`Auditor em ${d.auditor.value} tarefa${(d.auditor.value > 1 && 's') || ''}`}>
+					<Tooltip title={`Auditor em ${d.auditor.value} tarefa${(d.auditor.value > 1 && 's') || ''} para o intervalo de tempo escolhido`}>
 						<Checkbox
 							icon={<LocalLibraryOutlined />}
 							checkedIcon={<LocalLibrary />}
@@ -61,7 +65,7 @@ const MembersFiltersCheckList = ({ data, onChange }) => {
 							<div>{d.auditor.value}</div>
 						</Checkbox>
 					</Tooltip>
-					<Tooltip title={`Criador em ${d.creator.value} tarefa${(d.creator.value > 1 && 's') || ''}`}>
+					<Tooltip title={`Criador em ${d.creator.value} tarefa${(d.creator.value > 1 && 's') || ''} para o intervalo de tempo escolhido`}>
 						<Checkbox
 							icon={<BorderColorOutlined />}
 							checkedIcon={<BorderColor />}
@@ -73,7 +77,11 @@ const MembersFiltersCheckList = ({ data, onChange }) => {
 							<div>{d.creator.value}</div>
 						</Checkbox>
 					</Tooltip>
-					<Tooltip title={`Responsável em ${d.responsible.value} tarefa${(d.responsible.value > 1 && 's') || ''}`}>
+					<Tooltip
+						title={`Responsável em ${d.responsible.value} tarefa${
+							(d.responsible.value > 1 && 's') || ''
+						} para o intervalo de tempo escolhido`}
+					>
 						<Checkbox
 							icon={<PersonOutlined />}
 							checkedIcon={<Person />}
@@ -85,7 +93,7 @@ const MembersFiltersCheckList = ({ data, onChange }) => {
 							<div>{d.responsible.value}</div>
 						</Checkbox>
 					</Tooltip>
-					<Tooltip title={`Fechou ${d.closer.value} tarefa${(d.closer.value > 1 && 's') || ''}`}>
+					{/* <Tooltip title={`Fechou ${d.closer.value} tarefa${(d.closer.value > 1 && 's') || ''} no intervalo de tempo escolhido`}>
 						<Checkbox
 							icon={<CancelOutlined />}
 							checkedIcon={<Cancel />}
@@ -96,7 +104,8 @@ const MembersFiltersCheckList = ({ data, onChange }) => {
 						>
 							<div>{d.closer.value}</div>
 						</Checkbox>
-					</Tooltip>
+					</Tooltip> */}
+					{/* não tem o filtro de closed by na api */}
 				</div>
 			))}
 		</>

@@ -38,15 +38,36 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 			.then((res) => {
 				//Membros
 				let newMembers = []
-				res.data.forEach((it) => newMembers.push(...it.members))
-				const filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()].map((it) => ({
+				res.data.forEach((it) => {
+					if (newMembers.length === 0) {
+						newMembers.push(...it.members)
+					} else {
+						it.members.forEach((m) => {
+							let foundIndex = newMembers.findIndex((nm) => nm.id === m.id)
+							if (foundIndex !== -1) {
+								newMembers[foundIndex].accomplice += m.accomplice
+								newMembers[foundIndex].auditor += m.auditor
+								// newMembers[foundIndex].closer += m.closer
+								newMembers[foundIndex].creator += m.creator
+								newMembers[foundIndex].responsible += m.responsible
+							} else {
+								newMembers.push(m)
+							}
+						})
+					}
+				})
+
+				const formattedNewMembers = newMembers.map((it) => ({
 					...it,
 					accomplice: { value: it.accomplice, checked: !!it.accomplice, disabled: !it.accomplice },
 					auditor: { value: it.auditor, checked: !!it.auditor, disabled: !it.auditor },
-					closer: { value: it.closer, checked: !!it.closer, disabled: !it.closer },
+					// closer: { value: it.closer, checked: !!it.closer, disabled: !it.closer },
 					creator: { value: it.creator, checked: !!it.creator, disabled: !it.creator },
 					responsible: { value: it.responsible, checked: !!it.responsible, disabled: !it.responsible }
 				}))
+
+				const filteredMembers = [...new Map(formattedNewMembers.map((item) => [item.id, item])).values()]
+
 				setMembers(filteredMembers)
 				setCanRenderMembers(filteredMembers)
 				//Grupos
@@ -68,8 +89,37 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 		let filteredMembers = []
 		if (thisGroups?.length > 0) {
 			let newMembers = []
-			thisGroups.forEach((it) => newMembers.push(...it.members))
-			filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()]
+			thisGroups.forEach((it) => {
+				if (newMembers.length === 0) {
+					newMembers.push(...it.members)
+				} else {
+					it.members.forEach((m) => {
+						let foundIndex = newMembers.findIndex((nm) => nm.id === m.id)
+						if (foundIndex !== -1) {
+							newMembers[foundIndex].accomplice += m.accomplice
+							newMembers[foundIndex].auditor += m.auditor
+							// newMembers[foundIndex].closer += m.closer
+							newMembers[foundIndex].creator += m.creator
+							newMembers[foundIndex].responsible += m.responsible
+						} else {
+							newMembers.push(m)
+						}
+					})
+				}
+			})
+
+			console.log(newMembers)
+
+			const formattedNewMembers = newMembers.map((it) => ({
+				...it,
+				accomplice: { value: it.accomplice, checked: !!it.accomplice, disabled: !it.accomplice },
+				auditor: { value: it.auditor, checked: !!it.auditor, disabled: !it.auditor },
+				// closer: { value: it.closer, checked: !!it.closer, disabled: !it.closer },
+				creator: { value: it.creator, checked: !!it.creator, disabled: !it.creator },
+				responsible: { value: it.responsible, checked: !!it.responsible, disabled: !it.responsible }
+			}))
+
+			filteredMembers = [...new Map(formattedNewMembers.map((item) => [item.id, item])).values()]
 		} else {
 			filteredMembers = members
 		}
