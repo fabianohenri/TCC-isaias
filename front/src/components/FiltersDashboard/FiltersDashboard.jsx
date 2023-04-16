@@ -59,7 +59,7 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 	const onChangeGroups = (thisGroups) => {
 		//Arruma os membros que podem ser mostrados a partir dos grupos selecionados
 		let filteredMembers = []
-		if (thisGroups.length > 0) {
+		if (thisGroups?.length > 0) {
 			let newMembers = []
 			thisGroups.forEach((it) => newMembers.push(...it.members))
 			filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()]

@@ -90,7 +90,7 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStacked, isLoading }) => {
 	return (
 		<>
-			{isLoading ? (
+			{isLoading && !series ? (
 				<Skeleton height={height} width={width} />
 			) : (
 				<Chart
@@ -99,7 +99,7 @@ const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStack
 						textAlign: 'left',
 						fontFamily: 'Poppins'
 					}}
-					options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series.length)}
+					options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series?.length)}
 					series={series}
 					width={width}
 					height={height}
