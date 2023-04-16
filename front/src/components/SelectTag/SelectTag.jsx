@@ -41,31 +41,29 @@ const SelectTag = ({ label, options, onChange, selected }) => {
 	}, [selected])
 
 	return (
-		<div>
-			<FormControl sx={{ m: 1, width: 300 }}>
-				<InputLabel>{label}</InputLabel>
-				<Select
-					multiple
-					value={selectedOptions}
-					onChange={handleChange}
-					input={<OutlinedInput label='Chip' />}
-					renderValue={(selected) => (
-						<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-							{selected.map((value) => (
-								<Chip key={value.id + value.name} label={value.name} />
-							))}
-						</Box>
-					)}
-					MenuProps={MenuProps}
-				>
-					{options.map((obj) => (
-						<MenuItem key={obj.id + obj.name} value={obj} style={getStyles(obj, selectedOptions, theme)} disabled={obj.disabled}>
-							{obj.name}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-		</div>
+		<FormControl sx={{ m: 1, width: '100%' }}>
+			<InputLabel>{label}</InputLabel>
+			<Select
+				multiple
+				value={selectedOptions}
+				onChange={handleChange}
+				input={<OutlinedInput label='Chip' />}
+				renderValue={(selected) => (
+					<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+						{selected.map((value) => (
+							<Chip key={value.id + value.name} label={value.name} />
+						))}
+					</Box>
+				)}
+				MenuProps={MenuProps}
+			>
+				{options.map((obj) => (
+					<MenuItem key={obj.id + obj.name} value={obj} style={getStyles(obj, selectedOptions, theme)} disabled={obj.disabled}>
+						{obj.name}
+					</MenuItem>
+				))}
+			</Select>
+		</FormControl>
 	)
 }
 

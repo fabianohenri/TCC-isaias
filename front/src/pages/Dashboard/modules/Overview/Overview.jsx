@@ -15,9 +15,9 @@ const Overview = ({ filters }) => {
 		if (!isLoadingMetrics) {
 			setIsLoadingMetrics(true)
 		}
-		let baseUrl = `/task/get-overview-metrics?taskStatus=${''}&fromDate=${filters.fromDate}&toDate=${
-			filters.toDate
-		}&members=${filters.members.map((it) => it.id)}&groups=${filters.groups.map((it) => it.id)}`
+		let baseUrl = `/task/get-overview-metrics?taskStatus=${''}&fromDate=${filters.fromDate}&toDate=${filters.toDate}&members=${JSON.stringify(
+			filters.members
+		)}&groups=${filters.groups.map((it) => it.id)}`
 
 		return await api
 			.get(baseUrl)
@@ -33,10 +33,6 @@ const Overview = ({ filters }) => {
 	useEffect(() => {
 		getMetrics()
 	}, [filters])
-
-	useEffect(() => {
-		console.log(metrics)
-	}, [metrics])
 
 	return (
 		<div className={`page ${OverviewStyles.overviewContainer}`}>

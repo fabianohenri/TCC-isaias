@@ -3,7 +3,7 @@ const moment = require('moment-timezone')
 const lodash = require('lodash')
 const BitrixIntegration = require('../integration/bitrix.integration')
 const UserService = require('./user.service')
-const { formatSimpleUser, formatToSeries, formatToFilters } = require('../utils/utils')
+const { formatSimpleUser, formatToSeries, formatToFilters, formatMembersToFilters } = require('../utils/utils')
 
 // 1-pegar todas as pessoas do sistema
 // 2-separar elas pelos projetos
@@ -18,7 +18,7 @@ const getAllTasksWithFilters = async (fromDate, toDate, groupsFilter, membersFil
 	let start = 0
 	let iterations = null
 	let queryStringFilterGroups = formatToFilters(groupsFilter, 'GROUP_ID')
-	let queryStringFilterMembers = formatToFilters(membersFilter, 'RESPONSIBLE_ID')
+	let queryStringFilterMembers = formatMembersToFilters(membersFilter)
 	do {
 		let res = await axios.get(
 			restUrl +
@@ -47,21 +47,42 @@ const getAllGroupsAndMembers = async (fromDate, toDate) => {
 			groupIndex = groups.length - 1
 		}
 		//Usuários dentro do grupo
-		const taskAuditors = task.auditors
-		const taskCreator = task.createdBy
-		const taskResponsible = task.responsibleId
-		const taskClosedBy = task.closedBy
-		const taskAccomplices = task.accomplices
-		const allTaskUsers = lodash.uniq([...taskAuditors, taskCreator, taskResponsible, taskClosedBy, ...taskAccomplices])
-		const taskUsersFormatted = allTaskUsers.filter((taskUserId) => !groups[groupIndex].members.find((memberId) => memberId === taskUserId))
-		if (taskUsersFormatted.length > 0) {
-			groups[groupIndex].members.push(...taskUsersFormatted)
-		}
+		const taskAuditors = task.auditors.map((it) => ({ id: it, auditor: 1 }))
+		const taskCreator = { id: task.createdBy, creator: 1 }
+		const taskResponsible = { id: task.responsibleId, responsible: 1 }
+		const taskClosedBy = { id: task.createdBy, closer: 1 }
+		const taskAccomplices = task.accomplices.map((it) => ({ id: it, accomplice: 1 }))
+		const allTaskUsers = [...taskAuditors, taskCreator, taskResponsible, taskClosedBy, ...taskAccomplices]
+		let formattedAllTaskUsers = []
+		allTaskUsers.forEach((atu) => {
+			const foundIndex = formattedAllTaskUsers.findIndex((fatu) => fatu.id === atu.id)
+			if (foundIndex === -1) {
+				formattedAllTaskUsers.push({ auditor: 0, creator: 0, responsible: 0, closer: 0, accomplice: 0, ...atu })
+			} else {
+				atu.auditor && (formattedAllTaskUsers[foundIndex].auditor = atu.auditor)
+				atu.creator && (formattedAllTaskUsers[foundIndex].creator = atu.creator)
+				atu.responsible && (formattedAllTaskUsers[foundIndex].responsible = atu.responsible)
+				atu.closer && (formattedAllTaskUsers[foundIndex].closer = atu.closer)
+				atu.accomplice && (formattedAllTaskUsers[foundIndex].accomplice = atu.accomplice)
+			}
+		})
+		formattedAllTaskUsers.forEach((ftuser) => {
+			const memberIndexFound = groups[groupIndex].members.findIndex((member) => member.id === ftuser.id)
+			if (memberIndexFound === -1) {
+				groups[groupIndex].members.push(ftuser)
+			} else {
+				groups[groupIndex].members[memberIndexFound].auditor += ftuser.auditor
+				groups[groupIndex].members[memberIndexFound].creator += ftuser.creator
+				groups[groupIndex].members[memberIndexFound].responsible += ftuser.responsible
+				groups[groupIndex].members[memberIndexFound].closer += ftuser.closer
+				groups[groupIndex].members[memberIndexFound].accomplice += ftuser.accomplice
+			}
+		})
 	})
 
 	for (let group of groups) {
-		const users = await UserService.getAllUsers(group.members)
-		group.members = users.map((u) => formatSimpleUser(u))
+		const users = await UserService.getAllUsers(group.members.map((it) => it.id))
+		group.members = group.members.map((gm) => ({ ...gm, ...formatSimpleUser(users.find((u) => u.ID === gm.id)) }))
 	}
 	return groups
 }

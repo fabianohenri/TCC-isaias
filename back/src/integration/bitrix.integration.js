@@ -4,7 +4,7 @@ const clientSecret = 'D2cD35UXLlLCHeQgSjR5VBpy9YX5N3WPdyVBWIJJlZ3gFAxof6'
 const redirectUrl = 'http://localhost:3000'
 const buildBaseAppBitrixUrl = (domain) => `https://${domain}.bitrix24.com.br` //retirar do hardcode depois projetusti
 const baseAppBitrixUrl = 'https://projetusti.bitrix24.com.br'
-let accessKeyBitrix = '16593b64005e7b1b0058b7df0000012aa0ab075f154ff50952674af4cb1deb73db9b17'
+let accessKeyBitrix = '4b5d3c64005e7b1b0058b7df0000012aa0ab07fb289ef33665a693c3cb600f02ad5ab7'
 
 //1 passo login
 const getUrlAuth = async (domainBitrix) =>

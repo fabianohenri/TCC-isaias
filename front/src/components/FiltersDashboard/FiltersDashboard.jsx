@@ -1,7 +1,7 @@
 import React, { useState, useEffect, memo } from 'react'
 import { connect } from 'react-redux'
 import { CalendarMonth } from '@mui/icons-material'
-import { Button, Card, Modal, Collapse, IconButton, Paper, Typography } from '@mui/material'
+import { Button, Card, Modal, Collapse, IconButton, Paper, Typography, Grid } from '@mui/material'
 import moment from 'moment-timezone'
 //system libs
 import api from 'service/service'
@@ -9,6 +9,7 @@ import DatePicker from 'components/DatePicker/DatePicker'
 import SelectTag from 'components/SelectTag/SelectTag'
 import { changeFiltersAction } from 'storage/redux/actions/dashboard.actions'
 import { DEFAULT_DASHBOARD_FILTERS } from 'storage/redux/reducer/main.reducer'
+import MembersFiltersCheckList from './components/MembersFiltersCheckList/MembersFiltersCheckList'
 
 const style = {
 	position: 'absolute',
@@ -38,8 +39,14 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 				//Membros
 				let newMembers = []
 				res.data.forEach((it) => newMembers.push(...it.members))
-				const filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()]
-
+				const filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()].map((it) => ({
+					...it,
+					accomplice: { value: it.accomplice, checked: !!it.accomplice, disabled: !it.accomplice },
+					auditor: { value: it.auditor, checked: !!it.auditor, disabled: !it.auditor },
+					closer: { value: it.closer, checked: !!it.closer, disabled: !it.closer },
+					creator: { value: it.creator, checked: !!it.creator, disabled: !it.creator },
+					responsible: { value: it.responsible, checked: !!it.responsible, disabled: !it.responsible }
+				}))
 				setMembers(filteredMembers)
 				setCanRenderMembers(filteredMembers)
 				//Grupos
@@ -108,6 +115,10 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 		applyFilters(DEFAULT_DASHBOARD_FILTERS)
 	}
 
+	const onChangeFilter = (value, filterName) => {
+		setFilters({ ...filters, [filterName]: value })
+	}
+
 	return (
 		<>
 			<Button onClick={handleOpen}>Filtros</Button>
@@ -134,10 +145,17 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 							/>
 						</Paper>
 					</Collapse>
-					<SelectTag label='Grupos' options={canRenderGroups} onChange={onChangeGroups} selected={filters.groups} />
-					<SelectTag label='Membros' options={canRenderMembers} onChange={onChangeMembers} selected={filters.members} />
-					<Button onClick={() => applyFilters()}>Aplicar</Button>
-					<Button onClick={resetFilters}>Resetar</Button>
+					<Grid container spacing={3}>
+						<Grid item xs={6}>
+							<SelectTag label='Grupos' options={canRenderGroups} onChange={onChangeGroups} selected={filters.groups} />
+							<SelectTag label='Membros' options={canRenderMembers} onChange={onChangeMembers} selected={filters.members} />
+						</Grid>
+						<Grid item xs={6}>
+							<MembersFiltersCheckList data={filters.members} onChange={onChangeFilter} />
+						</Grid>
+						<Button onClick={() => applyFilters()}>Aplicar</Button>
+						<Button onClick={resetFilters}>Resetar</Button>
+					</Grid>
 				</Card>
 			</Modal>
 		</>
