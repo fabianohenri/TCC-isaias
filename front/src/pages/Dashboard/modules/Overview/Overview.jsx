@@ -4,32 +4,39 @@ import api from 'service/service'
 import CardMetric from 'components/CardMetric/CardMetric'
 import OverviewStyles from './OverviewStyles.module.css'
 import FiltersDashboard from 'components/FiltersDashboard/FiltersDashboard'
+import { connect } from 'react-redux'
+import BarChart from 'components/graphs/BarChart/BarChart'
 
-const Overview = () => {
+const Overview = ({ filters }) => {
 	const [metrics, setMetrics] = useState({})
+	const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
 
-	const getMetrics = async (taskStatus) => {
-		let baseUrl = '/task/get-overview-metrics'
-		if (taskStatus) {
-			baseUrl += `?taskStatus=${taskStatus}`
+	const getMetrics = async () => {
+		if (!isLoadingMetrics) {
+			setIsLoadingMetrics(true)
 		}
+		let baseUrl = `/task/get-overview-metrics?taskStatus=${''}&fromDate=${filters.fromDate}&toDate=${
+			filters.toDate
+		}&members=${filters.members.map((it) => it.id)}&groups=${filters.groups.map((it) => it.id)}`
 
-		const { data } = await api.get(baseUrl).catch((e) => console.error(e.response.data))
-		return data
-	}
-
-	const buildMetrics = async () => {
-		const totalMetrics = await getMetrics()
-		setMetrics({ totalMetrics })
+		return await api
+			.get(baseUrl)
+			.then((response) => {
+				setMetrics(response.data)
+			})
+			.catch((e) => {
+				console.error(e.response.data)
+			})
+			.finally(() => setIsLoadingMetrics(false))
 	}
 
 	useEffect(() => {
-		// buildMetrics()
-	}, [])
+		getMetrics()
+	}, [filters])
 
-	// useEffect(() => {
-	// 	console.log(metrics)
-	// }, [metrics])
+	useEffect(() => {
+		console.log(metrics)
+	}, [metrics])
 
 	return (
 		<div className={`page ${OverviewStyles.overviewContainer}`}>
@@ -41,52 +48,86 @@ const Overview = () => {
 				<FiltersDashboard />
 			</Grid>
 			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
+				<CardMetric title='Tarefas Totais' number={metrics?.general?.totalTasks} xs={4} />
+				<CardMetric title='Tarefas Abertas' number={metrics?.general?.openTasks} xs={4} />
+				<CardMetric title='Tarefas Fechadas' number={metrics?.general?.closedTasks} xs={4} />
 			</Grid>
 			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-			</Grid>
-			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-			</Grid>
-			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-			</Grid>
-			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-			</Grid>
-			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-			</Grid>
-			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-			</Grid>
-			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
-			</Grid>
-			<Grid container>
-				<CardMetric title='Tarefas Totais' number={10} xs={4} />
-				<CardMetric title='Tarefas Abertas' number={12} xs={4} />
-				<CardMetric title='Tarefas Fechadas' number={35} xs={4} />
+				<Grid item xs={3}>
+					<BarChart
+						series={metrics?.usersGraphData?.auditors?.series}
+						labels={metrics?.usersGraphData?.auditors?.labels}
+						height={500}
+						width='100%'
+						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+						isHorizontal={false}
+						isStacked={false}
+						isLoading={isLoadingMetrics}
+					/>
+				</Grid>
+				<Grid item xs={3}>
+					<Grid container>
+						<BarChart
+							series={metrics?.usersGraphData?.creators?.series}
+							labels={metrics?.usersGraphData?.creators?.labels}
+							height={500}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoadingMetrics}
+						/>
+					</Grid>
+				</Grid>
+				<Grid item xs={3}>
+					<Grid container>
+						<BarChart
+							series={metrics?.usersGraphData?.responsibles?.series}
+							labels={metrics?.usersGraphData?.responsibles?.labels}
+							height={500}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoadingMetrics}
+						/>
+					</Grid>
+				</Grid>
+				<Grid item xs={3}>
+					<Grid container>
+						<BarChart
+							series={metrics?.usersGraphData?.closers?.series}
+							labels={metrics?.usersGraphData?.closers?.labels}
+							height={500}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoadingMetrics}
+						/>
+					</Grid>
+				</Grid>
+				<Grid item xs={3}>
+					<Grid container>
+						<BarChart
+							series={metrics?.usersGraphData?.accomplices?.series}
+							labels={metrics?.usersGraphData?.accomplices?.labels}
+							height={500}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoadingMetrics}
+						/>
+					</Grid>
+				</Grid>
 			</Grid>
 		</div>
 	)
 }
 
-export default memo(Overview)
+const mapStateToProps = ({ store }) => ({
+	filters: store?.dashboard?.filters
+})
+
+export default connect(mapStateToProps)(memo(Overview))

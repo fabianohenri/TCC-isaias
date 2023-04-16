@@ -37,7 +37,6 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 			.then((res) => {
 				//Membros
 				let newMembers = []
-				console.log(newMembers)
 				res.data.forEach((it) => newMembers.push(...it.members))
 				const filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()]
 

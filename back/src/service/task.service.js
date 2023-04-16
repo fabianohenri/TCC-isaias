@@ -3,21 +3,27 @@ const moment = require('moment-timezone')
 const lodash = require('lodash')
 const BitrixIntegration = require('../integration/bitrix.integration')
 const UserService = require('./user.service')
+const { formatSimpleUser, formatToSeries, formatToFilters } = require('../utils/utils')
 
 // 1-pegar todas as pessoas do sistema
 // 2-separar elas pelos projetos
 // 3-colocar as tarefas de cada pessoa
 // projeto > pessoa > tarefa
 
-const getAllTasksWithFilters = async (fromDate, toDate) => {
+const getAllTasksWithFilters = async (fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
 	const restUrl = BitrixIntegration.getRestUrlTask()
 	let totalTickets = []
 	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20
 	const limit = 50
 	let start = 0
 	let iterations = null
+	let queryStringFilterGroups = formatToFilters(groupsFilter, 'GROUP_ID')
+	let queryStringFilterMembers = formatToFilters(membersFilter, 'RESPONSIBLE_ID')
 	do {
-		let res = await axios.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}`)
+		let res = await axios.get(
+			restUrl +
+				`&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}${queryStringFilterGroups}${queryStringFilterMembers}`
+		)
 		if (!iterations) {
 			iterations = Math.ceil(res.data.total / limit)
 		}
@@ -41,31 +47,37 @@ const getAllGroupsAndMembers = async (fromDate, toDate) => {
 			groupIndex = groups.length - 1
 		}
 		//Usuários dentro do grupo
-		const taskUsers = task.auditors
+		const taskAuditors = task.auditors
 		const taskCreator = task.createdBy
 		const taskResponsible = task.responsibleId
 		const taskClosedBy = task.closedBy
 		const taskAccomplices = task.accomplices
-		const allTaskUsers = lodash.uniq([...taskUsers, taskCreator, taskResponsible, taskClosedBy, ...taskAccomplices])
+		const allTaskUsers = lodash.uniq([...taskAuditors, taskCreator, taskResponsible, taskClosedBy, ...taskAccomplices])
 		const taskUsersFormatted = allTaskUsers.filter((taskUserId) => !groups[groupIndex].members.find((memberId) => memberId === taskUserId))
-		if (taskUsers.length > 0) {
+		if (taskUsersFormatted.length > 0) {
 			groups[groupIndex].members.push(...taskUsersFormatted)
 		}
 	})
 
 	for (let group of groups) {
 		const users = await UserService.getAllUsers(group.members)
-		group.members = users.map((u) => ({ id: u.ID, name: u.NAME + ' ' + u.LAST_NAME }))
+		group.members = users.map((u) => formatSimpleUser(u))
 	}
 	return groups
 }
 
-const getOverviewMetrics = async (fromDate, toDate, usersFilter, groupsFilter, openTasksFilter, closedTasksFilter) => {
-	const allTasks = await getAllTasksWithFilters(null, null)
+const getOverviewMetrics = async (fromDateFilter, toDateFilter, groupsFilter, membersFilter, taskStatusFilter) => {
+	const allTasks = await getAllTasksWithFilters(fromDateFilter, toDateFilter, groupsFilter, membersFilter, taskStatusFilter)
 	let totalTasks = allTasks.length
 	let groups = [] //tem os usuários dentro dele
 	let openTasks = 0
 	let closedTasks = 0
+	//people
+	let auditors = []
+	let creators = []
+	let responsibles = []
+	let closers = []
+	let accomplices = []
 	allTasks.forEach((task) => {
 		//Métricas das tarefas
 		if (task.closedDate) {
@@ -81,15 +93,54 @@ const getOverviewMetrics = async (fromDate, toDate, usersFilter, groupsFilter, o
 			groupIndex = groups.length - 1
 		}
 		//Usuários dentro do grupo
-		let taskUsers = task.auditors.map((ta) => task.auditorsData[ta])
-		// responsible e creator adicionando se não existir, mas acho difícil, retirar após validar se for o caso
-		let additionalUsers = [task.creator, task.responsible].filter((mu) => !taskUsers.find((tu) => tu.id === mu.id))
-		let taskUsersFormatted = [...taskUsers, ...additionalUsers].filter((a) => !groups[groupIndex].members.find((member) => member.id === a.id))
-		if (taskUsers.length > 0) {
+		const taskAuditors = task.auditors
+		const taskCreator = task.createdBy
+		const taskResponsible = task.responsibleId
+		const taskClosedBy = task.closedBy
+		const taskAccomplices = task.accomplices
+		auditors = auditors.concat(taskAuditors)
+		creators = creators.concat(taskCreator)
+		responsibles = responsibles.concat(taskResponsible)
+		closers = closers.concat(taskClosedBy)
+		accomplices = accomplices.concat(taskAccomplices)
+		const allTaskUsers = lodash.uniq([...taskAuditors, taskCreator, taskResponsible, taskClosedBy, ...taskAccomplices])
+		const taskUsersFormatted = allTaskUsers.filter((taskUserId) => !groups[groupIndex].members.find((memberId) => memberId === taskUserId))
+		if (taskUsersFormatted.length > 0) {
 			groups[groupIndex].members.push(...taskUsersFormatted)
 		}
 	})
-	return { totalTasks, openTasks, closedTasks }
+
+	const uniqueIds = lodash.uniq([...auditors, ...creators, ...responsibles, ...closers, ...accomplices])
+	const users = await UserService.getAllUsers(uniqueIds)
+
+	const auditorsFormatted = Object.entries(lodash.countBy(auditors))
+		.map(([key, value]) => ({ key, value }))
+		.map((obj) => ({ ...obj, key: formatSimpleUser(users.find((user) => user.ID === obj.key)) }))
+	const creatorsFormatted = Object.entries(lodash.countBy(creators))
+		.map(([key, value]) => ({ key, value }))
+		.map((obj) => ({ ...obj, key: formatSimpleUser(users.find((user) => user.ID === obj.key)) }))
+	const responsiblesFormatted = Object.entries(lodash.countBy(responsibles))
+		.map(([key, value]) => ({ key, value }))
+		.map((obj) => ({ ...obj, key: formatSimpleUser(users.find((user) => user.ID === obj.key)) }))
+	const closersFormatted = Object.entries(lodash.countBy(closers))
+		.map(([key, value]) => ({ key, value }))
+		.map((obj) => ({ ...obj, key: formatSimpleUser(users.find((user) => user.ID === obj.key)) }))
+	const accomplicesFormatted = Object.entries(lodash.countBy(accomplices))
+		.map(([key, value]) => ({ key, value }))
+		.map((obj) => ({ ...obj, key: formatSimpleUser(users.find((user) => user.ID === obj.key)) }))
+
+	const finalData = {
+		general: { totalTasks, openTasks, closedTasks },
+		usersGraphData: {
+			auditors: formatToSeries(auditorsFormatted, ['Auditores'], 'desc'),
+			creators: formatToSeries(creatorsFormatted, ['Criadores'], 'desc'),
+			responsibles: formatToSeries(responsiblesFormatted, ['Responsáveis'], 'desc'),
+			closers: formatToSeries(closersFormatted, ['Fechadores'], 'desc'),
+			accomplices: formatToSeries(accomplicesFormatted, ['Cúmplices'], 'desc')
+		}
+	}
+
+	return finalData
 }
 
 const getTotalPerMonth = async () => {

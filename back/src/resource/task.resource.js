@@ -1,4 +1,5 @@
 const TaskService = require('../service/task.service')
+const { extractGlobalFiltersFromRequest } = require('../utils/utils')
 
 const getAllGroupsAndMembers = async (req, res) => {
 	const fromDate = req.params.fromDate
@@ -24,9 +25,10 @@ const getTotalPerMonth = async (req, res) => {
 }
 
 const getOverviewMetrics = async (req, res) => {
-	const status = req.query.taskStatus
+	const { fromDate, toDate, groups, members, taskStatus } = extractGlobalFiltersFromRequest(req)
+
 	try {
-		const data = await TaskService.getOverviewMetrics(status)
+		const data = await TaskService.getOverviewMetrics(fromDate, toDate, groups, members, taskStatus)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
