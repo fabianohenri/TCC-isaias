@@ -1,7 +1,7 @@
 const Pool = require('pg').Pool
-const Config = require('./config')
+const config = require('./config')
 
-const pool = new Pool(Config.DB)
+const pool = new Pool(config.DB)
 
 module.exports = {
 	pool

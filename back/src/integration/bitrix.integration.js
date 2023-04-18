@@ -1,7 +1,9 @@
 const axios = require('axios')
-const clientId = 'local.634d96dde1a277.65748819'
-const clientSecret = 'D2cD35UXLlLCHeQgSjR5VBpy9YX5N3WPdyVBWIJJlZ3gFAxof6'
-const redirectUrl = 'http://localhost:3000'
+const config = require('../config')
+const clientId = config.BITRIX.CLIENT_ID
+const clientSecret = config.BITRIX.CLIENT_SECRET
+const redirectUrl = config.ETC.BASE_FRONT_URL
+
 const buildBaseAppBitrixUrl = (domain) => `https://${domain}.bitrix24.com.br` //retirar do hardcode depois projetusti
 const baseAppBitrixUrl = 'https://projetusti.bitrix24.com.br'
 let accessKeyBitrix = '1c6c3c64005e7b1b0058b7df0000012aa0ab07312dbb1106bb8690a60535817835547b'
@@ -23,9 +25,6 @@ const getFinalAccessUrl = async (authCode, scope) => {
 		})
 		.catch((e) => console.error(e))
 }
-
-// memberid = 9f5ac4d382d78119d7f64abee061f1b5
-// userid = 298
 
 //Metricas
 const baseAppBitrixRestUrlTask = `${baseAppBitrixUrl}/rest/tasks.task.list.json?auth=${accessKeyBitrix}`
