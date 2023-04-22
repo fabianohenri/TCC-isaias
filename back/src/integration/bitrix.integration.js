@@ -4,8 +4,8 @@ const clientId = config.BITRIX.CLIENT_ID
 const clientSecret = config.BITRIX.CLIENT_SECRET
 const redirectUrl = config.ETC.BASE_FRONT_URL
 
-const buildBaseAppBitrixUrl = (domain) => `https://${domain}.bitrix24.com.br` //retirar do hardcode depois projetusti
-const baseAppBitrixUrl = 'https://projetusti.bitrix24.com.br'
+const buildBaseAppBitrixUrl = (domain) => `https://${domain}.bitrix24.com.br`
+const baseAppBitrixUrl = buildBaseAppBitrixUrl('projetusti') //retirar do hardcode depois projetusti
 let accessKeyBitrix = '1c6c3c64005e7b1b0058b7df0000012aa0ab07312dbb1106bb8690a60535817835547b'
 
 //1 passo login
@@ -30,15 +30,6 @@ const getFinalAccessUrl = async (authCode, scope) => {
 const baseAppBitrixRestUrlTask = `${baseAppBitrixUrl}/rest/tasks.task.list.json?auth=${accessKeyBitrix}`
 const baseAppBitrixRestUrlUser = `${baseAppBitrixUrl}/rest/user.get.json?auth=${accessKeyBitrix}`
 
-const getMetric = async () => {
-	return axios
-		.get(baseAppBitrixRestUrlTask)
-		.then((res) => {
-			return res.data
-		})
-		.catch((e) => console.error(e))
-}
-
 const getRestUrlTask = () => {
 	return baseAppBitrixRestUrlTask
 }
@@ -49,7 +40,6 @@ const getRestUrlUser = () => {
 module.exports = {
 	getUrlAuth,
 	getFinalAccessUrl,
-	getMetric,
 	getRestUrlTask,
 	getRestUrlUser
 }

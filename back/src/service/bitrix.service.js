@@ -1,40 +1,49 @@
+const axios = require('axios')
 const BitrixIntegration = require('../integration/bitrix.integration')
-const BitrixRepository = require('../repository/bitrix.repository')
+const { formatToFilters, formatMembersToFilters } = require('../utils/utils')
 
-const getUrlAuth = async (domainBitrix) => {
-	return await BitrixIntegration.getUrlAuth(domainBitrix)
+const getAllUsers = async (userIds) => {
+	const restUrl = BitrixIntegration.getRestUrlUser()
+	const formattedUserIdsParams = userIds
+		.map((uId) => '&ID[]=' + uId)
+		.toString()
+		.replaceAll(',', '')
+	let res = await axios.get(restUrl + formattedUserIdsParams)
+	return res.data.result
 }
 
-const loginOrCreateAccount = async (authCode, scope) => {
-	const accessBitrix = await BitrixIntegration.getFinalAccessUrl(authCode, scope)
-	const accountExists = await BitrixRepository.findByUserIdBitrixAndDomain(accessBitrix.user_id, accessBitrix.domain)
-	if (accountExists) {
-		return await BitrixRepository.saveNewAccess(accessBitrix.access_token, accessBitrix.refresh_token, accessBitrix.scope, accountExists.id)
-	} else {
-		return await BitrixRepository.createAccount(
-			accessBitrix.access_token,
-			accessBitrix.refresh_token,
-			accessBitrix.scope,
-			accessBitrix.user_id,
-			accessBitrix.domain
+const getAllTasksWithFilters = async (fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
+	const restUrl = BitrixIntegration.getRestUrlTask()
+	let totalTickets = []
+	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20
+	const limit = 50
+	let start = 0
+	let iterations = null
+	let queryStringFilterGroups = formatToFilters(groupsFilter, 'GROUP_ID')
+	let queryStringFilterMembers = formatMembersToFilters(membersFilter)
+	do {
+		let res = await axios.get(
+			restUrl +
+				`&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}${queryStringFilterGroups}${queryStringFilterMembers}`
 		)
-	}
+		if (!iterations) {
+			iterations = Math.ceil(res.data.total / limit)
+		}
+		start += limit
+		iterations--
+		totalTickets.push(...res.data?.result?.tasks)
+	} while (iterations > 0)
+	return totalTickets
 }
 
-const getUserAuth = async () => {
-	const userId = 1
-	const userAuth = await BitrixRepository.getUserAuth(userId)
-	return userAuth
-}
-
-const getMetric = async () => {
-	const metric = await BitrixIntegration.getMetric()
-	return metric
+const getTotalPerMonth = async () => {
+	const restUrl = BitrixIntegration.getRestUrlTask()
+	const res = await axios.get(restUrl)
+	return res.data?.result?.tasks
 }
 
 module.exports = {
-	getUrlAuth,
-	loginOrCreateAccount,
-	getUserAuth,
-	getMetric
+	getAllUsers,
+	getAllTasksWithFilters,
+	getTotalPerMonth
 }

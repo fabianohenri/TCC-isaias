@@ -1,9 +1,9 @@
-const BitrixService = require('../service/bitrix.service')
+const UserService = require('../service/userAccount.service')
 
 const getUrlAuth = async (req, res) => {
 	try {
 		const domainBitrix = req.params.domainBitrix
-		const data = await BitrixService.getUrlAuth(domainBitrix)
+		const data = await UserService.getUrlAuth(domainBitrix)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -16,7 +16,7 @@ const loginOrCreateAccount = async (req, res) => {
 	const scope = req.query.scope
 
 	try {
-		const data = await BitrixService.loginOrCreateAccount(authCode, scope)
+		const data = await UserService.loginOrCreateAccount(authCode, scope)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -26,17 +26,7 @@ const loginOrCreateAccount = async (req, res) => {
 
 const getUserAuth = async (req, res) => {
 	try {
-		const data = await BitrixService.getUserAuth()
-		return res.status(200).send(data)
-	} catch (e) {
-		console.error(e)
-		return res.status(500).send('Erro ao buscar url de autenticação')
-	}
-}
-
-const getMetric = async (req, res) => {
-	try {
-		const data = await BitrixService.getMetric()
+		const data = await UserService.getUserAuth()
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -47,6 +37,5 @@ const getMetric = async (req, res) => {
 module.exports = {
 	getUrlAuth,
 	loginOrCreateAccount,
-	getUserAuth,
-	getMetric
+	getUserAuth
 }

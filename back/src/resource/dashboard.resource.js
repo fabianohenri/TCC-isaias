@@ -1,4 +1,4 @@
-const TaskService = require('../service/task.service')
+const DashboardService = require('../service/dashboard.service')
 const { extractGlobalFiltersFromRequest } = require('../utils/utils')
 
 const getAllGroupsAndMembers = async (req, res) => {
@@ -6,7 +6,7 @@ const getAllGroupsAndMembers = async (req, res) => {
 	const toDate = req.params.toDate
 
 	try {
-		const data = await TaskService.getAllGroupsAndMembers(fromDate, toDate)
+		const data = await DashboardService.getAllGroupsAndMembers(fromDate, toDate)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -16,7 +16,7 @@ const getAllGroupsAndMembers = async (req, res) => {
 
 const getTotalPerMonth = async (req, res) => {
 	try {
-		const data = await TaskService.getTotalPerMonth()
+		const data = await DashboardService.getTotalPerMonth()
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -28,7 +28,7 @@ const getOverviewMetrics = async (req, res) => {
 	const { fromDate, toDate, groups, members, taskStatus } = extractGlobalFiltersFromRequest(req)
 
 	try {
-		const data = await TaskService.getOverviewMetrics(fromDate, toDate, groups, members, taskStatus)
+		const data = await DashboardService.getOverviewMetrics(fromDate, toDate, groups, members, taskStatus)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -42,7 +42,7 @@ const getOverviewMetrics = async (req, res) => {
 // 	const membersIds = req.query.membersIds
 
 // 	try {
-// 		const data = await TaskService.getGroups(fromDate, toDate, membersIds)
+// 		const data = await DashboardService.getGroups(fromDate, toDate, membersIds)
 // 		return res.status(200).send(data)
 // 	} catch (e) {
 // 		console.error(e)
@@ -55,7 +55,7 @@ const getOverviewMetrics = async (req, res) => {
 // 	const groupsIds = req.params.groupsIds
 
 // 	try {
-// 		const data = await TaskService.getMembers(fromDate, toDate, groupsIds)
+// 		const data = await DashboardService.getMembers(fromDate, toDate, groupsIds)
 // 		return res.status(200).send(data)
 // 	} catch (e) {
 // 		console.error(e)

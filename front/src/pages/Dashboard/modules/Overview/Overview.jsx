@@ -15,9 +15,9 @@ const Overview = ({ filters }) => {
 		if (!isLoadingMetrics) {
 			setIsLoadingMetrics(true)
 		}
-		let baseUrl = `/task/get-overview-metrics?taskStatus=${''}&fromDate=${filters.fromDate}&toDate=${filters.toDate}&members=${JSON.stringify(
-			filters.members
-		)}&groups=${filters.groups.map((it) => it.id)}`
+		let baseUrl = `/dashboard/get-overview-metrics?taskStatus=${''}&fromDate=${filters.fromDate}&toDate=${
+			filters.toDate
+		}&members=${JSON.stringify(filters.members)}&groups=${filters.groups.map((it) => it.id)}`
 
 		return await api
 			.get(baseUrl)
