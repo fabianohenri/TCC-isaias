@@ -17,14 +17,14 @@ api.interceptors.request.use(async (config) => {
 
 api.interceptors.response.use(
 	(response) => {
-		if (response.status === 403) {
+		if ([401, 403].includes(response.status)) {
 			store.dispatch(logoutAction())
 			clearLocalStorage()
 		}
 		return response
 	},
 	(error) => {
-		if (error.response && error.response.status === 403) {
+		if (error.response && [401, 403].includes(error.response.status)) {
 			store.dispatch(logoutAction())
 			clearLocalStorage()
 		}

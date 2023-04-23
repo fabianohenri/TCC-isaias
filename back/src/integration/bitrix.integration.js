@@ -41,7 +41,11 @@ const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate, queryS
 		)
 		.catch(async (e) => {
 			if (e.response.status === 401) {
-				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken))
+				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken)).catch(async (e) => {
+					if (e.response.status === 400) {
+						throw { status: 401, message: 'Refresh Token do bitrix expirado, é necessário relogar no sistema' }
+					}
+				})
 				const newUserAccount = await UserAccountRepository.refreshAccess(data.access_token, data.refresh_token, data.user_id)
 				const newBitrixAccess = {
 					fullDomain: newUserAccount.domain_bitrix,
@@ -59,7 +63,11 @@ const getBitrixUsersByIds = async (bitrixAccess, formattedUserIdsParams) => {
 		.get(baseAppBitrixRestUrlUser(bitrixAccess.fullDomain, bitrixAccess.accessToken) + formattedUserIdsParams)
 		.catch(async (e) => {
 			if (e.response.status === 401) {
-				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken))
+				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken)).catch(async (e) => {
+					if (e.response.status === 400) {
+						throw { status: 401, message: 'Refresh Token do bitrix expirado, é necessário relogar no sistema' }
+					}
+				})
 				const newUserAccount = await UserAccountRepository.refreshAccess(data.access_token, data.refresh_token, data.user_id)
 				const newBitrixAccess = {
 					fullDomain: newUserAccount.domain_bitrix,

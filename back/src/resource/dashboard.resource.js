@@ -10,8 +10,9 @@ const getAllGroupsAndMembers = async (req, res) => {
 		const data = await DashboardService.getAllGroupsAndMembers(userId, fromDate, toDate)
 		return res.status(200).send(data)
 	} catch (e) {
-		console.error(e)
-		return res.status(500).send('Erro ao buscar métricas')
+		let status = e.status || 500
+		let message = e.message || 'Erro ao buscar grupos e membros'
+		return res.status(status).send(message)
 	}
 }
 
@@ -24,7 +25,9 @@ const getOverviewMetrics = async (req, res) => {
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
-		return res.status(500).send('Erro ao buscar métricas')
+		let status = e.status || 500
+		let message = e.message || 'Erro ao buscar métricas'
+		return res.status(status).send(message)
 	}
 }
 
