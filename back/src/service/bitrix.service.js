@@ -1,9 +1,7 @@
-const axios = require('axios')
 const BitrixIntegration = require('../integration/bitrix.integration')
 const { formatToFilters, formatMembersToFilters } = require('../utils/utils')
 
-const getAllTasksWithFilters = async (bitrixFullDomain, bitrixAccessToken, fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
-	const restUrl = BitrixIntegration.getRestUrlTask(bitrixFullDomain, bitrixAccessToken)
+const getAllTasksWithFilters = async (bitrixAccess, fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
 	let totalTickets = []
 	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20
 	const limit = 50
@@ -12,27 +10,29 @@ const getAllTasksWithFilters = async (bitrixFullDomain, bitrixAccessToken, fromD
 	let queryStringFilterGroups = formatToFilters(groupsFilter, 'GROUP_ID')
 	let queryStringFilterMembers = formatMembersToFilters(membersFilter)
 	do {
-		let res = await axios.get(
-			restUrl +
-				`&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}${queryStringFilterGroups}${queryStringFilterMembers}`
+		let data = await BitrixIntegration.getTasksWithFilters(
+			bitrixAccess,
+			start,
+			fromDate,
+			toDate,
+			queryStringFilterGroups,
+			queryStringFilterMembers
 		)
-		if (!iterations) {
-			iterations = Math.ceil(res.data.total / limit)
+		if (data.status === 401 && data.newAccess) {
+			return data
+		} else {
+			if (!iterations) {
+				iterations = Math.ceil(data.total / limit)
+			}
+			start += limit
+			iterations--
+			totalTickets.push(...data?.result?.tasks)
 		}
-		start += limit
-		iterations--
-		totalTickets.push(...res.data?.result?.tasks)
 	} while (iterations > 0)
 	return totalTickets
 }
 
-const getTotalPerMonth = async (bitrixFullDomain, bitrixAccessToken) => {
-	const restUrl = BitrixIntegration.getRestUrlTask(bitrixFullDomain, bitrixAccessToken)
-	const res = await axios.get(restUrl)
-	return res.data?.result?.tasks
-}
-
-const getBitrixUsersByIds = async (bitrixFullDomain, bitrixAccessToken, userIds) => {
+const getBitrixUsersByIds = async (bitrixAccess, userIds) => {
 	let formattedUserIdsParams = ''
 	if (userIds) {
 		formattedUserIdsParams = userIds
@@ -40,12 +40,25 @@ const getBitrixUsersByIds = async (bitrixFullDomain, bitrixAccessToken, userIds)
 			.toString()
 			.replaceAll(',', '')
 	}
-	let bitrixUsers = await BitrixIntegration.getBitrixUsersByIds(bitrixFullDomain, bitrixAccessToken, formattedUserIdsParams)
-	return bitrixUsers
+	let bitrixUsers = await BitrixIntegration.getBitrixUsersByIds(bitrixAccess, formattedUserIdsParams)
+	if (bitrixUsers.status === 401 && bitrixUsers.newAccess) {
+		bitrixAccess = bitrixUsers.newAccess
+		bitrixUsers = await BitrixIntegration.getBitrixUsersByIds(bitrixAccess, formattedUserIdsParams)
+	}
+	return bitrixUsers?.result
+}
+
+const getFinalAccessUrl = async (authCode, scope, domain) => {
+	return await BitrixIntegration.getFinalAccessUrl(authCode, scope, domain)
+}
+
+const getUrlAuth = async (domainBitrix) => {
+	return await BitrixIntegration.getUrlAuth(domainBitrix)
 }
 
 module.exports = {
 	getAllTasksWithFilters,
-	getTotalPerMonth,
-	getBitrixUsersByIds
+	getBitrixUsersByIds,
+	getFinalAccessUrl,
+	getUrlAuth
 }

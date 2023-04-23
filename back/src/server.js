@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const config = require('./config')
 
 const app = express()
-const UserResource = require('./resource/userAccount.resource')
+const LoginResource = require('./resource/login.resource')
 const DashboardResource = require('./resource/dashboard.resource')
 
 const port = 4000
@@ -36,13 +36,12 @@ const interceptor = (req, res, next) => {
 }
 app.use(interceptor)
 
-app.get(PREFIX + '/login/get-url-auth/:domainBitrix', UserResource.getUrlAuth)
-app.get(PREFIX + '/login', UserResource.loginOrCreateAccount)
+//Login
+app.get(PREFIX + '/login/get-url-auth/:domainBitrix', LoginResource.getUrlAuth)
+app.get(PREFIX + '/login', LoginResource.loginOrCreateAccount)
 
 //dashboard
 app.get(PREFIX + '/dashboard/get-all-groups-with-members/:fromDate/:toDate', DashboardResource.getAllGroupsAndMembers)
-// app.get(PREFIX + '/dashboard/get-all-groups/:fromDate/:toDate', DashboardResource.getGroups)
-// app.get(PREFIX + '/dashboard/get-all-members/:fromDate/:toDate', DashboardResource.getMembers)
 app.get(PREFIX + '/dashboard/get-overview-metrics', DashboardResource.getOverviewMetrics)
 
 app.listen(port, () => {

@@ -1,5 +1,7 @@
 const axios = require('axios')
 const config = require('../config')
+const UserAccountRepository = require('../repository/userAccount.repository')
+
 const { CLIENT_ID, CLIENT_SECRET, URL } = config.BITRIX
 const redirectUrl = config.ETC.BASE_FRONT_URL
 
@@ -8,12 +10,12 @@ const getUrlAuth = async (domainBitrix) =>
 	`https://${domainBitrix + '.' + URL}/oauth/authorize/?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${redirectUrl}`
 
 //2 passo login
-const buildFinalAccessUrl = (authCode, scope, bitrixFullDomain) =>
-	`https://${bitrixFullDomain}/oauth/token/?client_id=${CLIENT_ID}&grant_type=authorization_code&client_secret=${CLIENT_SECRET}&redirect_uri=${redirectUrl}&code=${authCode}&scope=${scope}`
+const buildFinalAccessUrl = (authCode, scope, fullDomain) =>
+	`https://${fullDomain}/oauth/token/?client_id=${CLIENT_ID}&grant_type=authorization_code&client_secret=${CLIENT_SECRET}&redirect_uri=${redirectUrl}&code=${authCode}&scope=${scope}`
 
-const getFinalAccessUrl = async (authCode, scope, bitrixFullDomain) => {
+const getFinalAccessUrl = async (authCode, scope, fullDomain) => {
 	return axios
-		.get(buildFinalAccessUrl(authCode, scope, bitrixFullDomain))
+		.get(buildFinalAccessUrl(authCode, scope, fullDomain))
 		.then((res) => {
 			const { access_token, refresh_token, scope, user_id, domain } = res.data
 			return { access_token, refresh_token, scope, user_id, domain }
@@ -22,21 +24,57 @@ const getFinalAccessUrl = async (authCode, scope, bitrixFullDomain) => {
 }
 
 //Metricas
-const baseAppBitrixRestUrlTask = (bitrixFullDomain, bitrixAccessToken) =>
-	`https://${bitrixFullDomain}/rest/tasks.task.list.json?auth=${bitrixAccessToken}`
-const baseAppBitrixRestUrlUser = (bitrixFullDomain, bitrixAccessToken) => `https://${bitrixFullDomain}/rest/user.get.json?auth=${bitrixAccessToken}`
+const baseAppBitrixRestUrlTask = (fullDomain, accessToken) => `https://${fullDomain}/rest/tasks.task.list.json?auth=${accessToken}`
+const baseAppBitrixRestUrlUser = (fullDomain, accessToken) => `https://${fullDomain}/rest/user.get.json?auth=${accessToken}`
 
-const getRestUrlTask = (bitrixFullDomain, bitrixAccessToken) => {
-	return baseAppBitrixRestUrlTask(bitrixFullDomain, bitrixAccessToken)
+const baseAppBitrixUrlRefreshToken = (
+	refreshToken
+) => `https://oauth.bitrix.info/oauth/token?grant_type=refresh_token&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${refreshToken}
+	`
+
+const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate, queryStringFilterGroups, queryStringFilterMembers) => {
+	const restUrl = baseAppBitrixRestUrlTask(bitrixAccess.fullDomain, bitrixAccess.accessToken)
+	const res = await axios
+		.get(
+			restUrl +
+				`&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}${queryStringFilterGroups}${queryStringFilterMembers}`
+		)
+		.catch(async (e) => {
+			if (e.response.status === 401) {
+				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken))
+				const newUserAccount = await UserAccountRepository.refreshAccess(data.access_token, data.refresh_token, data.user_id)
+				const newBitrixAccess = {
+					fullDomain: newUserAccount.domain_bitrix,
+					accessToken: newUserAccount.access_token_bitrix,
+					refreshToken: newUserAccount.refresh_token_bitrix
+				}
+				return { data: { status: 401, newAccess: newBitrixAccess } }
+			}
+		})
+	return res?.data || { total: null, result: { tasks: [] } }
 }
-const getBitrixUsersByIds = async (bitrixFullDomain, bitrixAccessToken, formattedUserIdsParams) => {
-	let res = await axios.get(baseAppBitrixRestUrlUser(bitrixFullDomain, bitrixAccessToken) + formattedUserIdsParams)
-	return res.data.result
+
+const getBitrixUsersByIds = async (bitrixAccess, formattedUserIdsParams) => {
+	let res = await axios
+		.get(baseAppBitrixRestUrlUser(bitrixAccess.fullDomain, bitrixAccess.accessToken) + formattedUserIdsParams)
+		.catch(async (e) => {
+			if (e.response.status === 401) {
+				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken))
+				const newUserAccount = await UserAccountRepository.refreshAccess(data.access_token, data.refresh_token, data.user_id)
+				const newBitrixAccess = {
+					fullDomain: newUserAccount.domain_bitrix,
+					accessToken: newUserAccount.access_token_bitrix,
+					refreshToken: newUserAccount.refresh_token_bitrix
+				}
+				return { data: { status: 401, newAccess: newBitrixAccess } }
+			}
+		})
+	return res?.data || { total: null, result: { tasks: [] } }
 }
 
 module.exports = {
 	getUrlAuth,
 	getFinalAccessUrl,
-	getRestUrlTask,
+	getTasksWithFilters,
 	getBitrixUsersByIds
 }

@@ -1,9 +1,9 @@
-const UserService = require('../service/userAccount.service')
+const LoginService = require('../service/login.service')
 
 const getUrlAuth = async (req, res) => {
 	try {
 		const domainBitrix = req.params.domainBitrix
-		const data = await UserService.getUrlAuth(domainBitrix)
+		const data = await LoginService.getUrlAuth(domainBitrix)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -17,7 +17,7 @@ const loginOrCreateAccount = async (req, res) => {
 	const domain = req.query.domain
 
 	try {
-		const data = await UserService.loginOrCreateAccount(authCode, scope, domain)
+		const data = await LoginService.loginOrCreateAccount(authCode, scope, domain)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
