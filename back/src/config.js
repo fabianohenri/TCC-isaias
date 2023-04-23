@@ -16,7 +16,8 @@ const BITRIX = {
 }
 
 const ETC = {
-	BASE_FRONT_URL: process.env.BASE_FRONT_URL
+	BASE_FRONT_URL: process.env.BASE_FRONT_URL,
+	KEEP_CONNECTED_HOURS: 720 //30 dias
 }
 
 module.exports = {

@@ -3,13 +3,8 @@ const BitrixIntegration = require('../integration/bitrix.integration')
 const { formatToFilters, formatMembersToFilters } = require('../utils/utils')
 
 const getAllUsers = async (userIds) => {
-	const restUrl = BitrixIntegration.getRestUrlUser()
-	const formattedUserIdsParams = userIds
-		.map((uId) => '&ID[]=' + uId)
-		.toString()
-		.replaceAll(',', '')
-	let res = await axios.get(restUrl + formattedUserIdsParams)
-	return res.data.result
+	const users = BitrixIntegration.getBitrixUsersByIds(userIds)
+	return users
 }
 
 const getAllTasksWithFilters = async (fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
@@ -42,8 +37,21 @@ const getTotalPerMonth = async () => {
 	return res.data?.result?.tasks
 }
 
+const getBitrixUsersByIds = async (userIds, accessToken) => {
+	let formattedUserIdsParams = ''
+	if (userIds) {
+		formattedUserIdsParams = userIds
+			.map((uId) => '&ID[]=' + uId)
+			.toString()
+			.replaceAll(',', '')
+	}
+	let bitrixUsers = await BitrixIntegration.getBitrixUsersByIds(formattedUserIdsParams, accessToken)
+	return bitrixUsers
+}
+
 module.exports = {
 	getAllUsers,
 	getAllTasksWithFilters,
-	getTotalPerMonth
+	getTotalPerMonth,
+	getBitrixUsersByIds
 }

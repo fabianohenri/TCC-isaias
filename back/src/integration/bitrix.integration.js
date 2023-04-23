@@ -6,7 +6,7 @@ const redirectUrl = config.ETC.BASE_FRONT_URL
 
 const buildBaseAppBitrixUrl = (domain) => `https://${domain}.bitrix24.com.br`
 const baseAppBitrixUrl = buildBaseAppBitrixUrl('projetusti') //retirar do hardcode depois projetusti
-let accessKeyBitrix = '1c6c3c64005e7b1b0058b7df0000012aa0ab07312dbb1106bb8690a60535817835547b'
+let accessTokenBitrix = '1c6c3c64005e7b1b0058b7df0000012aa0ab07312dbb1106bb8690a60535817835547b'
 
 //1 passo login
 const getUrlAuth = async (domainBitrix) =>
@@ -27,19 +27,20 @@ const getFinalAccessUrl = async (authCode, scope) => {
 }
 
 //Metricas
-const baseAppBitrixRestUrlTask = `${baseAppBitrixUrl}/rest/tasks.task.list.json?auth=${accessKeyBitrix}`
-const baseAppBitrixRestUrlUser = `${baseAppBitrixUrl}/rest/user.get.json?auth=${accessKeyBitrix}`
+const baseAppBitrixRestUrlTask = `${baseAppBitrixUrl}/rest/tasks.task.list.json?auth=${accessTokenBitrix}`
+const baseAppBitrixRestUrlUser = (accessToken) => `${baseAppBitrixUrl}/rest/user.get.json?auth=${accessToken}`
 
 const getRestUrlTask = () => {
 	return baseAppBitrixRestUrlTask
 }
-const getRestUrlUser = () => {
-	return baseAppBitrixRestUrlUser
+const getBitrixUsersByIds = async (formattedUserIdsParams, accessToken) => {
+	let res = await axios.get(baseAppBitrixRestUrlUser(accessToken) + formattedUserIdsParams)
+	return res.data.result
 }
 
 module.exports = {
 	getUrlAuth,
 	getFinalAccessUrl,
 	getRestUrlTask,
-	getRestUrlUser
+	getBitrixUsersByIds
 }

@@ -24,18 +24,7 @@ const loginOrCreateAccount = async (req, res) => {
 	}
 }
 
-const getUserAuth = async (req, res) => {
-	try {
-		const data = await UserService.getUserAuth()
-		return res.status(200).send(data)
-	} catch (e) {
-		console.error(e)
-		return res.status(500).send('Erro ao buscar url de autenticação')
-	}
-}
-
 module.exports = {
 	getUrlAuth,
-	loginOrCreateAccount,
-	getUserAuth
+	loginOrCreateAccount
 }

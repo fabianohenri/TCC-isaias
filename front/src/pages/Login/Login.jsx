@@ -12,7 +12,7 @@ const Login = ({ loginActionDispatch }) => {
 
 	const getAuth = () => {
 		setLoading(true)
-		api.get(`/get-url-auth/${domainBitrix}`)
+		api.get(`/login/get-url-auth/${domainBitrix}`)
 			.then((res) => {
 				window.location.href = res.data
 			})
