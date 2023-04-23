@@ -2,13 +2,8 @@ const axios = require('axios')
 const BitrixIntegration = require('../integration/bitrix.integration')
 const { formatToFilters, formatMembersToFilters } = require('../utils/utils')
 
-const getAllUsers = async (userIds) => {
-	const users = BitrixIntegration.getBitrixUsersByIds(userIds)
-	return users
-}
-
-const getAllTasksWithFilters = async (fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
-	const restUrl = BitrixIntegration.getRestUrlTask()
+const getAllTasksWithFilters = async (bitrixFullDomain, bitrixAccessToken, fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
+	const restUrl = BitrixIntegration.getRestUrlTask(bitrixFullDomain, bitrixAccessToken)
 	let totalTickets = []
 	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20
 	const limit = 50
@@ -31,13 +26,13 @@ const getAllTasksWithFilters = async (fromDate, toDate, groupsFilter, membersFil
 	return totalTickets
 }
 
-const getTotalPerMonth = async () => {
-	const restUrl = BitrixIntegration.getRestUrlTask()
+const getTotalPerMonth = async (bitrixFullDomain, bitrixAccessToken) => {
+	const restUrl = BitrixIntegration.getRestUrlTask(bitrixFullDomain, bitrixAccessToken)
 	const res = await axios.get(restUrl)
 	return res.data?.result?.tasks
 }
 
-const getBitrixUsersByIds = async (userIds, accessToken) => {
+const getBitrixUsersByIds = async (bitrixFullDomain, bitrixAccessToken, userIds) => {
 	let formattedUserIdsParams = ''
 	if (userIds) {
 		formattedUserIdsParams = userIds
@@ -45,12 +40,11 @@ const getBitrixUsersByIds = async (userIds, accessToken) => {
 			.toString()
 			.replaceAll(',', '')
 	}
-	let bitrixUsers = await BitrixIntegration.getBitrixUsersByIds(formattedUserIdsParams, accessToken)
+	let bitrixUsers = await BitrixIntegration.getBitrixUsersByIds(bitrixFullDomain, bitrixAccessToken, formattedUserIdsParams)
 	return bitrixUsers
 }
 
 module.exports = {
-	getAllUsers,
 	getAllTasksWithFilters,
 	getTotalPerMonth,
 	getBitrixUsersByIds

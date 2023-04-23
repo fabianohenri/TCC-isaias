@@ -12,7 +12,8 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 
 const BITRIX = {
 	CLIENT_ID: process.env.BITRIX_CLIENT_ID,
-	CLIENT_SECRET: process.env.BITRIX_CLIENT_SECRET
+	CLIENT_SECRET: process.env.BITRIX_CLIENT_SECRET,
+	URL: process.env.BITRIX_URL
 }
 
 const ETC = {

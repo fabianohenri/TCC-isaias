@@ -16,18 +16,22 @@ const Login = ({ loginActionDispatch }) => {
 			.then((res) => {
 				window.location.href = res.data
 			})
-			.catch((e) => console.error(e.response.data))
+			.catch(() => {
+				//todo
+			})
 	}
 
 	useEffect(() => {
 		if (searchParams.get('code') && searchParams.get('scope')) {
 			setLoading(true)
-			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}`)
+			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}&domain=${searchParams.get('domain')}`)
 				.then((res) => {
 					setLoading(false)
 					loginActionDispatch(res.data)
 				})
-				.catch((e) => console.error(e.response.data))
+				.catch(() => {
+					//todo
+				})
 		}
 	}, [searchParams])
 

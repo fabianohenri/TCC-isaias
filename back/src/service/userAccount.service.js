@@ -8,8 +8,8 @@ const getUrlAuth = async (domainBitrix) => {
 	return await BitrixIntegration.getUrlAuth(domainBitrix)
 }
 
-const loginOrCreateAccount = async (authCode, scope) => {
-	const accessBitrix = await BitrixIntegration.getFinalAccessUrl(authCode, scope)
+const loginOrCreateAccount = async (authCode, scope, domain) => {
+	const accessBitrix = await BitrixIntegration.getFinalAccessUrl(authCode, scope, domain)
 	const accountExists = await UserRepository.findByUserIdBitrixAndDomain(accessBitrix.user_id, accessBitrix.domain)
 
 	let userData = {}
@@ -35,9 +35,9 @@ const loginOrCreateAccount = async (authCode, scope) => {
 			{
 				userId: userData.id,
 				userIdBitrix: userData.user_id_bitrix,
-				refresh_token_bitrix: userData.refresh_token_bitrix,
-				access_token_bitrix: userData.access_token_bitrix,
-				domainBitrix: userData.domain_bitrix
+				bitrixRefreshToken: userData.refresh_token_bitrix,
+				bitrixAccessToken: userData.access_token_bitrix,
+				bitrixFullDomain: userData.domain_bitrix
 			},
 			config.JWT_SECRET_KEY,
 			{

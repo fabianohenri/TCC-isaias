@@ -4,9 +4,10 @@ const { extractGlobalFiltersFromRequest } = require('../utils/utils')
 const getAllGroupsAndMembers = async (req, res) => {
 	const fromDate = req.params.fromDate
 	const toDate = req.params.toDate
+	const { bitrixAccessToken, bitrixFullDomain } = req.userInfo
 
 	try {
-		const data = await DashboardService.getAllGroupsAndMembers(fromDate, toDate)
+		const data = await DashboardService.getAllGroupsAndMembers(bitrixFullDomain, bitrixAccessToken, fromDate, toDate)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -15,8 +16,9 @@ const getAllGroupsAndMembers = async (req, res) => {
 }
 
 const getTotalPerMonth = async (req, res) => {
+	const { bitrixAccessToken, bitrixFullDomain } = req.userInfo.bitrixAccessToken
 	try {
-		const data = await DashboardService.getTotalPerMonth()
+		const data = await DashboardService.getTotalPerMonth(bitrixFullDomain, bitrixAccessToken)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)
@@ -25,10 +27,11 @@ const getTotalPerMonth = async (req, res) => {
 }
 
 const getOverviewMetrics = async (req, res) => {
+	const { bitrixAccessToken, bitrixFullDomain } = req.userInfo
 	const { fromDate, toDate, groups, members, taskStatus } = extractGlobalFiltersFromRequest(req)
 
 	try {
-		const data = await DashboardService.getOverviewMetrics(fromDate, toDate, groups, members, taskStatus)
+		const data = await DashboardService.getOverviewMetrics(bitrixFullDomain, bitrixAccessToken, fromDate, toDate, groups, members, taskStatus)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)

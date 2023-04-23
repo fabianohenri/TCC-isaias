@@ -14,9 +14,10 @@ const getUrlAuth = async (req, res) => {
 const loginOrCreateAccount = async (req, res) => {
 	const authCode = req.query.authCode
 	const scope = req.query.scope
+	const domain = req.query.domain
 
 	try {
-		const data = await UserService.loginOrCreateAccount(authCode, scope)
+		const data = await UserService.loginOrCreateAccount(authCode, scope, domain)
 		return res.status(200).send(data)
 	} catch (e) {
 		console.error(e)

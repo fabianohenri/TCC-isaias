@@ -8,8 +8,8 @@ const { formatSimpleUser, formatToSeries, formatToFilters, formatMembersToFilter
 // 3-colocar as tarefas de cada pessoa
 // projeto > pessoa > tarefa
 
-const getAllGroupsAndMembers = async (fromDate, toDate) => {
-	const allTasks = await BitrixService.getAllTasksWithFilters(fromDate, toDate)
+const getAllGroupsAndMembers = async (bitrixFullDomain, bitrixAccessToken, fromDate, toDate) => {
+	const allTasks = await BitrixService.getAllTasksWithFilters(bitrixFullDomain, bitrixAccessToken, fromDate, toDate, null, null)
 
 	let groups = [] //tem os usuários dentro dele
 	allTasks.forEach((task) => {
@@ -55,14 +55,34 @@ const getAllGroupsAndMembers = async (fromDate, toDate) => {
 	})
 
 	for (let group of groups) {
-		const users = await BitrixService.getAllUsers(group.members.map((it) => it.id))
+		const users = await BitrixService.getBitrixUsersByIds(
+			bitrixFullDomain,
+			bitrixAccessToken,
+			group.members.map((it) => it.id)
+		)
 		group.members = group.members.map((gm) => ({ ...gm, ...formatSimpleUser(users.find((u) => u.ID === gm.id)) }))
 	}
 	return groups
 }
 
-const getOverviewMetrics = async (fromDateFilter, toDateFilter, groupsFilter, membersFilter, taskStatusFilter) => {
-	const allTasks = await BitrixService.getAllTasksWithFilters(fromDateFilter, toDateFilter, groupsFilter, membersFilter, taskStatusFilter)
+const getOverviewMetrics = async (
+	bitrixFullDomain,
+	bitrixAccessToken,
+	fromDateFilter,
+	toDateFilter,
+	groupsFilter,
+	membersFilter,
+	taskStatusFilter
+) => {
+	const allTasks = await BitrixService.getAllTasksWithFilters(
+		bitrixFullDomain,
+		bitrixAccessToken,
+		fromDateFilter,
+		toDateFilter,
+		groupsFilter,
+		membersFilter,
+		taskStatusFilter
+	)
 	let totalTasks = allTasks.length
 	let groups = [] //tem os usuários dentro dele
 	let openTasks = 0
@@ -106,7 +126,7 @@ const getOverviewMetrics = async (fromDateFilter, toDateFilter, groupsFilter, me
 	})
 
 	const uniqueIds = lodash.uniq([...auditors, ...creators, ...responsibles, ...closers, ...accomplices])
-	const users = await BitrixService.getAllUsers(uniqueIds)
+	const users = await BitrixService.getBitrixUsersByIds(bitrixFullDomain, bitrixAccessToken, uniqueIds)
 
 	const auditorsFormatted = Object.entries(lodash.countBy(auditors))
 		.map(([key, value]) => ({ key, value }))
@@ -138,8 +158,8 @@ const getOverviewMetrics = async (fromDateFilter, toDateFilter, groupsFilter, me
 	return finalData
 }
 
-const getTotalPerMonth = async () => {
-	const tasks = BitrixService.getTotalPerMonth()
+const getTotalPerMonth = async (bitrixFullDomain, bitrixAccessToken) => {
+	const tasks = BitrixService.getTotalPerMonth(bitrixFullDomain, bitrixAccessToken)
 	const taskMonths = tasks.map((it) => moment(it.createdDate, 'YYYY-MM-DD HH:mm:ss ZZ').format('YYYY-MM'))
 	const groupedTaskMonths = lodash.groupBy(taskMonths)
 	const formattedTaskMonths = Object.keys(groupedTaskMonths).map((key) => ({ date: key, value: groupedTaskMonths[key].length }))
