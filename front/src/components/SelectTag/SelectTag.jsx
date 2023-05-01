@@ -48,9 +48,9 @@ const SelectTag = ({ label, options, onChange, selected }) => {
 				value={selectedOptions}
 				onChange={handleChange}
 				input={<OutlinedInput label='Chip' />}
-				renderValue={(selected) => (
+				renderValue={(option) => (
 					<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-						{selected.map((value) => (
+						{option.map((value) => (
 							<Chip key={value.id + value.name} label={value.name} />
 						))}
 					</Box>

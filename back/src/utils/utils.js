@@ -3,16 +3,9 @@ const lodash = require('lodash')
 const extractGlobalFiltersFromRequest = (request) => {
 	const fromDate = !request.query.fromDate || request.query.fromDate === '' || request.query.fromDate === 'null' ? null : request.query.fromDate
 	const toDate = !request.query.toDate || request.query.toDate === '' || request.query.toDate === 'null' ? null : request.query.toDate
-	const members = !JSON.parse(request.query.members) || JSON.parse(request.query.members).length === 0 ? null : JSON.parse(request.query.members)
-	const groups = !request.query.groups || request.query.groups === '' || request.query.groups === 'null' ? null : request.query.groups.split(',')
-	const taskStatus =
-		!request.query.taskStatus || request.query.taskStatus === '' || request.query.taskStatus === 'null' ? null : request.query.taskStatus
 	return {
 		fromDate,
-		toDate,
-		members,
-		groups,
-		taskStatus
+		toDate
 	}
 }
 
@@ -53,10 +46,6 @@ const formatMemberChecked = (member) => {
 	if (member.auditor.checked) {
 		memberString += `&filter[AUDITOR][]=${member.id}`
 	}
-	//Não tem filtro de closed by na api
-	// if (member.closer.checked) {
-	// 	memberString += `&filter[CLOSED_BY][]=${member.id}`
-	// }
 	if (member.creator.checked) {
 		memberString += `&filter[CREATED_BY][]=${member.id}`
 	}

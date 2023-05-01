@@ -7,105 +7,107 @@ import {
 	BorderColorOutlined,
 	Person,
 	PersonOutlined,
-	// Cancel,
-	// CancelOutlined,
+	Cancel,
+	CancelOutlined,
 	LocalLibraryOutlined,
 	LocalLibrary
 } from '@mui/icons-material'
+import { formatMembersToChecklist } from 'utils/dataFormatUtils/filtersDashboardUtils'
 
-const MembersFiltersCheckList = ({ data, onChange }) => {
-	const [thisData, setThisData] = useState(data)
-
+const MembersFiltersCheckList = ({ data, onChange, membersInfo }) => {
 	useEffect(() => {
-		setThisData(data)
+		onChange(formatMembersToChecklist(data, membersInfo), 'membersInfo')
 	}, [data])
 
 	const handleOnChangeCheck = (isChecked, userId, propertyName) => {
-		const foundMemberIndex = thisData.findIndex((it) => it.id === userId)
-		let newUsers = thisData.map((it) => (it.id === userId && { ...it, [propertyName]: { ...it[propertyName], checked: isChecked } }) || it)
+		const foundMemberIndex = membersInfo.findIndex((it) => it.id === userId)
+		let newUsers = membersInfo.map((it) => (it.id === userId && { ...it, [propertyName]: { ...it[propertyName], checked: isChecked } }) || it)
 		if (
 			newUsers[foundMemberIndex].accomplice.checked ||
 			newUsers[foundMemberIndex].auditor.checked ||
-			// newUsers[foundMemberIndex].closer.checked ||
+			newUsers[foundMemberIndex].closer.checked ||
 			newUsers[foundMemberIndex].creator.checked ||
 			newUsers[foundMemberIndex].responsible.checked
 		) {
-			onChange(newUsers, 'members')
+			onChange(newUsers, 'membersInfo')
 		}
 	}
 
 	return (
 		<>
-			{thisData?.map((d) => (
+			{membersInfo?.map((d) => (
 				<div key={d.id}>
 					<div>{d.name}</div>
 					<Tooltip
-						title={`Observador em ${d.accomplice.value} tarefa${
-							(d.accomplice.value > 1 && 's') || ''
-						} para o intervalo de tempo escolhido`}
+						title={`Observador em ${d.accomplice.value.length} tarefa${
+							(d.accomplice.value.length > 1 && 's') || ''
+						} para os filtros escolhidos`}
 					>
 						<Checkbox
 							icon={<RemoveRedEyeOutlined />}
 							checkedIcon={<RemoveRedEye />}
 							key={d.id + 'accomplice'}
 							checked={d.accomplice.checked}
-							disabled={d.accomplice.disabled}
+							disabled={d.accomplice.value.length === 0}
 							onChange={(e) => handleOnChangeCheck(e.target.checked, d.id, 'accomplice')}
 						/>
 					</Tooltip>
-					<Tooltip title={`Auditor em ${d.auditor.value} tarefa${(d.auditor.value > 1 && 's') || ''} para o intervalo de tempo escolhido`}>
+					<Tooltip
+						title={`Auditor em ${d.auditor.value.length} tarefa${(d.auditor.value.length > 1 && 's') || ''} para os filtros escolhidos`}
+					>
 						<Checkbox
 							icon={<LocalLibraryOutlined />}
 							checkedIcon={<LocalLibrary />}
 							key={d.id + 'auditor'}
 							checked={d.auditor.checked}
-							disabled={d.auditor.disabled}
+							disabled={d.auditor.value.length === 0}
 							onChange={(e) => handleOnChangeCheck(e.target.checked, d.id, 'auditor')}
 						>
-							<div>{d.auditor.value}</div>
+							<div>{d.auditor.value.length}</div>
 						</Checkbox>
 					</Tooltip>
-					<Tooltip title={`Criador em ${d.creator.value} tarefa${(d.creator.value > 1 && 's') || ''} para o intervalo de tempo escolhido`}>
+					<Tooltip
+						title={`Criador em ${d.creator.value.length} tarefa${(d.creator.value.length > 1 && 's') || ''} para os filtros escolhidos`}
+					>
 						<Checkbox
 							icon={<BorderColorOutlined />}
 							checkedIcon={<BorderColor />}
 							key={d.id + 'creator'}
 							checked={d.creator.checked}
-							disabled={d.creator.disabled}
+							disabled={d.creator.value.length === 0}
 							onChange={(e) => handleOnChangeCheck(e.target.checked, d.id, 'creator')}
 						>
-							<div>{d.creator.value}</div>
+							<div>{d.creator.value.length}</div>
 						</Checkbox>
 					</Tooltip>
 					<Tooltip
-						title={`Responsável em ${d.responsible.value} tarefa${
-							(d.responsible.value > 1 && 's') || ''
-						} para o intervalo de tempo escolhido`}
+						title={`Responsável em ${d.responsible.value.length} tarefa${
+							(d.responsible.value.length > 1 && 's') || ''
+						} para os filtros escolhidos`}
 					>
 						<Checkbox
 							icon={<PersonOutlined />}
 							checkedIcon={<Person />}
 							key={d.id + 'responsible'}
 							checked={d.responsible.checked}
-							disabled={d.responsible.disabled}
+							disabled={d.responsible.value.length === 0}
 							onChange={(e) => handleOnChangeCheck(e.target.checked, d.id, 'responsible')}
 						>
-							<div>{d.responsible.value}</div>
+							<div>{d.responsible.value.length}</div>
 						</Checkbox>
 					</Tooltip>
-					{/* <Tooltip title={`Fechou ${d.closer.value} tarefa${(d.closer.value > 1 && 's') || ''} no intervalo de tempo escolhido`}>
+					<Tooltip title={`Fechou ${d.closer.value.length} tarefa${(d.closer.value.length > 1 && 's') || ''} os filtros escolhidos`}>
 						<Checkbox
 							icon={<CancelOutlined />}
 							checkedIcon={<Cancel />}
 							key={d.id + 'closer'}
 							checked={d.closer.checked}
-							disabled={d.closer.disabled}
+							disabled={d.closer.value.length === 0}
 							onChange={(e) => handleOnChangeCheck(e.target.checked, d.id, 'closer')}
 						>
-							<div>{d.closer.value}</div>
+							<div>{d.closer.value.length}</div>
 						</Checkbox>
-					</Tooltip> */}
-					{/* não tem o filtro de closed by na api */}
+					</Tooltip>
 				</div>
 			))}
 		</>

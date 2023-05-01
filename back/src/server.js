@@ -41,8 +41,7 @@ app.get(PREFIX + '/login/get-url-auth/:domainBitrix', LoginResource.getUrlAuth)
 app.get(PREFIX + '/login', LoginResource.loginOrCreateAccount)
 
 //dashboard
-app.get(PREFIX + '/dashboard/get-all-groups-with-members/:fromDate/:toDate', DashboardResource.getAllGroupsAndMembers)
-app.get(PREFIX + '/dashboard/get-overview-metrics', DashboardResource.getOverviewMetrics)
+app.get(PREFIX + '/dashboard/get-all-tasks-and-groups-with-members/:fromDate/:toDate', DashboardResource.getAllTasksAndGroupsWithMembers)
 
 app.listen(port, () => {
 	console.info(`---- API funcionando na porta ${port} -----`)

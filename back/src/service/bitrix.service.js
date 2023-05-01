@@ -1,23 +1,12 @@
 const BitrixIntegration = require('../integration/bitrix.integration')
-const { formatToFilters, formatMembersToFilters } = require('../utils/utils')
 
-const getAllTasksWithFilters = async (bitrixAccess, fromDate, toDate, groupsFilter, membersFilter, taskStatusFilter) => {
+const getAllTasksWithFilters = async (bitrixAccess, fromDate, toDate) => {
 	let totalTickets = []
-	// https://projetusti.bitrix24.com.br/rest/tasks.task.list.json&filter[>CREATED_DATE]=2023-01-10&filter[<CREATED_DATE]=2023-01-20
 	const limit = 50
 	let start = 0
 	let iterations = null
-	let queryStringFilterGroups = formatToFilters(groupsFilter, 'GROUP_ID')
-	let queryStringFilterMembers = formatMembersToFilters(membersFilter)
 	do {
-		let data = await BitrixIntegration.getTasksWithFilters(
-			bitrixAccess,
-			start,
-			fromDate,
-			toDate,
-			queryStringFilterGroups,
-			queryStringFilterMembers
-		)
+		let data = await BitrixIntegration.getTasksWithFilters(bitrixAccess, start, fromDate, toDate)
 		if (data.status === 401 && data.newAccess) {
 			return data
 		} else {

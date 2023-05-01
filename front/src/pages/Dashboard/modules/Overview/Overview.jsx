@@ -1,38 +1,21 @@
-import React, { useState, useEffect, memo } from 'react'
-import { Button, Card, Typography, Unstable_Grid2 as Grid } from '@mui/material'
-import api from 'service/service'
+import React, { useState, memo } from 'react'
+import { Button, Typography, Unstable_Grid2 as Grid } from '@mui/material'
 import CardMetric from 'components/CardMetric/CardMetric'
 import OverviewStyles from './OverviewStyles.module.css'
-import FiltersDashboard from 'components/FiltersDashboard/FiltersDashboard'
-import { connect } from 'react-redux'
 import BarChart from 'components/graphs/BarChart/BarChart'
+import { buildOverviewMetrics } from '../../../../utils/dataFormatUtils/overviewUtils'
 
-const Overview = ({ filters }) => {
+const Overview = ({ filters, data }) => {
 	const [metrics, setMetrics] = useState({})
 	const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
 
 	const getMetrics = async () => {
-		if (!isLoadingMetrics) {
-			setIsLoadingMetrics(true)
-		}
-		let baseUrl = `/dashboard/get-overview-metrics?taskStatus=${''}&fromDate=${filters.fromDate}&toDate=${
-			filters.toDate
-		}&members=${JSON.stringify(filters.members)}&groups=${filters.groups.map((it) => it.id)}`
-
-		return await api
-			.get(baseUrl)
-			.then((response) => {
-				setMetrics(response.data)
-			})
-			.catch((e) => {
-				console.error(e.response.data)
-			})
-			.finally(() => setIsLoadingMetrics(false))
+		buildOverviewMetrics([])
 	}
 
-	useEffect(() => {
-		getMetrics()
-	}, [filters])
+	// useEffect(() => {
+	// 	getMetrics()
+	// }, [filters])
 
 	return (
 		<div className={`page ${OverviewStyles.overviewContainer}`}>
@@ -41,7 +24,6 @@ const Overview = ({ filters }) => {
 					Visão Geral
 					<Button onClick={getMetrics}>Buscar</Button>
 				</Typography>
-				<FiltersDashboard />
 			</Grid>
 			<Grid container>
 				<CardMetric title='Tarefas Totais' number={metrics?.general?.totalTasks} xs={4} />
@@ -122,8 +104,4 @@ const Overview = ({ filters }) => {
 	)
 }
 
-const mapStateToProps = ({ store }) => ({
-	filters: store?.dashboard?.filters
-})
-
-export default connect(mapStateToProps)(memo(Overview))
+export default memo(Overview)

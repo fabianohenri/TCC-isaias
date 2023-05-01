@@ -6,7 +6,8 @@ const DEFAULT_DASHBOARD_FILTERS = {
 	fromDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),
 	toDate: moment().format('YYYY-MM-DD'),
 	members: [],
-	groups: []
+	groups: [],
+	membersInfo: []
 }
 
 const initialState = {
