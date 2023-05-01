@@ -16,7 +16,7 @@ import { formatMembersToChecklist } from 'utils/dataFormatUtils/filtersDashboard
 
 const MembersFiltersCheckList = ({ data, onChange, membersInfo }) => {
 	useEffect(() => {
-		onChange(formatMembersToChecklist(data, membersInfo), 'membersInfo')
+		onChange(formatMembersToChecklist(data, membersInfo), 'members')
 	}, [data])
 
 	const handleOnChangeCheck = (isChecked, userId, propertyName) => {
@@ -29,7 +29,7 @@ const MembersFiltersCheckList = ({ data, onChange, membersInfo }) => {
 			newUsers[foundMemberIndex].creator.checked ||
 			newUsers[foundMemberIndex].responsible.checked
 		) {
-			onChange(newUsers, 'membersInfo')
+			onChange(newUsers, 'members')
 		}
 	}
 

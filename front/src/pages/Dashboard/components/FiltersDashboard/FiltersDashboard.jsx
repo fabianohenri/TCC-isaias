@@ -25,6 +25,7 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 	const [filters, setFilters] = useState(filtersRedux)
 	const [groups, setGroups] = useState([])
 	const [members, setMembers] = useState([])
+	const [selectedMembers, setSelectedMembers] = useState([])
 	const [open, setOpen] = useState(false)
 	const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
 
@@ -44,12 +45,13 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 			filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()]
 		}
 		//Remove dos selecionados se não possuir o membro naquele grupo
-		let canKeepSelectedMembers = filters.members.filter((it) => filteredMembers.find((nm) => nm.id === it.id))
-		setFilters({ ...filters, groups: thisGroups, members: canKeepSelectedMembers })
+		let canKeepSelectedMembers = selectedMembers.filter((it) => filteredMembers.find((nm) => nm.id === it.id))
+		setSelectedMembers(canKeepSelectedMembers)
+		setFilters({ ...filters, groups: thisGroups })
 	}
 
 	const onChangeMembers = (thisMembers) => {
-		setFilters({ ...filters, members: thisMembers })
+		setSelectedMembers(thisMembers)
 	}
 
 	const toggleIsOpenDatePicker = () => {
@@ -113,14 +115,10 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 					<Grid container spacing={3}>
 						<Grid item xs={6}>
 							<SelectTag label='Grupos' options={groups} onChange={onChangeGroups} selected={filters.groups} />
-							<SelectTag label='Membros' options={members} onChange={onChangeMembers} selected={filters.members} />
+							<SelectTag label='Membros' options={members} onChange={onChangeMembers} selected={selectedMembers} />
 						</Grid>
 						<Grid item xs={6}>
-							<MembersFiltersCheckList
-								data={filters.members}
-								onChange={onChangeMemberChecklistFilter}
-								membersInfo={filters.membersInfo}
-							/>
+							<MembersFiltersCheckList data={selectedMembers} onChange={onChangeMemberChecklistFilter} membersInfo={filters.members} />
 						</Grid>
 						<Button onClick={() => applyFilters()}>Aplicar</Button>
 						<Button onClick={resetFilters}>Resetar</Button>
