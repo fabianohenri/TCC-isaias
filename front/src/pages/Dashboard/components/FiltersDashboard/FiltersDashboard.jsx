@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo } from 'react'
 import { connect } from 'react-redux'
-import { Button, Card, Modal, Grid } from '@mui/material'
+import { Button, Card, Modal, Grid, Checkbox } from '@mui/material'
 //system libs
 import { extractMembersFromData } from 'utils/dataFormatUtils/filtersDashboardUtils'
 
@@ -47,7 +47,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 		setMembers(membersCanRender)
 		//A partir dos grupos selecionados, remove os membros que não pertencem a eles
 		const membersToKeep = filters.members.filter((m) => membersOnGroup.find((mog) => mog === m.id))
-		setFilters({ groups: changedGroups, members: membersToKeep })
+		setFilters({ ...filters, groups: changedGroups, members: membersToKeep })
 	}
 
 	const onChangeMembers = (changedMembers) => {
@@ -60,7 +60,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 		setGroups(groupsCanRender)
 		//A partir dos membros selecionados, remove os grupos que não pertencem a eles
 		const groupsToKeep = filters.groups.filter((g) => availableGroups.find((gtk) => gtk === g.id))
-		setFilters({ members: changedMembers, groups: groupsToKeep })
+		setFilters({ ...filters, members: changedMembers, groups: groupsToKeep })
 	}
 
 	const handleOpen = () => setOpen(true)
@@ -76,6 +76,10 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 		applyFilters(DEFAULT_DASHBOARD_FILTERS)
 	}
 
+	const handleChangeShowOnlySelectedData = (event) => {
+		setFilters({ ...filters, showOnlySelectedData: event.target.checked })
+	}
+
 	return (
 		<>
 			<Button onClick={handleOpen}>Filtros</Button>
@@ -88,6 +92,14 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 						</Grid>
 						<Grid item xs={6}>
 							<MembersFiltersCheckList data={filters.members} />
+						</Grid>
+						<Grid item xs={6}>
+							<Checkbox
+								onChange={handleChangeShowOnlySelectedData}
+								checked={filters.showOnlySelectedData}
+								disabled={filters.members.length === 0}
+							/>{' '}
+							Mostrar apenas dados da seleção
 						</Grid>
 						<Button onClick={() => applyFilters()}>Aplicar</Button>
 						<Button onClick={resetFilters}>Resetar</Button>

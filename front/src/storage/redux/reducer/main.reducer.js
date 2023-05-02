@@ -4,7 +4,8 @@ import moment from 'moment-timezone'
 
 const DEFAULT_DASHBOARD_FILTERS = {
 	members: [],
-	groups: []
+	groups: [],
+	showOnlySelectedData: false
 }
 const DEFAULT_DASHBOARD_DATE_FILTERS = {
 	fromDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),
