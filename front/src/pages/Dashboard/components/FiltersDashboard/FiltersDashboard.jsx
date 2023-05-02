@@ -1,13 +1,11 @@
 import React, { useState, useEffect, memo } from 'react'
 import { connect } from 'react-redux'
-import { CalendarMonth } from '@mui/icons-material'
-import moment from 'moment-timezone'
-import { Button, Card, Modal, Collapse, IconButton, Paper, Typography, Grid } from '@mui/material'
+import { Button, Card, Modal, Grid } from '@mui/material'
 //system libs
 import { extractMembersFromData } from 'utils/dataFormatUtils/filtersDashboardUtils'
-import DatePicker from 'components/DatePicker/DatePicker'
+
 import SelectTag from 'components/SelectTag/SelectTag'
-import { changeFiltersAction } from 'storage/redux/actions/dashboard.actions'
+import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
 import { DEFAULT_DASHBOARD_FILTERS } from 'storage/redux/reducer/main.reducer'
 import MembersFiltersCheckList from './components/MembersFiltersCheckList/MembersFiltersCheckList'
 
@@ -21,59 +19,55 @@ const style = {
 	p: 10
 }
 
-const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDispatch, data }) => {
-	const [filters, setFilters] = useState(filtersRedux)
+const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFiltersDispatch, data }) => {
+	const [filters, setFilters] = useState(filtersDependantRedux)
 	const [groups, setGroups] = useState([])
 	const [members, setMembers] = useState([])
-	const [selectedMembers, setSelectedMembers] = useState([])
 	const [open, setOpen] = useState(false)
-	const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
 
 	useEffect(() => {
+		applyFilters(DEFAULT_DASHBOARD_FILTERS)
 		if (data) {
 			setGroups(data.groups)
-			setMembers(extractMembersFromData(data))
+			setMembers(data.members)
 		}
 	}, [data])
 
-	const onChangeGroups = (thisGroups) => {
-		//Arruma os membros que podem ser mostrados a partir dos grupos selecionados
-		let filteredMembers = members
-		if (thisGroups?.length > 0) {
-			let newMembers = []
-			thisGroups.forEach((i) => newMembers.push(...i.members))
-			filteredMembers = [...new Map(newMembers.map((item) => [item.id, item])).values()]
-		}
-		//Remove dos selecionados se não possuir o membro naquele grupo
-		let canKeepSelectedMembers = selectedMembers.filter((it) => filteredMembers.find((nm) => nm.id === it.id))
-		setSelectedMembers(canKeepSelectedMembers)
-		setFilters({ ...filters, groups: thisGroups })
+	useEffect(() => {
+		setFilters(filtersDependantRedux)
+	}, [filtersDependantRedux])
+
+	const onChangeGroups = (changedGroups) => {
+		//Verifica a partir dos grupos selecionados quais membros serão mostrados no select
+		const groupsToFilter = changedGroups.length > 0 ? changedGroups : data.groups
+		let membersOnGroup = new Set()
+		groupsToFilter.forEach((cg) => cg.members.forEach((cgm) => membersOnGroup.add(cgm)))
+		membersOnGroup = Array.from(membersOnGroup)
+		const membersCanRender = data.members.filter((m) => membersOnGroup.find((mg) => mg == m.id))
+		setMembers(membersCanRender)
+		//A partir dos grupos selecionados, remove os membros que não pertencem a eles
+		const membersToKeep = filters.members.filter((m) => membersOnGroup.find((mog) => mog === m.id))
+		setFilters({ groups: changedGroups, members: membersToKeep })
 	}
 
-	const onChangeMembers = (thisMembers) => {
-		setSelectedMembers(thisMembers)
-	}
-
-	const toggleIsOpenDatePicker = () => {
-		setIsOpenDatePicker(!isOpenDatePicker)
-	}
-
-	const onChangeDatePicker = (fromDate, toDate) => {
-		setFilters({
-			...filters,
-			fromDate: moment(fromDate).format('YYYY-MM-DD'),
-			toDate: moment(toDate).format('YYYY-MM-DD'),
-			members: [],
-			groups: []
-		})
-		setIsOpenDatePicker(false)
+	const onChangeMembers = (changedMembers) => {
+		//Verifica a partir dos membros selecionados quais grupos serão mostrados no select
+		const membersToFilter = changedMembers.length > 0 ? changedMembers : data.members
+		let availableGroups = new Set()
+		membersToFilter.forEach((cm) => cm.groups.forEach((cmg) => availableGroups.add(cmg)))
+		availableGroups = Array.from(availableGroups)
+		const groupsCanRender = data.groups.filter((g) => availableGroups.find((mg) => mg == g.id))
+		setGroups(groupsCanRender)
+		//A partir dos membros selecionados, remove os grupos que não pertencem a eles
+		const groupsToKeep = filters.groups.filter((g) => availableGroups.find((gtk) => gtk === g.id))
+		setFilters({ members: changedMembers, groups: groupsToKeep })
 	}
 
 	const handleOpen = () => setOpen(true)
 	const handleClose = () => setOpen(false)
 
 	const applyFilters = (defaultFilters) => {
-		changeFiltersDispatch(defaultFilters || filters)
+		addOnFiltersDispatch({ dependant: defaultFilters || filters })
 		setOpen(false)
 	}
 
@@ -82,43 +76,18 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 		applyFilters(DEFAULT_DASHBOARD_FILTERS)
 	}
 
-	const onChangeMemberChecklistFilter = (value, filterName) => {
-		setFilters({ ...filters, [filterName]: value })
-	}
-
 	return (
 		<>
 			<Button onClick={handleOpen}>Filtros</Button>
 			<Modal open={open} onClose={handleClose}>
 				<Card sx={style}>
-					<div style={{ display: 'flex', alignItems: 'center' }}>
-						<IconButton onClick={toggleIsOpenDatePicker}>
-							<CalendarMonth />
-						</IconButton>
-						<Typography sx={{ fontSize: '1em' }}>
-							{moment(filters.fromDate).format('DD/MM/YYYY')} - {moment(filters.toDate).format('DD/MM/YYYY')}
-						</Typography>
-					</div>
-
-					<Collapse in={isOpenDatePicker}>
-						<Paper>
-							<DatePicker
-								onChange={onChangeDatePicker}
-								selectionValue={{
-									startDate: moment(filters.fromDate, 'YYYY-MM-DD').toDate(),
-									endDate: moment(filters.toDate, 'YYYY-MM-DD').toDate(),
-									key: 'selection'
-								}}
-							/>
-						</Paper>
-					</Collapse>
 					<Grid container spacing={3}>
 						<Grid item xs={6}>
 							<SelectTag label='Grupos' options={groups} onChange={onChangeGroups} selected={filters.groups} />
-							<SelectTag label='Membros' options={members} onChange={onChangeMembers} selected={selectedMembers} />
+							<SelectTag label='Membros' options={members} onChange={onChangeMembers} selected={filters.members} />
 						</Grid>
 						<Grid item xs={6}>
-							<MembersFiltersCheckList data={selectedMembers} onChange={onChangeMemberChecklistFilter} membersInfo={filters.members} />
+							<MembersFiltersCheckList data={filters.members} />
 						</Grid>
 						<Button onClick={() => applyFilters()}>Aplicar</Button>
 						<Button onClick={resetFilters}>Resetar</Button>
@@ -130,11 +99,11 @@ const FiltersDashboard = ({ filtersRedux, changeFiltersDispatch, resetFiltersDis
 }
 
 const mapStateToProps = ({ store }) => ({
-	filtersRedux: store?.dashboard?.filters
+	filtersDependantRedux: store?.dashboard?.filters?.dependant
 })
 
 const mapDispatchToProps = (dispatch) => ({
-	changeFiltersDispatch: (filters) => dispatch(changeFiltersAction(filters))
+	addOnFiltersDispatch: (filters) => dispatch(addOnFiltersAction(filters))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(memo(FiltersDashboard))

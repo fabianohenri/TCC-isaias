@@ -17,6 +17,14 @@ const formatSimpleUser = (user) => {
 	return formattedUser
 }
 
+const getNameAndIdFromUser = (user) => {
+	let formattedUser = { id: null, name: 'Usuário indefinido' }
+	if (user) {
+		formattedUser = { id: user?.id || 'Usuário indefinido', name: user?.name }
+	}
+	return formattedUser
+}
+
 const formatToSeries = (formattedData, labels, orderBy) => {
 	if (orderBy === 'desc') {
 		formattedData = lodash.orderBy(formattedData, 'value', 'desc')
@@ -69,10 +77,32 @@ const formatMembersToFilters = (filtersArray) => {
 	return queryString
 }
 
+const formatTask = (task) => ({
+	id: task.id,
+	allUsers: task.allUsers,
+	closedDate: task.closedDate,
+	createdDate: task.createdDate,
+	dateStart: task.dateStart,
+	deadline: task.deadline,
+	description: task.description,
+	durationFact: task.durationFact,
+	durationPlan: task.durationPlan,
+	durationType: task.durationType,
+	endDatePlan: task.endDatePlan,
+	group: task.group,
+	priority: task.priority,
+	serviceCommentsCount: task.serviceCommentsCount,
+	status: task.status,
+	timeEstimate: task.timeEstimate,
+	title: task.title
+})
+
 module.exports = {
 	extractGlobalFiltersFromRequest,
 	formatSimpleUser,
 	formatToSeries,
 	formatToFilters,
-	formatMembersToFilters
+	formatMembersToFilters,
+	getNameAndIdFromUser,
+	formatTask
 }

@@ -3,15 +3,17 @@ import { DASHBOARD_ACTION_TYPES } from '../actions/dashboard.actions'
 import moment from 'moment-timezone'
 
 const DEFAULT_DASHBOARD_FILTERS = {
-	fromDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-	toDate: moment().format('YYYY-MM-DD'),
 	members: [],
 	groups: []
+}
+const DEFAULT_DASHBOARD_DATE_FILTERS = {
+	fromDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),
+	toDate: moment().format('YYYY-MM-DD')
 }
 
 const initialState = {
 	dashboard: {
-		filters: DEFAULT_DASHBOARD_FILTERS
+		filters: { dependant: DEFAULT_DASHBOARD_FILTERS, ...DEFAULT_DASHBOARD_DATE_FILTERS }
 	},
 	user: null
 }
@@ -33,12 +35,12 @@ export default (state = initialState, action) => {
 				...state,
 				user: initialState.user
 			}
-		case DASHBOARD_ACTION_TYPES.CHANGE_FILTERS:
+		case DASHBOARD_ACTION_TYPES.ADD_ON_FILTERS:
 			return {
 				...state,
 				dashboard: {
 					...state.dashboard,
-					filters: action.payload.newFilters
+					filters: { ...state.dashboard.filters, ...action.payload.newFilters }
 				}
 			}
 		case DASHBOARD_ACTION_TYPES.resetFiltersAction:
@@ -54,4 +56,4 @@ export default (state = initialState, action) => {
 	}
 }
 
-export { DEFAULT_DASHBOARD_FILTERS }
+export { DEFAULT_DASHBOARD_FILTERS, DEFAULT_DASHBOARD_DATE_FILTERS }

@@ -1,28 +1,25 @@
-import React, { useState, memo } from 'react'
+import React, { useState, memo, useEffect } from 'react'
 import { Button, Typography, Unstable_Grid2 as Grid } from '@mui/material'
 import CardMetric from 'components/CardMetric/CardMetric'
 import OverviewStyles from './OverviewStyles.module.css'
 import BarChart from 'components/graphs/BarChart/BarChart'
-import { buildOverviewMetrics } from '../../../../utils/dataFormatUtils/overviewUtils'
+import { buildOverviewMetrics } from 'utils/dataFormatUtils/overviewUtils'
 
-const Overview = ({ filters, data }) => {
+const Overview = ({ data }) => {
 	const [metrics, setMetrics] = useState({})
 	const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
 
-	const getMetrics = async () => {
-		buildOverviewMetrics([])
-	}
-
-	// useEffect(() => {
-	// 	getMetrics()
-	// }, [filters])
+	useEffect(() => {
+		if (data) {
+			setMetrics(buildOverviewMetrics(data))
+		}
+	}, [data])
 
 	return (
 		<div className={`page ${OverviewStyles.overviewContainer}`}>
 			<Grid>
 				<Typography sx={{ fontSize: '2.5em' }} gutterBottom>
 					Visão Geral
-					<Button onClick={getMetrics}>Buscar</Button>
 				</Typography>
 			</Grid>
 			<Grid container>

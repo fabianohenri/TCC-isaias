@@ -1,11 +1,11 @@
 const DASHBOARD_ACTION_TYPES = {
-	CHANGE_FILTERS: 'CHANGE_FILTERS',
+	ADD_ON_FILTERS: 'ADD_ON_FILTERS',
 	RESET_FILTERS: 'RESET_FILTERS'
 }
 
-const changeFiltersAction = (newFilters) => ({
-	type: DASHBOARD_ACTION_TYPES.CHANGE_FILTERS,
+const addOnFiltersAction = (newFilters) => ({
+	type: DASHBOARD_ACTION_TYPES.ADD_ON_FILTERS,
 	payload: { newFilters }
 })
 
-export { DASHBOARD_ACTION_TYPES, changeFiltersAction }
+export { DASHBOARD_ACTION_TYPES, addOnFiltersAction }
