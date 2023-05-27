@@ -34,22 +34,25 @@ const baseAppBitrixUrlRefreshToken = (
 
 const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate) => {
 	const restUrl = baseAppBitrixRestUrlTask(bitrixAccess.fullDomain, bitrixAccess.accessToken)
-	const res = await axios.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}`).catch(async (e) => {
-		if (e.response.status === 401) {
-			const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken)).catch(async (e) => {
-				if (e.response.status === 400) {
-					throw { status: 401, message: 'Refresh Token do bitrix expirado, é necessário relogar no sistema' }
+	//TODO verificar se os campos customs UF_ servem pra algo
+	const res = await axios
+		.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}&select[]=*&select[]=TAGS&select[]=UF_*`)
+		.catch(async (e) => {
+			if (e.response.status === 401) {
+				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken)).catch(async (e) => {
+					if (e.response.status === 400) {
+						throw { status: 401, message: 'Refresh Token do bitrix expirado, é necessário relogar no sistema' }
+					}
+				})
+				const newUserAccount = await UserAccountRepository.refreshAccess(data.access_token, data.refresh_token, data.user_id)
+				const newBitrixAccess = {
+					fullDomain: newUserAccount.domain_bitrix,
+					accessToken: newUserAccount.access_token_bitrix,
+					refreshToken: newUserAccount.refresh_token_bitrix
 				}
-			})
-			const newUserAccount = await UserAccountRepository.refreshAccess(data.access_token, data.refresh_token, data.user_id)
-			const newBitrixAccess = {
-				fullDomain: newUserAccount.domain_bitrix,
-				accessToken: newUserAccount.access_token_bitrix,
-				refreshToken: newUserAccount.refresh_token_bitrix
+				return { data: { status: 401, newAccess: newBitrixAccess } }
 			}
-			return { data: { status: 401, newAccess: newBitrixAccess } }
-		}
-	})
+		})
 	return res?.data || { total: null, result: { tasks: [] } }
 }
 
