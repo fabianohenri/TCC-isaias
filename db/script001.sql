@@ -1,11 +1,13 @@
 CREATE TABLE user_account (
 	id SERIAL NOT NULL,
-	username varchar(80) not null,
-	access_token_bitrix varchar(100),
-	email varchar(80) not null,
-	password_account varchar(20) not null,
-	created_at timestamp with time zone not null default CURRENT_TIMESTAMP,
-	updated_at timestamp with time zone default CURRENT_TIMESTAMP,
-	deleted_at timestamp with time zone default NULL
+	username VARCHAR(80) NOT NULL,
+	access_token_bitrix TEXT NOT NULL,
+	refresh_token_bitrix TEXT NOT NULL,
+	user_id_bitrix TEXT NOT NULL,
+	scope_bitrix TEXT NOT NULL,
+	domain_bitrix TEXT NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+	deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
 	PRIMARY KEY (id)
 )

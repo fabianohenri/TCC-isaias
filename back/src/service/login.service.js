@@ -20,8 +20,13 @@ const loginOrCreateAccount = async (authCode, scope, domain) => {
 			accountExists.id
 		)
 	} else {
-		const [bitrixUserData] = await BitrixService.getBitrixUsersByIds([accessBitrix.user_id], accessBitrix.access_token)
-		const userName = bitrixUserData.NAME + ' ' + bitrixUserData.LAST_NAME
+		const bitrixAccessFormatted = {
+			fullDomain: accessBitrix.domain,
+			accessToken: accessBitrix.access_token,
+			refreshToken: accessBitrix.refresh_token
+		}
+		const [bitrixUserData] = await BitrixService.getBitrixUsersByIds([accessBitrix.user_id], bitrixAccessFormatted)
+		const userName = (bitrixUserData.NAME + ' ' + bitrixUserData.LAST_NAME).trim()
 		userData = await UserAccountRepository.createAccount(
 			accessBitrix.access_token,
 			accessBitrix.refresh_token,

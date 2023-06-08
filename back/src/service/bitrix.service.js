@@ -21,7 +21,7 @@ const getAllTasksWithFilters = async (bitrixAccess, fromDate, toDate) => {
 	return totalTickets
 }
 
-const getBitrixUsersByIds = async (bitrixAccess, userIds) => {
+const getBitrixUsersByIds = async (userIds, bitrixAccess) => {
 	let formattedUserIdsParams = ''
 	if (userIds) {
 		formattedUserIdsParams = userIds
