@@ -12,7 +12,7 @@ const extractGlobalFiltersFromRequest = (request) => {
 const formatSimpleUser = (user) => {
 	let formattedUser = { id: null, name: 'Usuário indefinido' }
 	if (user) {
-		formattedUser = { id: user?.ID || 'Usuário indefinido', name: user?.NAME + ' ' + user?.LAST_NAME }
+		formattedUser = { id: user?.ID || null, name: user?.NAME + ' ' + user?.LAST_NAME }
 	}
 	return formattedUser
 }
@@ -20,7 +20,7 @@ const formatSimpleUser = (user) => {
 const getNameAndIdFromUser = (user) => {
 	let formattedUser = { id: null, name: 'Usuário indefinido' }
 	if (user) {
-		formattedUser = { id: user?.id || 'Usuário indefinido', name: user?.name }
+		formattedUser = { id: user?.id || null, name: user?.name }
 	}
 	return formattedUser
 }

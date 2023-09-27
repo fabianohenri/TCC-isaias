@@ -7,7 +7,12 @@ import { buildOverviewMetrics } from 'utils/dataFormatUtils/overviewUtils'
 
 const Overview = ({ data }) => {
 	const [metrics, setMetrics] = useState({})
-	const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
+	const [isLoadingMetrics] = useState(true)
+	let canLoadAuditors = metrics?.usersGraphData?.auditors?.series?.length > 0
+	let canLoadCreators = metrics?.usersGraphData?.creators?.series?.length > 0
+	let canLoadResponsibles = metrics?.usersGraphData?.responsibles?.series?.length > 0
+	let canLoadClosers = metrics?.usersGraphData?.closers?.series?.length > 0
+	let canLoadAccomplices = metrics?.usersGraphData?.accomplices?.series?.length > 0
 
 	useEffect(() => {
 		if (data) {
@@ -28,23 +33,12 @@ const Overview = ({ data }) => {
 				<CardMetric title='Tarefas Fechadas' number={metrics?.general?.closedTasks} xs={4} />
 			</Grid>
 			<Grid container>
-				<Grid item xs={3}>
-					<BarChart
-						series={metrics?.usersGraphData?.auditors?.series}
-						labels={metrics?.usersGraphData?.auditors?.labels}
-						height={500}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoadingMetrics}
-					/>
-				</Grid>
-				<Grid item xs={3}>
-					<Grid container>
+				{canLoadAuditors && (
+					<Grid item xs={3}>
+						Auditors
 						<BarChart
-							series={metrics?.usersGraphData?.creators?.series}
-							labels={metrics?.usersGraphData?.creators?.labels}
+							series={metrics?.usersGraphData?.auditors?.series}
+							labels={metrics?.usersGraphData?.auditors?.labels}
 							height={500}
 							width='100%'
 							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
@@ -53,49 +47,75 @@ const Overview = ({ data }) => {
 							isLoading={isLoadingMetrics}
 						/>
 					</Grid>
-				</Grid>
-				<Grid item xs={3}>
-					<Grid container>
-						<BarChart
-							series={metrics?.usersGraphData?.responsibles?.series}
-							labels={metrics?.usersGraphData?.responsibles?.labels}
-							height={500}
-							width='100%'
-							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-							isHorizontal={false}
-							isStacked={false}
-							isLoading={isLoadingMetrics}
-						/>
+				)}
+				{canLoadCreators && (
+					<Grid item xs={3}>
+						<Grid container>
+							Creators
+							<BarChart
+								series={metrics?.usersGraphData?.creators?.series}
+								labels={metrics?.usersGraphData?.creators?.labels}
+								height={500}
+								width='100%'
+								colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+								isHorizontal={false}
+								isStacked={false}
+								isLoading={isLoadingMetrics}
+							/>
+						</Grid>
 					</Grid>
-				</Grid>
-				<Grid item xs={3}>
-					<Grid container>
-						<BarChart
-							series={metrics?.usersGraphData?.closers?.series}
-							labels={metrics?.usersGraphData?.closers?.labels}
-							height={500}
-							width='100%'
-							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-							isHorizontal={false}
-							isStacked={false}
-							isLoading={isLoadingMetrics}
-						/>
+				)}
+				{canLoadResponsibles && (
+					<Grid item xs={3}>
+						<Grid container>
+							Responsibles
+							<BarChart
+								series={metrics?.usersGraphData?.responsibles?.series}
+								labels={metrics?.usersGraphData?.responsibles?.labels}
+								height={500}
+								width='100%'
+								colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+								isHorizontal={false}
+								isStacked={false}
+								isLoading={isLoadingMetrics}
+							/>
+						</Grid>
 					</Grid>
-				</Grid>
-				<Grid item xs={3}>
-					<Grid container>
-						<BarChart
-							series={metrics?.usersGraphData?.accomplices?.series}
-							labels={metrics?.usersGraphData?.accomplices?.labels}
-							height={500}
-							width='100%'
-							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-							isHorizontal={false}
-							isStacked={false}
-							isLoading={isLoadingMetrics}
-						/>
+				)}
+				{canLoadClosers && (
+					<Grid item xs={3}>
+						<Grid container>
+							Closers
+							<BarChart
+								series={metrics?.usersGraphData?.closers?.series}
+								labels={metrics?.usersGraphData?.closers?.labels}
+								height={500}
+								width='100%'
+								colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+								isHorizontal={false}
+								isStacked={false}
+								isLoading={isLoadingMetrics}
+							/>
+						</Grid>
 					</Grid>
-				</Grid>
+				)}
+				{canLoadAccomplices && (
+					<Grid item xs={3}>
+						<Grid container>
+							Accomplices
+							<BarChart
+								series={metrics?.usersGraphData?.accomplices?.series}
+								labels={metrics?.usersGraphData?.accomplices?.labels}
+								height={500}
+								width='100%'
+								colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+								isHorizontal={false}
+								isStacked={false}
+								isLoading={isLoadingMetrics}
+							/>
+						</Grid>
+					</Grid>
+				)}
 			</Grid>
 		</div>
 	)

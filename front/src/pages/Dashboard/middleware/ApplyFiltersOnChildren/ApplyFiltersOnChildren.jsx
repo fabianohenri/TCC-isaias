@@ -3,7 +3,7 @@ import Overview from '../../modules/Overview/Overview'
 import { connect } from 'react-redux'
 
 const applyFilters = (data, filters) => {
-	let newData = data
+	let newData = [...data]
 	if (data?.length > 1 && (filters.members.length > 0 || filters.groups.length > 0)) {
 		const membersIdsInFilter = filters?.members?.map((m) => m.id)
 		//filtra pelos membros e pelos grupos
@@ -16,6 +16,7 @@ const applyFilters = (data, filters) => {
 			if (filters.groups.length > 0) {
 				cond2 = filters.groups.map((g) => g.id).includes(d.group.id)
 			}
+
 			return cond1 && cond2
 		})
 		//filtra pra mostrar somente dados dos itens selecionados nos filtros
@@ -39,7 +40,8 @@ const ApplyFiltersOnChildren = ({ filtersDependantRedux, selectedItem, data }) =
 	const [filteredData, setFilteredData] = useState([])
 
 	useEffect(() => {
-		setFilteredData(applyFilters(data, filtersDependantRedux))
+		const filteredFormattedData = applyFilters(data, filtersDependantRedux)
+		setFilteredData(filteredFormattedData)
 	}, [data, filtersDependantRedux])
 
 	return <>{selectedItem === 'overview' && <Overview data={filteredData} />}</>

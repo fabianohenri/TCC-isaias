@@ -82,7 +82,7 @@ const Dashboard = ({ addOnFiltersDispatch }) => {
 					</Paper>
 				</Collapse>
 				<FiltersDashboard data={groupsAndMembers} />
-				<ApplyFiltersOnChildren selectedItem={selectedItem} data={allTasks} />
+				{!isLoading && allTasks.length > 0 && <ApplyFiltersOnChildren selectedItem={selectedItem} data={allTasks} />}
 			</Grid>
 		</Grid>
 	)

@@ -4,7 +4,15 @@ const formatToSeries = (formattedData, labels, orderBy) => {
 	if (orderBy) {
 		formattedData = lodash.orderBy(formattedData, 'value', orderBy)
 	}
-	return { series: formattedData.map((it) => ({ name: it?.key?.name || 'Usuário não encontrado', data: [it?.value] })), labels }
+	// const seriesDataObject = { series: formattedData.map((it) => ({ name: it?.key?.name || 'Usuário não encontrado', data: [it?.value] })), labels }
+	//Retirando usuarios indefinidos
+	const seriesDataObject = {
+		series: formattedData
+			.filter((item) => item?.key?.id && item?.key?.name.trim() !== 'Não atribuído')
+			.map((it) => ({ name: it?.key?.name, data: [it?.value] })),
+		labels
+	}
+	return seriesDataObject
 }
 
 const buildOverviewMetrics = (allTasks) => {
