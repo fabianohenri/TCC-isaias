@@ -1,6 +1,5 @@
 import React, { useState, useEffect, memo } from 'react'
 import Overview from '../../modules/Overview/Overview'
-import { connect } from 'react-redux'
 
 const applyFilters = (data, filters) => {
 	let newData = [...data]
@@ -36,19 +35,20 @@ const applyFilters = (data, filters) => {
 	return newData
 }
 
-const ApplyFiltersOnChildren = ({ filtersDependantRedux, selectedItem, data }) => {
+const ApplyFiltersOnChildren = ({ filters, selectedMenuItem, data }) => {
 	const [filteredData, setFilteredData] = useState([])
 
 	useEffect(() => {
-		const filteredFormattedData = applyFilters(data, filtersDependantRedux)
+		const filteredFormattedData = applyFilters(data, filters)
 		setFilteredData(filteredFormattedData)
-	}, [data, filtersDependantRedux])
+	}, [data, filters])
 
-	return <>{selectedItem === 'overview' && <Overview data={filteredData} />}</>
+	return (
+		<>
+			{selectedMenuItem === 'overview' && <Overview data={filteredData} />}
+			{selectedMenuItem === 'log' && <>LOG METRICS</>}
+		</>
+	)
 }
 
-const mapStateToProps = ({ store }) => ({
-	filtersDependantRedux: store?.dashboard?.filters?.dependant
-})
-
-export default connect(mapStateToProps)(memo(ApplyFiltersOnChildren))
+export default memo(ApplyFiltersOnChildren)

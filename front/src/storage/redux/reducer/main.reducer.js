@@ -14,6 +14,7 @@ const DEFAULT_DASHBOARD_DATE_FILTERS = {
 
 const initialState = {
 	dashboard: {
+		selectedMenuItem: 'overview',
 		filters: { dependant: DEFAULT_DASHBOARD_FILTERS, ...DEFAULT_DASHBOARD_DATE_FILTERS }
 	},
 	user: null
@@ -21,6 +22,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
 	switch (action.type) {
+		//USER
 		case USER_ACTION_TYPES.LOGIN:
 			return {
 				...state,
@@ -36,6 +38,7 @@ export default (state = initialState, action) => {
 				...state,
 				user: initialState.user
 			}
+		//DASHBOARD
 		case DASHBOARD_ACTION_TYPES.ADD_ON_FILTERS:
 			return {
 				...state,
@@ -44,12 +47,20 @@ export default (state = initialState, action) => {
 					filters: { ...state.dashboard.filters, ...action.payload.newFilters }
 				}
 			}
-		case DASHBOARD_ACTION_TYPES.resetFiltersAction:
+		// case DASHBOARD_ACTION_TYPES.RESET_FILTERS:
+		// 	return {
+		// 		...state,
+		// 		dashboard: {
+		// 			...state.dashboard,
+		// 			filters: DEFAULT_DASHBOARD_FILTERS
+		// 		}
+		// 	}
+		case DASHBOARD_ACTION_TYPES.CHANGE_MENU_ITEM:
 			return {
 				...state,
 				dashboard: {
 					...state.dashboard,
-					filters: DEFAULT_DASHBOARD_FILTERS
+					selectedMenuItem: action.payload.selectedMenuItem
 				}
 			}
 		default:

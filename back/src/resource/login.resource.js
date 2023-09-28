@@ -25,7 +25,19 @@ const loginOrCreateAccount = async (req, res) => {
 	}
 }
 
+const getInfoAccount = async (req, res) => {
+	const userId = req.userInfo.userId
+	try {
+		const data = await LoginService.getInfoAccount(userId)
+		return res.status(200).send(data)
+	} catch (e) {
+		console.error(e)
+		return res.status(500).send('Erro ao buscar informações do usuário')
+	}
+}
+
 module.exports = {
 	getUrlAuth,
-	loginOrCreateAccount
+	loginOrCreateAccount,
+	getInfoAccount
 }

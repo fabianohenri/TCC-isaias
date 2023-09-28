@@ -39,6 +39,7 @@ app.use(interceptor)
 //Login
 app.get(PREFIX + '/login/get-url-auth/:domainBitrix', LoginResource.getUrlAuth)
 app.get(PREFIX + '/login', LoginResource.loginOrCreateAccount)
+app.get(PREFIX + '/account/get-info', LoginResource.getInfoAccount)
 
 //dashboard
 app.get(PREFIX + '/dashboard/get-all-tasks-and-groups-with-members/:fromDate/:toDate', DashboardResource.getAllTasksAndGroupsWithMembers)

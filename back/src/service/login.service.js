@@ -56,7 +56,13 @@ const loginOrCreateAccount = async (authCode, scope, domain) => {
 	return userDataFormatted
 }
 
+const getInfoAccount = async (userId) => {
+	const user = await UserAccountRepository.getUsersByIds(userId)
+	return user[0]
+}
+
 module.exports = {
 	getUrlAuth,
-	loginOrCreateAccount
+	loginOrCreateAccount,
+	getInfoAccount
 }

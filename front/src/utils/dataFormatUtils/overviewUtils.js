@@ -16,6 +16,7 @@ const formatToSeries = (formattedData, labels, orderBy) => {
 }
 
 const buildOverviewMetrics = (allTasks) => {
+	console.log(allTasks)
 	let totalTasks = allTasks.length
 	let openTasks = 0
 	let closedTasks = 0
