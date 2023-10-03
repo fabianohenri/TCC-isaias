@@ -79,6 +79,7 @@ const formatMembersToFilters = (filtersArray) => {
 
 const formatTask = (task) => ({
 	id: task.id,
+	tags: Object.values(task.tags),
 	allUsers: task.allUsers,
 	closedDate: task.closedDate,
 	createdDate: task.createdDate,

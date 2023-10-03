@@ -28,7 +28,6 @@ const getStyles = (name, personName, theme) => {
 const SelectTag = ({ label, options, onChange, selected }) => {
 	const theme = useTheme()
 	const [selectedOptions, setSelectedOptions] = useState([])
-
 	const handleChange = (event) => {
 		onChange(event.target.value)
 		if (!selected) {

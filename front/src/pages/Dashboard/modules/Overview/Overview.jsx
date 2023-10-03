@@ -13,6 +13,7 @@ const Overview = ({ data }) => {
 	let canLoadResponsibles = metrics?.usersGraphData?.responsibles?.series?.length > 0
 	let canLoadClosers = metrics?.usersGraphData?.closers?.series?.length > 0
 	let canLoadAccomplices = metrics?.usersGraphData?.accomplices?.series?.length > 0
+	let canLoadTagsPopular = metrics?.tagsGraphData?.popular?.series?.length > 0
 
 	useEffect(() => {
 		if (data) {
@@ -33,9 +34,24 @@ const Overview = ({ data }) => {
 				<CardMetric title='Tarefas Fechadas' number={metrics?.general?.closedTasks} xs={4} />
 			</Grid>
 			<Grid container>
+				{canLoadTagsPopular && (
+					<Grid item xs={6}>
+						Tags
+						<BarChart
+							series={metrics?.tagsGraphData?.popular?.series}
+							labels={metrics?.tagsGraphData?.popular?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoadingMetrics}
+						/>
+					</Grid>
+				)}
 				{canLoadResponsibles && (
 					<Grid item xs={6}>
-						Responsibles
+						Responsáveis
 						<BarChart
 							series={metrics?.usersGraphData?.responsibles?.series}
 							labels={metrics?.usersGraphData?.responsibles?.labels}
@@ -50,7 +66,7 @@ const Overview = ({ data }) => {
 				)}
 				{canLoadCreators && (
 					<Grid item xs={6}>
-						Creators
+						Criadores
 						<BarChart
 							series={metrics?.usersGraphData?.creators?.series}
 							labels={metrics?.usersGraphData?.creators?.labels}
@@ -65,7 +81,7 @@ const Overview = ({ data }) => {
 				)}
 				{canLoadAuditors && (
 					<Grid item xs={4}>
-						Auditors
+						Observadores
 						<BarChart
 							series={metrics?.usersGraphData?.auditors?.series}
 							labels={metrics?.usersGraphData?.auditors?.labels}
@@ -80,7 +96,7 @@ const Overview = ({ data }) => {
 				)}
 				{canLoadClosers && (
 					<Grid item xs={4}>
-						Closers
+						Fechadores
 						<BarChart
 							series={metrics?.usersGraphData?.closers?.series}
 							labels={metrics?.usersGraphData?.closers?.labels}
@@ -95,7 +111,7 @@ const Overview = ({ data }) => {
 				)}
 				{canLoadAccomplices && (
 					<Grid item xs={4}>
-						Accomplices
+						Participantes
 						<BarChart
 							series={metrics?.usersGraphData?.accomplices?.series}
 							labels={metrics?.usersGraphData?.accomplices?.labels}

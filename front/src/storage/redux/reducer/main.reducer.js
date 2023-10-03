@@ -5,6 +5,7 @@ import moment from 'moment-timezone'
 const DEFAULT_DASHBOARD_FILTERS = {
 	members: [],
 	groups: [],
+	tags: [],
 	showOnlySelectedData: false
 }
 const DEFAULT_DASHBOARD_DATE_FILTERS = {

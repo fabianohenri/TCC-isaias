@@ -16,20 +16,36 @@ const style = {
 	transform: 'translate(-50%, -50%)',
 	bgcolor: 'background.paper',
 	boxShadow: 24,
-	p: 10
+	p: 10,
+	height: '60%',
+	width: '60%'
 }
 
-const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFiltersDispatch, data }) => {
+const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFiltersDispatch, data, allTasks }) => {
 	const [filters, setFilters] = useState(filtersDependantRedux)
 	const [groups, setGroups] = useState([])
 	const [members, setMembers] = useState([])
+	const [tags, setTags] = useState([])
 	const [open, setOpen] = useState(false)
 
 	useEffect(() => {
 		applyFilters(DEFAULT_DASHBOARD_FILTERS)
 		if (data) {
-			setGroups(data.groups)
-			setMembers(data.members)
+			setGroups(data.groups.sort((a, b) => a.name.localeCompare(b.name)))
+			setMembers(data.members.sort((a, b) => a.name.localeCompare(b.name)))
+			let tagsData = []
+			allTasks.forEach((tt) => {
+				tt.tags.forEach((taskTag) => {
+					const foundIndex = tagsData.findIndex((t) => t.id === taskTag.id)
+					if (foundIndex === -1) {
+						tagsData.push({ id: taskTag.id, name: taskTag.title, value: 1 })
+					} else {
+						tagsData[foundIndex].value += 1
+					}
+				})
+			})
+			tagsData = tagsData.map((ntd) => ({ ...ntd, name: `${ntd.name} (${ntd.value})` })).sort((a, b) => a.name.localeCompare(b.name))
+			setTags(tagsData)
 		}
 	}, [data])
 
@@ -62,6 +78,11 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 		const groupsToKeep = filters.groups.filter((g) => availableGroups.find((gtk) => gtk === g.id))
 		setFilters({ ...filters, members: changedMembers, groups: groupsToKeep })
 	}
+	const onChangeTags = (changedTags) => {
+		//Verifica a partir dos membros selecionados quais grupos serão mostrados no select
+		// const tagsToFilter = changedTags.length > 0 ? changedTags : allTags
+		setFilters({ ...filters, tags: changedTags })
+	}
 
 	const handleOpen = () => setOpen(true)
 	const handleClose = () => setOpen(false)
@@ -89,6 +110,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 						<Grid item xs={6}>
 							<SelectTag label='Grupos' options={groups} onChange={onChangeGroups} selected={filters.groups} />
 							<SelectTag label='Membros' options={members} onChange={onChangeMembers} selected={filters.members} />
+							<SelectTag label='Tags' options={tags} onChange={onChangeTags} selected={filters.tags} />
 						</Grid>
 						<Grid item xs={6}>
 							<MembersFiltersCheckList data={filters.members} />

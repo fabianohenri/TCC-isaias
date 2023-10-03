@@ -11,7 +11,7 @@ const getAllTasksWithFilters = async (bitrixAccess, fromDate, toDate) => {
 			return data
 		} else {
 			if (!iterations) {
-				iterations = Math.ceil(data.total / limit)
+				iterations = data.total === 0 ? 0 : Math.ceil(data.total / limit)
 			}
 			start += limit
 			iterations--

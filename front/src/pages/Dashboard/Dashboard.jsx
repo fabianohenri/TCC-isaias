@@ -13,7 +13,7 @@ import ApplyFiltersOnChildren from './middleware/ApplyFiltersOnChildren/ApplyFil
 import AccountInfo from 'pages/AccountInfo/AccountInfo'
 
 const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuItemRedux }) => {
-	const [groupsAndMembers, setGroupsAndMembers] = useState(null)
+	const [filterData, setFilterData] = useState(null)
 	const [allTasks, setAllTasks] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
@@ -23,7 +23,7 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 		setIsLoading(true)
 		api.get(`/dashboard/get-all-tasks-and-groups-with-members/${date.fromDate}/${date.toDate}`)
 			.then((res) => {
-				setGroupsAndMembers({ groups: res?.data.groups, members: res?.data?.members })
+				setFilterData({ groups: res?.data.groups, members: res?.data?.members })
 				setAllTasks(res.data?.allTasks)
 			})
 			.catch((e) => console.error(e.response.data))
@@ -79,7 +79,7 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 								/>
 							</Paper>
 						</Collapse>
-						<FiltersDashboard data={groupsAndMembers} />
+						<FiltersDashboard data={filterData} allTasks={allTasks} />
 						<ApplyFiltersOnChildren data={allTasks} filters={filtersDependantRedux} selectedMenuItem={selectedMenuItemRedux} />
 					</>
 				)}

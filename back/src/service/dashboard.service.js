@@ -64,7 +64,6 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 				atu.responsible && formattedAllTaskUsers[foundIndex].responsible.push(...atu.responsible)
 				atu.closer && formattedAllTaskUsers[foundIndex].closer.push(...atu.closer)
 				atu.accomplice && formattedAllTaskUsers[foundIndex].accomplice.push(...atu.accomplice)
-				atu.accomplice && formattedAllTaskUsers[foundIndex].accomplice.push(...atu.accomplice)
 			}
 		})
 		formattedAllTaskUsers.forEach((ftuser) => {

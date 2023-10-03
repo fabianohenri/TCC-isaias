@@ -51,7 +51,7 @@ const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 								<Dashboard fontSize='medium' style={{ backgroundColor: 'black', color: 'white' }} />
 							</ListItemIcon>
 							<Typography className={SideMenuStyles.item} sx={{ fontSize: '1.5em' }} variant='inherit'>
-								Histórico
+								Gráficos
 							</Typography>
 						</MenuItem>
 

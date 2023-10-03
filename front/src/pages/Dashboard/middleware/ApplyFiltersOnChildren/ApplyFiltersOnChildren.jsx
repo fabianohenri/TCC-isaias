@@ -3,10 +3,14 @@ import Overview from '../../modules/Overview/Overview'
 
 const applyFilters = (data, filters) => {
 	let newData = [...data]
-	if (data?.length > 1 && (filters.members.length > 0 || filters.groups.length > 0)) {
+	if (data?.length > 1 && (filters.members.length > 0 || filters.groups.length > 0 || filters.tags.length > 0)) {
 		const membersIdsInFilter = filters?.members?.map((m) => m.id)
+		//filtra por tag primeiro
+		newData = newData.filter((task) => {
+			return task.tags.some((taskTags) => filters.tags.some((filterTag) => filterTag.id === taskTags.id))
+		})
 		//filtra pelos membros e pelos grupos
-		newData = data.filter((d) => {
+		newData = newData.filter((d) => {
 			let cond1 = true
 			let cond2 = true
 			if (membersIdsInFilter.length > 0) {

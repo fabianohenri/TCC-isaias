@@ -16,7 +16,6 @@ const formatToSeries = (formattedData, labels, orderBy) => {
 }
 
 const buildOverviewMetrics = (allTasks) => {
-	console.log(allTasks)
 	let totalTasks = allTasks.length
 	let openTasks = 0
 	let closedTasks = 0
@@ -26,6 +25,7 @@ const buildOverviewMetrics = (allTasks) => {
 	let responsibles = []
 	let closers = []
 	let accomplices = []
+	let tags = []
 	allTasks.forEach((task) => {
 		//Métricas das tarefas
 		if (task.closedDate) {
@@ -44,6 +44,15 @@ const buildOverviewMetrics = (allTasks) => {
 		responsibles = responsibles.concat(taskResponsible)
 		closers = closers.concat(taskCloser)
 		accomplices = accomplices.concat(taskAccomplices)
+		//extrair tags
+		task.tags.forEach((tt) => {
+			const foundIndex = tags.findIndex((t) => t.key.id === tt.id)
+			if (foundIndex === -1) {
+				tags.push({ key: { id: tt.id, name: tt.title }, value: 1 })
+			} else {
+				tags[foundIndex].value += 1
+			}
+		})
 	})
 
 	const users = lodash.uniqBy([...auditors, ...creators, ...responsibles, ...closers, ...accomplices], 'id')
@@ -66,11 +75,14 @@ const buildOverviewMetrics = (allTasks) => {
 	const finalData = {
 		general: { totalTasks, openTasks, closedTasks },
 		usersGraphData: {
-			auditors: formatToSeries(auditorsFormatted, ['Auditores'], 'desc'),
+			auditors: formatToSeries(auditorsFormatted, ['Observadores'], 'desc'),
 			creators: formatToSeries(creatorsFormatted, ['Criadores'], 'desc'),
 			responsibles: formatToSeries(responsiblesFormatted, ['Responsáveis'], 'desc'),
 			closers: formatToSeries(closersFormatted, ['Fechadores'], 'desc'),
-			accomplices: formatToSeries(accomplicesFormatted, ['Cúmplices'], 'desc')
+			accomplices: formatToSeries(accomplicesFormatted, ['Participantes'], 'desc')
+		},
+		tagsGraphData: {
+			popular: formatToSeries(tags, ['Tags'], 'desc')
 		}
 	}
 
