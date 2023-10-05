@@ -25,7 +25,7 @@ const getStyles = (name, personName, theme) => {
 	}
 }
 
-const SelectTag = ({ label, options, onChange, selected }) => {
+const SelectTag = ({ label, options, onChange, selected, onClose }) => {
 	const theme = useTheme()
 	const [selectedOptions, setSelectedOptions] = useState([])
 	const handleChange = (event) => {
@@ -39,10 +39,17 @@ const SelectTag = ({ label, options, onChange, selected }) => {
 		setSelectedOptions(selected)
 	}, [selected])
 
+	const handleOnClose = () => {
+		if (onClose) {
+			onClose()
+		}
+	}
+
 	return (
 		<FormControl sx={{ m: 1, width: '100%' }}>
 			<InputLabel>{label}</InputLabel>
 			<Select
+				onClose={handleOnClose}
 				multiple
 				value={selectedOptions}
 				onChange={handleChange}

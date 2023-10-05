@@ -35,8 +35,9 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 		allTasks = await BitrixService.getAllTasksWithFilters(bitrixAccess, fromDate, toDate)
 	}
 
-	let groups = [] //tem os usuários dentro dele
+	let groups = []
 	let members = []
+	let tags = []
 	allTasks.forEach((task) => {
 		//Grupo (projeto)
 		const groupFoundIndex = groups.findIndex((g) => g.id === task.group.id)
@@ -99,7 +100,25 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 		accomplices: task.accomplices.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta)))
 	}))
 
-	return { groups, members, allTasks }
+	allTasks.forEach((task) => {
+		task.tags.forEach((taskTag) => {
+			const foundIndex = tags.findIndex((t) => t.id === taskTag.id)
+			if (foundIndex === -1) {
+				tags.push({ id: taskTag.id, name: taskTag.title, value: 1, tasks: [task.id] })
+			} else {
+				tags[foundIndex].value += 1
+				tags[foundIndex].tasks.push(task.id)
+			}
+		})
+	})
+	tags = tags.map((ntd) => ({ ...ntd, name: `${ntd.name} (${ntd.value})` })).sort((a, b) => a.name.localeCompare(b.name))
+
+	//sort
+	groups = groups.sort((a, b) => a.name.localeCompare(b.name))
+	members = members.sort((a, b) => a.name.localeCompare(b.name))
+	tags = tags.sort((a, b) => a.name.localeCompare(b.name))
+
+	return { groups, members, tags, allTasks }
 }
 
 module.exports = {

@@ -21,31 +21,131 @@ const style = {
 	width: '60%'
 }
 
-const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFiltersDispatch, data, allTasks }) => {
+const getFilterOptions = (data, filters, tasks, changeType) => {
+	//Verifica a partir das tags selecionados quais membros serão mostrados no select
+	let tasksFiltered = data.allTasks
+	let membersOptions = data.members
+	let groupsOptions = data.groups
+	let tagsOptions = data.tags
+	let lastFilter = null
+	let teste = [
+		{
+			type: 'groups',
+			canFilter: filters.groups.length > 0,
+			functionFilter: (filters, tf) => filters.groups.some((fg) => fg.id === tf.group.id),
+			functionOption: (tasksAfterFilter, thisGroupsOptions) => {
+				const uniqueGroups = new Set()
+				tasksAfterFilter.forEach((tf) => uniqueGroups.add(tf.group.id))
+				const groupsOnTasksFiltered = Array.from(uniqueGroups)
+				return thisGroupsOptions.filter((go) => groupsOnTasksFiltered.includes(go.id))
+			}
+		},
+		{
+			type: 'members',
+			canFilter: filters.members.length > 0,
+			functionFilter: (filters, tf) => filters.members.some((fm) => tf.allUsers.includes(fm.id)),
+			functionOption: (tasksAfterFilter, thisMembersOptions) => {
+				const uniqueMembers = new Set()
+				tasksAfterFilter.forEach((tf) => tf.allUsers.forEach((user) => uniqueMembers.add(user)))
+				const membersOnTasksFiltered = Array.from(uniqueMembers)
+				return thisMembersOptions.filter((mo) => membersOnTasksFiltered.includes(mo.id))
+			}
+		},
+		{
+			type: 'tags',
+			canFilter: filters.tags.length > 0,
+			functionFilter: (filters, tf) => filters.tags.some((tag) => tf.tags.some((tft) => tft.id === tag.id)),
+			functionOption: (tasksAfterFilter, thisTagsOptions) => {
+				const uniqueTags = new Set()
+				tasksAfterFilter.forEach((tf) => tf.tags.forEach((tft) => uniqueTags.add(tft.id)))
+				const tagsOnTasksFiltered = Array.from(uniqueTags)
+				return thisTagsOptions.filter((go) => tagsOnTasksFiltered.includes(go.id))
+			}
+		}
+	]
+
+	lastFilter = teste.find((item) => item.type === changeType)
+	if (lastFilter) {
+		teste.splice(teste.indexOf(lastFilter), 1)
+	}
+
+	tasksFiltered = tasksFiltered.filter((tf) => {
+		const fau = teste.map((t) => {
+			if (t.canFilter) {
+				return t.functionFilter(filters, tf)
+			} else {
+				return true
+			}
+		})
+		return fau.every((cond) => cond)
+	})
+
+	if (changeType === 'groups') {
+		const keepSelectingOptions = lastFilter.functionOption(tasksFiltered, groupsOptions)
+		groupsOptions = keepSelectingOptions
+	} else if (changeType === 'members') {
+		const keepSelectingOptions = lastFilter.functionOption(tasksFiltered, membersOptions)
+		membersOptions = keepSelectingOptions
+	} else if (changeType === 'tags') {
+		const keepSelectingOptions = lastFilter.functionOption(tasksFiltered, tagsOptions)
+		tagsOptions = keepSelectingOptions
+	}
+
+	tasksFiltered = tasksFiltered.filter((tf) => {
+		let lastCond = true
+		if (lastFilter.canFilter) {
+			lastCond = lastFilter.functionFilter(filters, tf)
+		}
+		return lastCond
+	})
+
+	teste.forEach((t) => {
+		if (t.type === 'groups') {
+			const changedOptions = t.functionOption(tasksFiltered, groupsOptions)
+			groupsOptions = changedOptions
+		} else if (t.type === 'members') {
+			const changedOptions = t.functionOption(tasksFiltered, membersOptions)
+			membersOptions = changedOptions
+		} else if (t.type === 'tags') {
+			const changedOptions = t.functionOption(tasksFiltered, tagsOptions)
+			tagsOptions = changedOptions
+		}
+	})
+
+	// if (filters.showOnlySelectedData) {
+	// 	tasksFiltered = tasksFiltered.map((fd) => {
+	// 		return {
+	// 			...fd,
+	// 			accomplices: fd.accomplices.filter((a) => membersIdsInFilter.includes(a.id)),
+	// 			auditors: fd.auditors.filter((au) => membersIdsInFilter.includes(au.id)),
+	// 			closer: membersIdsInFilter.includes(fd.closer.id) ? fd.closer : [],
+	// 			creator: membersIdsInFilter.includes(fd.creator.id) ? fd.creator : [],
+	// 			responsible: membersIdsInFilter.includes(fd.responsible.id) ? fd.responsible : []
+	// 		}
+	// 	})
+	// }
+
+	const filterData = {
+		tasks: tasksFiltered,
+		options: {
+			members: membersOptions,
+			groups: groupsOptions,
+			tags: tagsOptions
+		}
+	}
+	return filterData
+}
+
+const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFiltersDispatch, data }) => {
 	const [filters, setFilters] = useState(filtersDependantRedux)
-	const [groups, setGroups] = useState([])
-	const [members, setMembers] = useState([])
-	const [tags, setTags] = useState([])
+	const [filterOptions, setFilterOptions] = useState(data)
+	const [filteredTasks, setFilteredTasks] = useState(data.allTasks)
 	const [open, setOpen] = useState(false)
 
 	useEffect(() => {
 		applyFilters(DEFAULT_DASHBOARD_FILTERS)
 		if (data) {
-			setGroups(data.groups.sort((a, b) => a.name.localeCompare(b.name)))
-			setMembers(data.members.sort((a, b) => a.name.localeCompare(b.name)))
-			let tagsData = []
-			allTasks.forEach((tt) => {
-				tt.tags.forEach((taskTag) => {
-					const foundIndex = tagsData.findIndex((t) => t.id === taskTag.id)
-					if (foundIndex === -1) {
-						tagsData.push({ id: taskTag.id, name: taskTag.title, value: 1 })
-					} else {
-						tagsData[foundIndex].value += 1
-					}
-				})
-			})
-			tagsData = tagsData.map((ntd) => ({ ...ntd, name: `${ntd.name} (${ntd.value})` })).sort((a, b) => a.name.localeCompare(b.name))
-			setTags(tagsData)
+			setFilterOptions({ groups: data.groups, members: data.members, tags: data.tags })
 		}
 	}, [data])
 
@@ -54,34 +154,20 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 	}, [filtersDependantRedux])
 
 	const onChangeGroups = (changedGroups) => {
-		//Verifica a partir dos grupos selecionados quais membros serão mostrados no select
-		const groupsToFilter = changedGroups.length > 0 ? changedGroups : data.groups
-		let membersOnGroup = new Set()
-		groupsToFilter.forEach((cg) => cg.members.forEach((cgm) => membersOnGroup.add(cgm)))
-		membersOnGroup = Array.from(membersOnGroup)
-		const membersCanRender = data.members.filter((m) => membersOnGroup.find((mg) => mg == m.id))
-		setMembers(membersCanRender)
-		//A partir dos grupos selecionados, remove os membros que não pertencem a eles
-		const membersToKeep = filters.members.filter((m) => membersOnGroup.find((mog) => mog === m.id))
-		setFilters({ ...filters, groups: changedGroups, members: membersToKeep })
+		const newFilters = { ...filters, groups: changedGroups }
+		setFilters(newFilters)
+		handleChangeSelect(newFilters, 'groups')
 	}
 
 	const onChangeMembers = (changedMembers) => {
-		//Verifica a partir dos membros selecionados quais grupos serão mostrados no select
-		const membersToFilter = changedMembers.length > 0 ? changedMembers : data.members
-		let availableGroups = new Set()
-		membersToFilter.forEach((cm) => cm.groups.forEach((cmg) => availableGroups.add(cmg)))
-		availableGroups = Array.from(availableGroups)
-		const groupsCanRender = data.groups.filter((g) => availableGroups.find((mg) => mg == g.id))
-		setGroups(groupsCanRender)
-		//A partir dos membros selecionados, remove os grupos que não pertencem a eles
-		const groupsToKeep = filters.groups.filter((g) => availableGroups.find((gtk) => gtk === g.id))
-		setFilters({ ...filters, members: changedMembers, groups: groupsToKeep })
+		const newFilters = { ...filters, members: changedMembers }
+		setFilters(newFilters)
+		handleChangeSelect(newFilters, 'members')
 	}
 	const onChangeTags = (changedTags) => {
-		//Verifica a partir dos membros selecionados quais grupos serão mostrados no select
-		// const tagsToFilter = changedTags.length > 0 ? changedTags : allTags
-		setFilters({ ...filters, tags: changedTags })
+		const newFilters = { ...filters, tags: changedTags }
+		setFilters(newFilters)
+		handleChangeSelect(newFilters, 'tags')
 	}
 
 	const handleOpen = () => setOpen(true)
@@ -101,6 +187,22 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 		setFilters({ ...filters, showOnlySelectedData: event.target.checked })
 	}
 
+	const handleChangeSelect = (newFilters, filterType) => {
+		const { options, tasks } = getFilterOptions(data, newFilters, filteredTasks, filterType)
+		setFilteredTasks(tasks)
+		setFilterOptions(options)
+	}
+	// const handleOnCloseMembers = () => {
+	// 	const { options, tasks } = getFilterOptions(data, filters, filteredTasks, 'members')
+	// 	setFilteredTasks(tasks)
+	// 	setFilterOptions(options)
+	// }
+	// const handleOnCloseTags = () => {
+	// 	const { options, tasks } = getFilterOptions(data, filters, filteredTasks, 'tags')
+	// 	setFilteredTasks(tasks)
+	// 	setFilterOptions(options)
+	// }
+
 	return (
 		<>
 			<Button onClick={handleOpen}>Filtros</Button>
@@ -108,9 +210,27 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, resetFi
 				<Card sx={style}>
 					<Grid container spacing={3}>
 						<Grid item xs={6}>
-							<SelectTag label='Grupos' options={groups} onChange={onChangeGroups} selected={filters.groups} />
-							<SelectTag label='Membros' options={members} onChange={onChangeMembers} selected={filters.members} />
-							<SelectTag label='Tags' options={tags} onChange={onChangeTags} selected={filters.tags} />
+							<SelectTag
+								label='Grupos'
+								options={filterOptions.groups}
+								onChange={onChangeGroups}
+								selected={filters.groups}
+								// onClose={handleOnCloseGroups}
+							/>
+							<SelectTag
+								label='Membros'
+								options={filterOptions.members}
+								onChange={onChangeMembers}
+								selected={filters.members}
+								// onClose={handleOnCloseMembers}
+							/>
+							<SelectTag
+								label='Tags'
+								options={filterOptions.tags}
+								onChange={onChangeTags}
+								selected={filters.tags}
+								// onClose={handleOnCloseTags}
+							/>
 						</Grid>
 						<Grid item xs={6}>
 							<MembersFiltersCheckList data={filters.members} />

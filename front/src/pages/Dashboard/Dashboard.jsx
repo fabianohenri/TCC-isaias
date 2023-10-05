@@ -23,7 +23,7 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 		setIsLoading(true)
 		api.get(`/dashboard/get-all-tasks-and-groups-with-members/${date.fromDate}/${date.toDate}`)
 			.then((res) => {
-				setFilterData({ groups: res?.data.groups, members: res?.data?.members })
+				setFilterData(res?.data)
 				setAllTasks(res.data?.allTasks)
 			})
 			.catch((e) => console.error(e.response.data))
@@ -79,7 +79,7 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 								/>
 							</Paper>
 						</Collapse>
-						<FiltersDashboard data={filterData} allTasks={allTasks} />
+						<FiltersDashboard data={filterData} />
 						<ApplyFiltersOnChildren data={allTasks} filters={filtersDependantRedux} selectedMenuItem={selectedMenuItemRedux} />
 					</>
 				)}
