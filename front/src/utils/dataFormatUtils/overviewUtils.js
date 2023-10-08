@@ -7,9 +7,7 @@ const formatToSeries = (formattedData, labels, orderBy) => {
 	// const seriesDataObject = { series: formattedData.map((it) => ({ name: it?.key?.name || 'Usuário não encontrado', data: [it?.value] })), labels }
 	//Retirando usuarios indefinidos
 	const seriesDataObject = {
-		series: formattedData
-			.filter((item) => item?.key?.id && item?.key?.name.trim() !== 'Não atribuído')
-			.map((it) => ({ name: it?.key?.name, data: [it?.value] })),
+		series: formattedData.map((it) => ({ name: it?.key?.name, data: [it?.value] })),
 		labels
 	}
 	return seriesDataObject
@@ -34,16 +32,22 @@ const buildOverviewMetrics = (allTasks) => {
 			openTasks += 1
 		}
 		//Usuários dentro do grupo
-		const taskAuditors = task.auditors
+		const taskAuditors = task.auditors.filter((ta) => ta.id)
+		const taskAccomplices = task.accomplices.filter((tac) => tac.id)
 		const taskCreator = task.creator
 		const taskResponsible = task.responsible
 		const taskCloser = task.closer
-		const taskAccomplices = task.accomplices
 		auditors = auditors.concat(taskAuditors)
-		creators = creators.concat(taskCreator)
-		responsibles = responsibles.concat(taskResponsible)
-		closers = closers.concat(taskCloser)
 		accomplices = accomplices.concat(taskAccomplices)
+		if (taskCreator.id) {
+			creators = taskCreator && creators.concat(taskCreator)
+		}
+		if (taskResponsible.id) {
+			responsibles = taskResponsible && responsibles.concat(taskResponsible)
+		}
+		if (taskCloser.id) {
+			closers = taskCloser && closers.concat(taskCloser)
+		}
 		//extrair tags
 		task.tags.forEach((tt) => {
 			const foundIndex = tags.findIndex((t) => t.key.id === tt.id)

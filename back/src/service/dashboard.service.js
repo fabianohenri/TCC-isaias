@@ -88,9 +88,9 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 		members.map((it) => it.id),
 		bitrixAccess
 	)
-	members = members.map((m) => ({ ...m, ...formatSimpleUser(users.find((u) => u.ID === m.id)) }))
-	//fixme ver com o marcos miguel quais propriedades são necessárias nas tarefas
-
+	members = members
+		.map((m) => ({ ...m, ...formatSimpleUser(users.find((u) => u.ID === m.id)) }))
+		.filter((mf) => mf.id && mf.name.trim() !== 'Não atribuído')
 	allTasks = allTasks.map((task) => ({
 		...formatTask(task),
 		creator: getNameAndIdFromUser(members.find((m) => m.id == task.createdBy)),

@@ -18,7 +18,7 @@ const formatSimpleUser = (user) => {
 }
 
 const getNameAndIdFromUser = (user) => {
-	let formattedUser = { id: null, name: 'Usuário indefinido' }
+	let formattedUser = { id: null, name: null }
 	if (user) {
 		formattedUser = { id: user?.id || null, name: user?.name }
 	}
