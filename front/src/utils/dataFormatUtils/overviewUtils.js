@@ -1,11 +1,10 @@
 import lodash from 'lodash'
+import moment from 'moment-timezone'
 
 const formatToSeries = (formattedData, labels, orderBy) => {
 	if (orderBy) {
 		formattedData = lodash.orderBy(formattedData, 'value', orderBy)
 	}
-	// const seriesDataObject = { series: formattedData.map((it) => ({ name: it?.key?.name || 'Usuário não encontrado', data: [it?.value] })), labels }
-	//Retirando usuarios indefinidos
 	const seriesDataObject = {
 		series: formattedData.map((it) => ({ name: it?.key?.name, data: [it?.value] })),
 		labels
@@ -24,6 +23,7 @@ const buildOverviewMetrics = (allTasks) => {
 	let closers = []
 	let accomplices = []
 	let tags = []
+	let averageCompletionTime = []
 	allTasks.forEach((task) => {
 		//Métricas das tarefas
 		if (task.closedDate) {
@@ -57,6 +57,20 @@ const buildOverviewMetrics = (allTasks) => {
 				tags[foundIndex].value += 1
 			}
 		})
+		if (task.createdDate && task.closedDate) {
+			const created = moment(task.createdDate)
+			const closed = moment(task.closedDate)
+			//tempo até fechar
+			averageCompletionTime.push({
+				// taskId: task.id,
+				responsibleId: task.responsible.id,
+				responsibleName: task.responsible.name,
+				// completionTime: moment(closed).diff(created),
+				completionTimeHours: moment(closed).diff(created, 'hours', true)
+				// createdDate: task.createdDate,
+				// closedDate: task.closedDate
+			})
+		}
 	})
 
 	const users = lodash.uniqBy([...auditors, ...creators, ...responsibles, ...closers, ...accomplices], 'id')
@@ -76,6 +90,15 @@ const buildOverviewMetrics = (allTasks) => {
 		.map(([key, value]) => ({ key, value }))
 		.map((obj) => ({ ...obj, key: users.find((user) => user.id === obj.key) }))
 
+	const groupedAvg = lodash.groupBy(averageCompletionTime, 'responsibleId')
+	const avgMemberTime = lodash.map(groupedAvg, (g) => ({
+		key: {
+			id: g[0].responsibleId,
+			name: g[0].responsibleName
+		},
+		value: Math.round((lodash.sumBy(g, 'completionTimeHours') / g.length) * 10) / 10
+	}))
+
 	const finalData = {
 		general: { totalTasks, openTasks, closedTasks },
 		usersGraphData: {
@@ -87,6 +110,9 @@ const buildOverviewMetrics = (allTasks) => {
 		},
 		tagsGraphData: {
 			popular: formatToSeries(tags, ['Tags'], 'desc')
+		},
+		completionGraphData: {
+			averageTime: formatToSeries(avgMemberTime, ['Média de finalização (em horas)'], 'desc')
 		}
 	}
 

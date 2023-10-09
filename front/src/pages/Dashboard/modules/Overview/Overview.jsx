@@ -14,6 +14,7 @@ const Overview = ({ data }) => {
 	let canLoadClosers = metrics?.usersGraphData?.closers?.series?.length > 0
 	let canLoadAccomplices = metrics?.usersGraphData?.accomplices?.series?.length > 0
 	let canLoadTagsPopular = metrics?.tagsGraphData?.popular?.series?.length > 0
+	let canLoadAverageMemberCompletionTime = metrics?.completionGraphData?.averageTime?.series?.length > 0
 
 	useEffect(() => {
 		if (data) {
@@ -115,6 +116,22 @@ const Overview = ({ data }) => {
 						<BarChart
 							series={metrics?.usersGraphData?.accomplices?.series}
 							labels={metrics?.usersGraphData?.accomplices?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoadingMetrics}
+						/>
+					</Grid>
+				)}
+				{canLoadAverageMemberCompletionTime && (
+					<Grid item xs={4}>
+						Tempo médio de conclusão
+						<BarChart
+							series={metrics?.completionGraphData?.averageTime?.series}
+							labels={metrics?.completionGraphData?.averageTime?.labels}
+							additionalOptions={{ formatterLabel: ' h' }}
 							height={400}
 							width='100%'
 							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}

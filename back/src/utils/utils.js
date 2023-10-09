@@ -10,7 +10,7 @@ const extractGlobalFiltersFromRequest = (request) => {
 }
 
 const formatSimpleUser = (user) => {
-	let formattedUser = { id: null, name: 'Usuário indefinido' }
+	let formattedUser = { id: null, name: null }
 	if (user) {
 		formattedUser = { id: user?.ID || null, name: user?.NAME + ' ' + user?.LAST_NAME }
 	}

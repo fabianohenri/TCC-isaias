@@ -2,9 +2,23 @@ import React, { memo } from 'react'
 import Chart from 'react-apexcharts'
 import Skeleton from 'react-loading-skeleton'
 
-let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isStacked, seriesLength) => {
+let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isStacked, seriesLength, additionalOptions) => {
 	let options = {
 		colors,
+		tooltip: {
+			y: {
+				formatter: (val) => {
+					let newValue = val
+					if (additionalOptions?.decimal) {
+						newValue = newValue.toFixed(additionalOptions.decimal)
+					}
+					if (additionalOptions?.formatterLabel) {
+						newValue + additionalOptions?.formatterLabel
+					}
+					return newValue
+				}
+			}
+		},
 		plotOptions: {
 			bar: {
 				horizontal: isHorizontal,
@@ -14,6 +28,7 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 		},
 		dataLabels: {
 			enabled: true,
+			offsetY: 0,
 			offsetX: 0,
 			style: {
 				fontSize: '14px',
@@ -87,7 +102,7 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 	return options
 }
 
-const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStacked, isLoading }) => {
+const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStacked, isLoading, additionalOptions }) => {
 	return (
 		<>
 			{isLoading && !series ? (
@@ -99,7 +114,7 @@ const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStack
 						textAlign: 'left',
 						fontFamily: 'Poppins'
 					}}
-					options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series?.length)}
+					options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series?.length, additionalOptions)}
 					series={series}
 					width={width}
 					height={height}

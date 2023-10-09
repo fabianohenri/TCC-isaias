@@ -91,14 +91,17 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 	members = members
 		.map((m) => ({ ...m, ...formatSimpleUser(users.find((u) => u.ID === m.id)) }))
 		.filter((mf) => mf.id && mf.name.trim() !== 'Não atribuído')
-	allTasks = allTasks.map((task) => ({
-		...formatTask(task),
-		creator: getNameAndIdFromUser(members.find((m) => m.id == task.createdBy)),
-		responsible: getNameAndIdFromUser(members.find((m) => m.id == task.responsible.id)),
-		closer: getNameAndIdFromUser(members.find((m) => m.id == task.closedBy)),
-		auditors: task.auditors.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta))),
-		accomplices: task.accomplices.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta)))
-	}))
+
+	allTasks = allTasks
+		.map((task) => ({
+			...formatTask(task),
+			creator: getNameAndIdFromUser(members.find((m) => m.id == task.createdBy)),
+			responsible: getNameAndIdFromUser(members.find((m) => m.id == task.responsible.id)),
+			closer: getNameAndIdFromUser(members.find((m) => m.id == task.closedBy)),
+			auditors: task.auditors.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta))),
+			accomplices: task.accomplices.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta)))
+		}))
+		.filter((t) => (!!t.createdDate && !!t.closedDate ? !!t.responsible.id : true))
 
 	allTasks.forEach((task) => {
 		task.tags.forEach((taskTag) => {
@@ -112,7 +115,6 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 		})
 	})
 	tags = tags.map((ntd) => ({ ...ntd, name: `${ntd.name} (${ntd.value})` })).sort((a, b) => a.name.localeCompare(b.name))
-
 	//sort
 	groups = groups.sort((a, b) => a.name.localeCompare(b.name))
 	members = members.sort((a, b) => a.name.localeCompare(b.name))
