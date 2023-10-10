@@ -30,7 +30,7 @@ const MembersFiltersCheckList = ({ data }) => {
 							disabled={d.accomplice.length === 0}
 						/>
 					</Tooltip>
-					<Tooltip title={`Auditor em ${d.auditor.length} tarefa${(d.auditor.length > 1 && 's') || ''} para os filtros escolhidos`}>
+					<Tooltip title={`Participante em ${d.auditor.length} tarefa${(d.auditor.length > 1 && 's') || ''} para os filtros escolhidos`}>
 						<Checkbox
 							icon={<LocalLibraryOutlined />}
 							checkedIcon={<LocalLibrary />}

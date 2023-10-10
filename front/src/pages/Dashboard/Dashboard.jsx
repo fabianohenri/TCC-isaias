@@ -11,10 +11,11 @@ import { Collapse, IconButton, Paper, Typography, Unstable_Grid2 as Grid } from 
 import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
 import ApplyFiltersOnChildren from './middleware/ApplyFiltersOnChildren/ApplyFiltersOnChildren'
 import AccountInfo from 'pages/AccountInfo/AccountInfo'
+import Overview from './modules/Overview/Overview'
 
 const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuItemRedux }) => {
-	const [filterData, setFilterData] = useState(null)
-	const [allTasks, setAllTasks] = useState(null)
+	const [originalFilterData, setOriginalFilterData] = useState(null)
+	const [tasksFiltered, setTasksFiltered] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
 	const [date, setDate] = useState(DEFAULT_DASHBOARD_DATE_FILTERS)
@@ -23,8 +24,8 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 		setIsLoading(true)
 		api.get(`/dashboard/get-all-tasks-and-groups-with-members/${date.fromDate}/${date.toDate}`)
 			.then((res) => {
-				setFilterData(res?.data)
-				setAllTasks(res.data?.allTasks)
+				setOriginalFilterData(res?.data)
+				setTasksFiltered(res?.data?.allTasks)
 			})
 			.catch((e) => console.error(e.response.data))
 			.finally(() => {
@@ -50,13 +51,17 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 		setIsOpenDatePicker(false)
 	}
 
+	const handleOnApplyFilters = (newTasksFiltered) => {
+		setTasksFiltered(newTasksFiltered)
+	}
+
 	return (
 		<Grid container>
 			<Grid xs={2} style={{ position: 'relative' }}>
 				<SideMenu />
 			</Grid>
 			<Grid xs={10}>
-				{!isLoading && allTasks.length > 0 && ['overview', 'log'].includes(selectedMenuItemRedux) && (
+				{!isLoading && originalFilterData?.allTasks?.length > 0 && ['overview', 'log'].includes(selectedMenuItemRedux) && (
 					<>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
 							<IconButton onClick={toggleIsOpenDatePicker}>
@@ -79,8 +84,11 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 								/>
 							</Paper>
 						</Collapse>
-						<FiltersDashboard data={filterData} />
-						<ApplyFiltersOnChildren data={allTasks} filters={filtersDependantRedux} selectedMenuItem={selectedMenuItemRedux} />
+						<FiltersDashboard data={originalFilterData} onApplyFilters={handleOnApplyFilters} />
+						<>
+							{selectedMenuItemRedux === 'overview' && <Overview data={tasksFiltered} />}
+							{selectedMenuItemRedux === 'log' && <>LOG METRICS</>}
+						</>
 					</>
 				)}
 				{selectedMenuItemRedux === 'account' && <AccountInfo />}

@@ -50,7 +50,7 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 		const taskAuditors = task.auditors.map((it) => ({ id: it, auditor: [{ taskId: task.id, groupId: task.group.id }] }))
 		const taskCreator = { id: task.createdBy, creator: [{ taskId: task.id, groupId: task.group.id }] }
 		const taskResponsible = { id: task.responsibleId, responsible: [{ taskId: task.id, groupId: task.group.id }] }
-		const taskClosedBy = { id: task.createdBy, closer: [{ taskId: task.id, groupId: task.group.id }] }
+		const taskClosedBy = { id: task.closedBy, closer: [{ taskId: task.id, groupId: task.group.id }] }
 		const taskAccomplices = task.accomplices.map((it) => ({ id: it, accomplice: [{ taskId: task.id, groupId: task.group.id }] }))
 		const allTaskUsers = [...taskAuditors, taskCreator, taskResponsible, taskClosedBy, ...taskAccomplices]
 		task.allUsers = allTaskUsers.map((it) => it.id)
@@ -114,11 +114,12 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 			}
 		})
 	})
-	tags = tags.map((ntd) => ({ ...ntd, name: `${ntd.name} (${ntd.value})` })).sort((a, b) => a.name.localeCompare(b.name))
 	//sort
 	groups = groups.sort((a, b) => a.name.localeCompare(b.name))
 	members = members.sort((a, b) => a.name.localeCompare(b.name))
 	tags = tags.sort((a, b) => a.name.localeCompare(b.name))
+	let a = allTasks.find((t) => t.id === '39892')
+	let b = members.find((s) => s.id === '300')
 
 	return { groups, members, tags, allTasks }
 }
