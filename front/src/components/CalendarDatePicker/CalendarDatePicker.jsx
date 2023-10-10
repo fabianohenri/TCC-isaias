@@ -18,7 +18,7 @@ const style = {
 	padding: '20px'
 }
 
-const CalendarDatePicker = ({ onApplyDate }) => {
+const CalendarDatePicker = ({ onApplyDate, disabled }) => {
 	const [date, setDate] = useState(DEFAULT_DASHBOARD_DATE_FILTERS)
 	const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
 
@@ -43,10 +43,10 @@ const CalendarDatePicker = ({ onApplyDate }) => {
 	return (
 		<>
 			<div style={{ display: 'flex', alignItems: 'center' }}>
-				<IconButton onClick={toggleIsOpenDatePicker}>
-					<CalendarMonth style={{ color: '#1976D2' }} />
+				<IconButton onClick={toggleIsOpenDatePicker} disabled={disabled}>
+					<CalendarMonth style={{ color: disabled ? 'grey' : '#1976D2' }} />
 				</IconButton>
-				<Typography sx={{ fontSize: '1em', marginTop: '2px', opacity: 0.7 }}>
+				<Typography sx={{ fontSize: '1em', marginTop: '2px' }} color='text.secondary'>
 					{moment(date.fromDate).format('DD/MM/YYYY')} - {moment(date.toDate).format('DD/MM/YYYY')}
 				</Typography>
 			</div>

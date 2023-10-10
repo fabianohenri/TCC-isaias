@@ -3,7 +3,7 @@ import { Unstable_Grid2 as Grid } from '@mui/material'
 import CardMetric from 'components/CardMetric/CardMetric'
 import { buildOverviewMetrics } from 'utils/dataFormatUtils/overviewUtils'
 
-const Overview = ({ data }) => {
+const Overview = ({ data, loading }) => {
 	const [metrics, setMetrics] = useState({})
 
 	useEffect(() => {
@@ -14,9 +14,9 @@ const Overview = ({ data }) => {
 
 	return (
 		<Grid container>
-			<CardMetric title='Tarefas Totais' number={metrics?.totalTasks} xs={4} />
-			<CardMetric title='Tarefas Abertas' number={metrics?.openTasks} xs={4} />
-			<CardMetric title='Tarefas Fechadas' number={metrics?.closedTasks} xs={4} />
+			<CardMetric title='Tarefas Totais' number={metrics?.totalTasks} xs={4} loading={loading} />
+			<CardMetric title='Tarefas Abertas' number={metrics?.openTasks} xs={4} loading={loading} />
+			<CardMetric title='Tarefas Fechadas' number={metrics?.closedTasks} xs={4} loading={loading} />
 		</Grid>
 	)
 }

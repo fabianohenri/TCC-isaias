@@ -7,6 +7,7 @@ import store from 'storage/redux/store'
 import SystemRoutes from 'routes/routes'
 //css
 import './global.css'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 

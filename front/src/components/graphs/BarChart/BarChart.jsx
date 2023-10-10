@@ -1,6 +1,5 @@
 import React, { memo } from 'react'
 import Chart from 'react-apexcharts'
-import Skeleton from 'react-loading-skeleton'
 
 let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isStacked, seriesLength, additionalOptions) => {
 	let options = {
@@ -108,25 +107,21 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 	return options
 }
 
-const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStacked, isLoading, additionalOptions }) => {
+const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStacked, additionalOptions }) => {
 	return (
 		<>
-			{isLoading && !series ? (
-				<Skeleton height={height} width={width} />
-			) : (
-				<Chart
-					style={{
-						color: 'black',
-						textAlign: 'left',
-						fontFamily: 'Poppins'
-					}}
-					options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series?.length, additionalOptions)}
-					series={series}
-					width={width}
-					height={height}
-					type='bar'
-				/>
-			)}
+			<Chart
+				style={{
+					color: 'black',
+					textAlign: 'left',
+					fontFamily: 'Poppins'
+				}}
+				options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series?.length, additionalOptions)}
+				series={series}
+				width={width}
+				height={height}
+				type='bar'
+			/>
 		</>
 	)
 }

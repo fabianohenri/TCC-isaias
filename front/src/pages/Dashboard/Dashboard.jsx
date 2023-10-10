@@ -10,6 +10,7 @@ import AccountInfo from 'pages/AccountInfo/AccountInfo'
 import Overview from './modules/Overview/Overview'
 import GraphsModule from './modules/GraphsModule/GraphsModule'
 import CalendarDatePicker from 'components/CalendarDatePicker/CalendarDatePicker'
+import { LoadingIcon } from 'utils/SystemIcons/SystemIcons'
 
 const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 	const [originalFilterData, setOriginalFilterData] = useState(null)
@@ -60,20 +61,19 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 							height: '4em'
 						}}
 					>
-						<CalendarDatePicker onApplyDate={handleOnApplyDate} />
-						{!isLoading && (
-							<FiltersDashboard
-								data={originalFilterData}
-								onApplyFilters={handleOnApplyFilters}
-								loading={isLoading}
-								buttonStyle={{ marginLeft: '1.5em' }}
-							/>
-						)}
+						<CalendarDatePicker onApplyDate={handleOnApplyDate} disabled={isLoading} />
+						<div style={{ marginLeft: '1.5em', display: 'flex', alignItems: 'center' }}>
+							{isLoading ? (
+								<LoadingIcon thickness={2} style={{ color: '#1976D2', width: '25px', height: '25px', marginLeft: '2em' }} />
+							) : (
+								<FiltersDashboard data={originalFilterData} onApplyFilters={handleOnApplyFilters} />
+							)}
+						</div>
 					</div>
-					{!isLoading && originalFilterData?.allTasks?.length > 0 && ['overview', 'graphs'].includes(selectedMenuItemRedux) && (
+					{['overview', 'graphs'].includes(selectedMenuItemRedux) && (
 						<>
-							{selectedMenuItemRedux === 'overview' && <Overview data={tasksFiltered} />}
-							{selectedMenuItemRedux === 'graphs' && <GraphsModule data={tasksFiltered} isLoading={false} />}
+							{selectedMenuItemRedux === 'overview' && <Overview data={tasksFiltered} loading={isLoading} />}
+							{selectedMenuItemRedux === 'graphs' && <GraphsModule data={tasksFiltered} loading={isLoading} />}
 						</>
 					)}
 					{selectedMenuItemRedux === 'account' && <AccountInfo />}
