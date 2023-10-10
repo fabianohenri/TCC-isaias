@@ -46,7 +46,7 @@ const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 								Overview
 							</Typography>
 						</MenuItem>
-						<MenuItem onClick={() => handleOnClickMenuItem('log')} selected={selectedMenuItem === 'log'}>
+						<MenuItem onClick={() => handleOnClickMenuItem('graphs')} selected={selectedMenuItem === 'graphs'}>
 							<ListItemIcon className={SideMenuStyles.item}>
 								<Dashboard fontSize='medium' style={{ backgroundColor: 'black', color: 'white' }} />
 							</ListItemIcon>

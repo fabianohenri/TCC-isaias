@@ -11,6 +11,7 @@ import { Collapse, IconButton, Paper, Typography, Unstable_Grid2 as Grid } from 
 import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
 import AccountInfo from 'pages/AccountInfo/AccountInfo'
 import Overview from './modules/Overview/Overview'
+import GraphsModule from './modules/GraphsModule/GraphsModule'
 
 const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 	const [originalFilterData, setOriginalFilterData] = useState(null)
@@ -59,7 +60,7 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 				<SideMenu />
 			</Grid>
 			<Grid xs={10}>
-				{!isLoading && originalFilterData?.allTasks?.length > 0 && ['overview', 'log'].includes(selectedMenuItemRedux) && (
+				{!isLoading && originalFilterData?.allTasks?.length > 0 && ['overview', 'graphs'].includes(selectedMenuItemRedux) && (
 					<>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
 							<IconButton onClick={toggleIsOpenDatePicker}>
@@ -85,7 +86,7 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 						<FiltersDashboard data={originalFilterData} onApplyFilters={handleOnApplyFilters} />
 						<>
 							{selectedMenuItemRedux === 'overview' && <Overview data={tasksFiltered} />}
-							{selectedMenuItemRedux === 'log' && <>LOG METRICS</>}
+							{selectedMenuItemRedux === 'graphs' && <GraphsModule data={tasksFiltered} isLoading={false} />}
 						</>
 					</>
 				)}

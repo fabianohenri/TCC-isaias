@@ -16,7 +16,20 @@ const buildOverviewMetrics = (allTasks) => {
 	let totalTasks = allTasks.length
 	let openTasks = 0
 	let closedTasks = 0
-	//pessoas
+	allTasks.forEach((task) => {
+		if (task.closedDate) {
+			closedTasks += 1
+		} else {
+			openTasks += 1
+		}
+	})
+
+	const finalData = { totalTasks, openTasks, closedTasks }
+
+	return finalData
+}
+
+const buildGraphsMetrics = (allTasks) => {
 	let auditors = []
 	let creators = []
 	let responsibles = []
@@ -25,12 +38,6 @@ const buildOverviewMetrics = (allTasks) => {
 	let tags = []
 	let averageCompletionTime = []
 	allTasks.forEach((task) => {
-		//Métricas das tarefas
-		if (task.closedDate) {
-			closedTasks += 1
-		} else {
-			openTasks += 1
-		}
 		//Usuários dentro do grupo
 		const taskAuditors = task.auditors.filter((ta) => ta.id)
 		const taskAccomplices = task.accomplices.filter((tac) => tac.id)
@@ -100,7 +107,6 @@ const buildOverviewMetrics = (allTasks) => {
 	}))
 
 	const finalData = {
-		general: { totalTasks, openTasks, closedTasks },
 		usersGraphData: {
 			auditors: formatToSeries(auditorsFormatted, ['Observadores'], 'desc'),
 			creators: formatToSeries(creatorsFormatted, ['Criadores'], 'desc'),
@@ -119,4 +125,4 @@ const buildOverviewMetrics = (allTasks) => {
 	return finalData
 }
 
-export { buildOverviewMetrics }
+export { buildOverviewMetrics, buildGraphsMetrics }
