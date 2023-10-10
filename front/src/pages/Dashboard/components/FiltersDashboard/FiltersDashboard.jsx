@@ -120,7 +120,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 
 	const resetFilters = () => {
 		setFilters(DEFAULT_DASHBOARD_FILTERS)
-		applyFilters(DEFAULT_DASHBOARD_FILTERS)
+		handleChangeFilter(data, DEFAULT_DASHBOARD_FILTERS)
 	}
 
 	const handleChangeShowOnlySelectedMemberData = (event) => {
