@@ -18,7 +18,7 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 						newValue = newValue.toFixed(additionalOptions.decimal)
 					}
 					if (additionalOptions?.formatterLabel) {
-						newValue + additionalOptions?.formatterLabel
+						newValue = newValue + additionalOptions?.formatterLabel
 					}
 					return newValue
 				}
@@ -107,22 +107,20 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 	return options
 }
 
-const BarChart = ({ series, height, width, colors, labels, isHorizontal, isStacked, additionalOptions }) => {
+const BarChart = ({ series, height, width, colors, labels, isHorizontal = false, isStacked = false, additionalOptions }) => {
 	return (
-		<>
-			<Chart
-				style={{
-					color: 'black',
-					textAlign: 'left',
-					fontFamily: 'Poppins'
-				}}
-				options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series?.length, additionalOptions)}
-				series={series}
-				width={width}
-				height={height}
-				type='bar'
-			/>
-		</>
+		<Chart
+			style={{
+				color: 'black',
+				textAlign: 'left',
+				fontFamily: 'Poppins'
+			}}
+			options={buildBarOptions(colors, labels, true, true, isHorizontal, isStacked, series?.length, additionalOptions)}
+			series={series}
+			width={width}
+			height={height}
+			type='bar'
+		/>
 	)
 }
 
