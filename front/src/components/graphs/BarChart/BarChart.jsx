@@ -5,6 +5,12 @@ import Skeleton from 'react-loading-skeleton'
 let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isStacked, seriesLength, additionalOptions) => {
 	let options = {
 		colors,
+		chart: {
+			toolbar: {
+				offsetX: 0,
+				offsetY: -30
+			}
+		},
 		tooltip: {
 			y: {
 				formatter: (val) => {

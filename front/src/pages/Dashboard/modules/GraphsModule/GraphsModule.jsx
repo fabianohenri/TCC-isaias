@@ -2,6 +2,7 @@ import React, { useState, memo, useEffect } from 'react'
 import { Unstable_Grid2 as Grid } from '@mui/material'
 import BarChart from 'components/graphs/BarChart/BarChart'
 import { buildGraphsMetrics } from 'utils/dataFormatUtils/overviewUtils'
+import CardGraph from 'components/CardGraph/CardGraph'
 
 const GraphsModule = ({ data, isLoading }) => {
 	const [metrics, setMetrics] = useState({})
@@ -24,108 +25,115 @@ const GraphsModule = ({ data, isLoading }) => {
 		<Grid container>
 			{canLoadTagsPopular && (
 				<Grid item xs={6}>
-					Tags
-					<BarChart
-						series={metrics?.tagsGraphData?.popular?.series}
-						labels={metrics?.tagsGraphData?.popular?.labels}
-						height={400}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoading}
-					/>
+					<CardGraph title='Tags'>
+						<BarChart
+							series={metrics?.tagsGraphData?.popular?.series}
+							labels={metrics?.tagsGraphData?.popular?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoading}
+						/>
+					</CardGraph>
+				</Grid>
+			)}
+			{canLoadAverageMemberCompletionTime && (
+				<Grid item xs={6}>
+					<CardGraph title='Média de finalização de tarefas'>
+						<BarChart
+							series={metrics?.completionGraphData?.averageTime?.series}
+							labels={metrics?.completionGraphData?.averageTime?.labels}
+							additionalOptions={{ formatterLabel: ' h' }}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoading}
+						/>
+					</CardGraph>
 				</Grid>
 			)}
 			{canLoadResponsibles && (
 				<Grid item xs={6}>
-					Responsáveis
-					<BarChart
-						series={metrics?.usersGraphData?.responsibles?.series}
-						labels={metrics?.usersGraphData?.responsibles?.labels}
-						height={400}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoading}
-					/>
+					<CardGraph title='Responsáveis'>
+						<BarChart
+							series={metrics?.usersGraphData?.responsibles?.series}
+							labels={metrics?.usersGraphData?.responsibles?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoading}
+						/>
+					</CardGraph>
 				</Grid>
 			)}
 			{canLoadCreators && (
 				<Grid item xs={6}>
-					Criadores
-					<BarChart
-						series={metrics?.usersGraphData?.creators?.series}
-						labels={metrics?.usersGraphData?.creators?.labels}
-						height={400}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoading}
-					/>
-				</Grid>
-			)}
-			{canLoadAuditors && (
-				<Grid item xs={4}>
-					Observadores
-					<BarChart
-						series={metrics?.usersGraphData?.auditors?.series}
-						labels={metrics?.usersGraphData?.auditors?.labels}
-						height={400}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoading}
-					/>
+					<CardGraph title='Criadores'>
+						<BarChart
+							series={metrics?.usersGraphData?.creators?.series}
+							labels={metrics?.usersGraphData?.creators?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoading}
+						/>
+					</CardGraph>
 				</Grid>
 			)}
 			{canLoadClosers && (
-				<Grid item xs={4}>
-					Fechadores
-					<BarChart
-						series={metrics?.usersGraphData?.closers?.series}
-						labels={metrics?.usersGraphData?.closers?.labels}
-						height={400}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoading}
-					/>
+				<Grid item xs={6}>
+					<CardGraph title='Fechadores'>
+						<BarChart
+							series={metrics?.usersGraphData?.closers?.series}
+							labels={metrics?.usersGraphData?.closers?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoading}
+						/>
+					</CardGraph>
 				</Grid>
 			)}
 			{canLoadAccomplices && (
-				<Grid item xs={4}>
-					Participantes
-					<BarChart
-						series={metrics?.usersGraphData?.accomplices?.series}
-						labels={metrics?.usersGraphData?.accomplices?.labels}
-						height={400}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoading}
-					/>
+				<Grid item xs={6}>
+					<CardGraph title='Participantes'>
+						<BarChart
+							series={metrics?.usersGraphData?.accomplices?.series}
+							labels={metrics?.usersGraphData?.accomplices?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoading}
+						/>
+					</CardGraph>
 				</Grid>
 			)}
-			{canLoadAverageMemberCompletionTime && (
-				<Grid item xs={4}>
-					Tempo médio de conclusão
-					<BarChart
-						series={metrics?.completionGraphData?.averageTime?.series}
-						labels={metrics?.completionGraphData?.averageTime?.labels}
-						additionalOptions={{ formatterLabel: ' h' }}
-						height={400}
-						width='100%'
-						colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
-						isHorizontal={false}
-						isStacked={false}
-						isLoading={isLoading}
-					/>
+			{canLoadAuditors && (
+				<Grid item xs={12}>
+					<CardGraph title='Observadores'>
+						<BarChart
+							series={metrics?.usersGraphData?.auditors?.series}
+							labels={metrics?.usersGraphData?.auditors?.labels}
+							height={400}
+							width='100%'
+							colors={['#008FFB', '#00E396', '#FEB019', '#FF4560']}
+							isHorizontal={false}
+							isStacked={false}
+							isLoading={isLoading}
+						/>
+					</CardGraph>
 				</Grid>
 			)}
 		</Grid>

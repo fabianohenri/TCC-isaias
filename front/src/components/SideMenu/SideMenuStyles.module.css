@@ -2,7 +2,7 @@
 	position: fixed;
 	display: flex;
 	height: 100%;
-	width: 16.5%;
+	width: 16.65%;
 	background-color: rgb(5, 20, 60) !important;
 }
 
@@ -13,7 +13,6 @@
 
 .titleApp {
 	color: rgb(247, 247, 247);
-	margin-left: 1em;
 	margin-top: 1em;
 }
 

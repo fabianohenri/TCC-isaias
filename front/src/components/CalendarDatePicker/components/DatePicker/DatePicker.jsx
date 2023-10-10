@@ -37,8 +37,18 @@ const DatePicker = ({ onChange, selectionValue }) => {
 
 	return (
 		<>
-			<DateRangePicker ranges={[selectionRange]} onChange={handleSelect} locale={pt} staticRanges={staticRanges} inputRanges={inputRanges} />{' '}
-			<Button onClick={onApply}>Aplicar</Button>
+			<div style={{ boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)', width: 'fit-content', marginBottom: '2em' }}>
+				<DateRangePicker
+					ranges={[selectionRange]}
+					onChange={handleSelect}
+					locale={pt}
+					staticRanges={staticRanges}
+					inputRanges={inputRanges}
+				/>
+			</div>
+			<Button onClick={onApply} variant='contained' fullWidth>
+				Aplicar data
+			</Button>
 		</>
 	)
 }

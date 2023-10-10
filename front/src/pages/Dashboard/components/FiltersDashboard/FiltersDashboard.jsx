@@ -70,7 +70,7 @@ const getFilterOptions = (data, filters) => {
 	return filterData
 }
 
-const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, onApplyFilters }) => {
+const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, onApplyFilters, buttonStyle }) => {
 	const [filters, setFilters] = useState(filtersDependantRedux)
 	const [filterOptions, setFilterOptions] = useState(data)
 	const [filteredTasks, setFilteredTasks] = useState(data.allTasks)
@@ -141,7 +141,9 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 
 	return (
 		<>
-			<Button onClick={handleOpen}>Filtros</Button>
+			<Button onClick={handleOpen} style={buttonStyle}>
+				+Filtros
+			</Button>
 			<Modal open={open} onClose={handleClose}>
 				<Card sx={style}>
 					<Grid container spacing={3}>

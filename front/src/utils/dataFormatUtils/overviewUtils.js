@@ -118,7 +118,7 @@ const buildGraphsMetrics = (allTasks) => {
 			popular: formatToSeries(tags, ['Tags'], 'desc')
 		},
 		completionGraphData: {
-			averageTime: formatToSeries(avgMemberTime, ['Média de finalização (em horas)'], 'desc')
+			averageTime: formatToSeries(avgMemberTime, ['Média de finalização de tarefas (em horas)'], 'desc')
 		}
 	}
 
