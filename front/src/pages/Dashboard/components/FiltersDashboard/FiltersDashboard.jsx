@@ -77,6 +77,13 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 	const [open, setOpen] = useState(false)
 
 	useEffect(() => {
+		if (!open) {
+			setFilters(filtersDependantRedux)
+			handleChangeFilter(data, filtersDependantRedux)
+		}
+	}, [open])
+
+	useEffect(() => {
 		applyFilters(DEFAULT_DASHBOARD_FILTERS)
 		if (data) {
 			setFilterOptions({ groups: data.groups, members: data.members, tags: data.tags })
