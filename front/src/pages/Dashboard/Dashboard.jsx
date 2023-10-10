@@ -44,7 +44,7 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 	}
 
 	return (
-		<Grid container spacing={0}>
+		<Grid container spacing={0} className='page'>
 			<Grid xs={2} style={{ position: 'relative' }}>
 				<SideMenu />
 			</Grid>
@@ -76,8 +76,8 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 							{selectedMenuItemRedux === 'graphs' && <GraphsModule data={tasksFiltered} isLoading={false} />}
 						</>
 					)}
+					{selectedMenuItemRedux === 'account' && <AccountInfo />}
 				</>
-				{selectedMenuItemRedux === 'account' && <AccountInfo />}
 			</Grid>
 		</Grid>
 	)

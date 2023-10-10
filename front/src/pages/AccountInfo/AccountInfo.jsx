@@ -1,3 +1,5 @@
+import { Card, Grid, Typography } from '@mui/material'
+import moment from 'moment-timezone'
 import React, { useState, useEffect } from 'react'
 import api from 'service/service'
 
@@ -22,18 +24,28 @@ const AccountInfo = () => {
 	}
 
 	return (
-		<div style={{ height: '94vh' }}>
-			{loading ? (
-				<>carregando</>
-			) : (
-				<>
-					<div>username: {info.username}</div>
-					<div>scope: {info.scope_bitrix}</div>
-					<div>dominio: {info.domain_bitrix}</div>
-					<div>conta criada em (no sistema): {info.created_at}</div>
-				</>
-			)}
-		</div>
+		<Grid container style={{ padding: '2em', height: '93%' }}>
+			<Card style={{ padding: '6em 4em', width: '100%' }}>
+				{loading ? (
+					<>carregando</>
+				) : (
+					<>
+						<Typography style={{ opacity: 0.95 }}>
+							Nome: <span style={{ color: '#05143c' }}>{info.username}</span>
+						</Typography>
+						<Typography style={{ opacity: 0.95, marginTop: '3em' }}>
+							Domínio: <span style={{ color: '#05143c' }}>{info.domain_bitrix}</span>
+						</Typography>
+						<Typography style={{ opacity: 0.95, marginTop: '3em' }}>
+							Escopo da integração: <span style={{ color: '#05143c' }}>{info.scope_bitrix}</span>
+						</Typography>
+						<Typography style={{ opacity: 0.95, marginTop: '3em' }}>
+							Conta criada no sistema em: <span style={{ color: '#05143c' }}>{moment(info.created_at).format('DD/MM/yyyy')}</span>
+						</Typography>
+					</>
+				)}
+			</Card>
+		</Grid>
 	)
 }
 

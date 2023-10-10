@@ -11,8 +11,7 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-/*arrumar*/
 .page {
 	width: 100%;
-	min-height: 94vh;
+	height: 100vh;
 }
