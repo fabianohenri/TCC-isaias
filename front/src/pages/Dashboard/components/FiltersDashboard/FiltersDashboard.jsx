@@ -2,8 +2,6 @@ import React, { useState, useEffect, memo } from 'react'
 import { connect } from 'react-redux'
 import { Button, Card, Modal, Grid, Checkbox } from '@mui/material'
 //system libs
-import { extractMembersFromData } from 'utils/dataFormatUtils/filtersDashboardUtils'
-
 import SelectTag from 'components/SelectTag/SelectTag'
 import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
 import { DEFAULT_DASHBOARD_FILTERS } from 'storage/redux/reducer/main.reducer'

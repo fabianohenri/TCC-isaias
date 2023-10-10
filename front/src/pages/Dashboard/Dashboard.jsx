@@ -9,11 +9,10 @@ import { CalendarMonth } from '@mui/icons-material'
 import moment from 'moment-timezone'
 import { Collapse, IconButton, Paper, Typography, Unstable_Grid2 as Grid } from '@mui/material'
 import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
-import ApplyFiltersOnChildren from './middleware/ApplyFiltersOnChildren/ApplyFiltersOnChildren'
 import AccountInfo from 'pages/AccountInfo/AccountInfo'
 import Overview from './modules/Overview/Overview'
 
-const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuItemRedux }) => {
+const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 	const [originalFilterData, setOriginalFilterData] = useState(null)
 	const [tasksFiltered, setTasksFiltered] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
@@ -27,7 +26,6 @@ const Dashboard = ({ addOnFiltersDispatch, filtersDependantRedux, selectedMenuIt
 				setOriginalFilterData(res?.data)
 				setTasksFiltered(res?.data?.allTasks)
 			})
-			.catch((e) => console.error(e.response.data))
 			.finally(() => {
 				setIsLoading(false)
 			})
@@ -102,7 +100,6 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const mapStateToProps = ({ store }) => ({
-	filtersDependantRedux: store?.dashboard?.filters?.dependant,
 	selectedMenuItemRedux: store?.dashboard?.selectedMenuItem
 })
 
