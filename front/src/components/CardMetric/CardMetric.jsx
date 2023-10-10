@@ -1,7 +1,6 @@
 import { Card, CardContent, Typography, Unstable_Grid2 as Grid } from '@mui/material'
 import React from 'react'
 import SkeletonLoad from 'react-loading-skeleton'
-import CardMetricStyles from './CardMetric.module.css'
 
 const CardMetric = ({ title, number, xs, loading }) => {
 	return (
@@ -9,7 +8,7 @@ const CardMetric = ({ title, number, xs, loading }) => {
 			{loading ? (
 				<SkeletonLoad height='7em' width='100%' />
 			) : (
-				<Card className={CardMetricStyles.cardContainer}>
+				<Card>
 					<CardContent>
 						<Typography sx={{ fontSize: 14 }} color='text.secondary' gutterBottom>
 							{title}

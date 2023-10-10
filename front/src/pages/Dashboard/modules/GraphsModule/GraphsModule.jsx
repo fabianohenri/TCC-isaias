@@ -98,10 +98,10 @@ const GraphsModule = ({ data, loading }) => {
 	}, [data])
 
 	return (
-		<Grid container>
+		<Grid container className='module'>
 			{graphsToRender.map((graph) => (
 				<Grid item xs={graph.xs} key={graph.title}>
-					<GraphContainer loading={loading} height={containerHeight} title={graph.title}>
+					<GraphContainer loading={loading} height={containerHeight} title={graph.title} key={graph.title}>
 						{graph.canLoad && (
 							<BarChart
 								series={graph?.series}

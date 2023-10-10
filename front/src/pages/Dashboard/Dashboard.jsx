@@ -7,7 +7,7 @@ import { DEFAULT_DASHBOARD_DATE_FILTERS } from 'storage/redux/reducer/main.reduc
 import { Unstable_Grid2 as Grid } from '@mui/material'
 import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
 import AccountInfo from 'pages/AccountInfo/AccountInfo'
-import Overview from './modules/Overview/Overview'
+import OverviewModule from './modules/OverviewModule/OverviewModule'
 import GraphsModule from './modules/GraphsModule/GraphsModule'
 import CalendarDatePicker from 'components/CalendarDatePicker/CalendarDatePicker'
 import { LoadingIcon } from 'utils/SystemIcons/SystemIcons'
@@ -46,38 +46,36 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 
 	return (
 		<Grid container spacing={0} className='page'>
-			<Grid xs={2} style={{ position: 'relative' }}>
+			<Grid item xs={2} style={{ position: 'relative' }}>
 				<SideMenu />
 			</Grid>
-			<Grid xs={10}>
-				<>
-					<div
-						style={{
-							paddingLeft: '1.3em',
-							display: 'flex',
-							backgroundColor: '#ffffff',
-							borderRadius: '0px 0px 10px 10px',
-							boxShadow: '2px 2px rgba(0,0,0,0.1)',
-							height: '4em'
-						}}
-					>
-						<CalendarDatePicker onApplyDate={handleOnApplyDate} disabled={isLoading} />
-						<div style={{ marginLeft: '1.5em', display: 'flex', alignItems: 'center' }}>
-							{isLoading ? (
-								<LoadingIcon thickness={2} style={{ color: '#1976D2', width: '25px', height: '25px', marginLeft: '2em' }} />
-							) : (
-								<FiltersDashboard data={originalFilterData} onApplyFilters={handleOnApplyFilters} />
-							)}
-						</div>
+			<Grid item xs={10}>
+				<div
+					style={{
+						paddingLeft: '1.3em',
+						display: 'flex',
+						backgroundColor: '#ffffff',
+						borderRadius: '0px 0px 10px 10px',
+						boxShadow: 'inset 0px 0px 3px 0px rgba(0,0,0,0.3)',
+						height: '4em'
+					}}
+				>
+					<CalendarDatePicker onApplyDate={handleOnApplyDate} disabled={isLoading} />
+					<div style={{ marginLeft: '1.5em', display: 'flex', alignItems: 'center' }}>
+						{isLoading ? (
+							<LoadingIcon thickness={2} style={{ color: '#1976D2', width: '25px', height: '25px', marginLeft: '2em' }} />
+						) : (
+							<FiltersDashboard data={originalFilterData} onApplyFilters={handleOnApplyFilters} />
+						)}
 					</div>
-					{['overview', 'graphs'].includes(selectedMenuItemRedux) && (
-						<>
-							{selectedMenuItemRedux === 'overview' && <Overview data={tasksFiltered} loading={isLoading} />}
-							{selectedMenuItemRedux === 'graphs' && <GraphsModule data={tasksFiltered} loading={isLoading} />}
-						</>
-					)}
-					{selectedMenuItemRedux === 'account' && <AccountInfo />}
-				</>
+				</div>
+				{['overview', 'graphs'].includes(selectedMenuItemRedux) && (
+					<>
+						{selectedMenuItemRedux === 'overview' && <OverviewModule data={tasksFiltered} loading={isLoading} />}
+						{selectedMenuItemRedux === 'graphs' && <GraphsModule data={tasksFiltered} loading={isLoading} />}
+					</>
+				)}
+				{selectedMenuItemRedux === 'account' && <AccountInfo />}
 			</Grid>
 		</Grid>
 	)
