@@ -4,7 +4,7 @@ import SideMenuStyles from './SideMenuStyles.module.css'
 import { logoutAction } from 'storage/redux/actions/user.actions'
 import { connect } from 'react-redux'
 import { changeMenuItemAction } from 'storage/redux/actions/dashboard.actions'
-import { AccountIcon, DashboardIcon, GraphIcon, LogoutIcon } from 'utils/SystemIcons/SystemIcons'
+import { AccountIcon, DashboardIcon, GraphIcon, LogoutIcon, OverviewIcon } from 'utils/SystemIcons/SystemIcons'
 
 const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 	const [selectedMenuItem, setSelectedMenuItem] = useState('overview')
@@ -20,16 +20,20 @@ const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 		<div className={SideMenuStyles.sideMenuContainer}>
 			<Grid container direction='column' style={{ width: '100%' }}>
 				<Grid item xs={12}>
-					<Typography className={SideMenuStyles.titleApp} sx={{ fontSize: '2em' }} style={{ textAlign: 'center' }}>
-						Dashboard
-					</Typography>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+						<DashboardIcon style={{ color: '#ffffff', height: 35, width: 35 }} />
+						<Typography className={SideMenuStyles.titleApp} sx={{ fontSize: '2em' }} style={{ textAlign: 'center' }}>
+							DashBit
+						</Typography>
+					</div>
+
 					<Typography
 						className={SideMenuStyles.titleApp}
 						sx={{ fontSize: '0.8em' }}
 						style={{ width: '100%', textAlign: 'center' }}
 						gutterBottom
 					>
-						Bitrix24
+						Integrado com Bitrix24
 					</Typography>
 				</Grid>
 				<div style={{ width: '100%', justifyContent: 'center', display: 'flex', marginBottom: '3em', opacity: 0.8 }}>
@@ -39,7 +43,7 @@ const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 					<MenuList>
 						<MenuItem onClick={() => handleOnClickMenuItem('overview')} selected={selectedMenuItem === 'overview'}>
 							<ListItemIcon className={SideMenuStyles.item}>
-								<DashboardIcon size={16} style={{ color: '#ffffff' }} />
+								<OverviewIcon style={{ color: '#ffffff' }} />
 							</ListItemIcon>
 							<Typography className={SideMenuStyles.item} sx={{ fontSize: '1.5em' }} variant='inherit'>
 								Overview
@@ -47,7 +51,7 @@ const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 						</MenuItem>
 						<MenuItem onClick={() => handleOnClickMenuItem('graphs')} selected={selectedMenuItem === 'graphs'}>
 							<ListItemIcon className={SideMenuStyles.item}>
-								<GraphIcon size={16} style={{ color: '#ffffff' }} />
+								<GraphIcon style={{ color: '#ffffff' }} />
 							</ListItemIcon>
 							<Typography className={SideMenuStyles.item} sx={{ fontSize: '1.5em' }} variant='inherit'>
 								Gráficos
@@ -62,7 +66,7 @@ const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 
 						<MenuItem onClick={() => handleOnClickMenuItem('account')} selected={selectedMenuItem === 'account'}>
 							<ListItemIcon className={SideMenuStyles.item}>
-								<AccountIcon size={16} style={{ color: '#ffffff' }} />
+								<AccountIcon style={{ color: '#ffffff' }} />
 							</ListItemIcon>
 							<Typography className={SideMenuStyles.item} variant='inherit'>
 								Conta
@@ -70,7 +74,7 @@ const SideMenu = ({ logoutDispatch, changeMenuItemDispatch }) => {
 						</MenuItem>
 						<MenuItem onClick={logout}>
 							<ListItemIcon className={SideMenuStyles.item}>
-								<LogoutIcon size={16} style={{ color: '#ffffff' }} />
+								<LogoutIcon style={{ color: '#ffffff', marginLeft: '0.08em' }} />
 							</ListItemIcon>
 							<Typography className={SideMenuStyles.item} variant='inherit'>
 								Deslogar

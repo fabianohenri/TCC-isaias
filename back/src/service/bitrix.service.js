@@ -18,6 +18,7 @@ const getAllTasksWithFilters = async (bitrixAccess, fromDate, toDate) => {
 			totalTickets.push(...data?.result?.tasks)
 		}
 	} while (iterations > 0)
+
 	return totalTickets
 }
 

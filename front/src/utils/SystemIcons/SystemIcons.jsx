@@ -1,14 +1,14 @@
 import React from 'react'
 import { CircularProgress } from '@mui/material'
-import { BarChart, Logout, Dashboard, AccountBox } from '@mui/icons-material'
-
+import { BarChart, Logout, Dashboard, AccountBox, Visibility } from '@mui/icons-material'
 export const LoadingIcon = ({ size, alignCenter = false, thickness, ...rest }) => (
 	<span style={{ ...(alignCenter && { display: 'flex', alignContent: 'center' }) }}>
 		<CircularProgress size={size} thickness={thickness} color='inherit' {...rest} />
 	</span>
 )
 
-export const GraphIcon = ({ size, ...rest }) => <BarChart size={size} {...rest} />
-export const LogoutIcon = ({ size, ...rest }) => <Logout size={size} {...rest} />
-export const DashboardIcon = ({ size, ...rest }) => <Dashboard size={size} {...rest} />
-export const AccountIcon = ({ size, ...rest }) => <AccountBox size={size} {...rest} />
+export const GraphIcon = ({ ...rest }) => <BarChart {...rest} />
+export const LogoutIcon = ({ ...rest }) => <Logout {...rest} />
+export const DashboardIcon = ({ ...rest }) => <Dashboard {...rest} />
+export const OverviewIcon = ({ ...rest }) => <Visibility {...rest} />
+export const AccountIcon = ({ ...rest }) => <AccountBox {...rest} />
