@@ -99,10 +99,11 @@ const GraphsModule = ({ data, loading }) => {
 
 	return (
 		<Grid container className='module'>
-			{graphsToRender.map((graph) => (
-				<Grid item xs={graph.xs} key={graph.title}>
-					<GraphContainer loading={loading} height={containerHeight} title={graph.title} key={graph.title}>
-						{graph.canLoad && (
+			{graphsToRender
+				.filter((it) => it.canLoad || loading)
+				.map((graph) => (
+					<Grid item xs={graph.xs} key={graph.title}>
+						<GraphContainer loading={loading} height={containerHeight} title={graph.title} key={graph.title}>
 							<BarChart
 								series={graph?.series}
 								labels={graph?.labels}
@@ -111,10 +112,9 @@ const GraphsModule = ({ data, loading }) => {
 								colors={allGraphColors}
 								additionalOptions={graph.additionalOptions}
 							/>
-						)}
-					</GraphContainer>
-				</Grid>
-			))}
+						</GraphContainer>
+					</Grid>
+				))}
 		</Grid>
 	)
 }

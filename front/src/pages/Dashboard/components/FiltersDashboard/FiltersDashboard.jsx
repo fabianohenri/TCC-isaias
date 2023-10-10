@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo } from 'react'
 import { connect } from 'react-redux'
-import { Button, Card, Modal, Grid, Checkbox } from '@mui/material'
+import { Button, Card, Modal, Grid, Checkbox, Typography } from '@mui/material'
 //system libs
 import SelectTag from 'components/SelectTag/SelectTag'
 import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
@@ -15,8 +15,8 @@ const style = {
 	bgcolor: 'background.paper',
 	boxShadow: 24,
 	p: 10,
-	height: '60%',
-	width: '60%'
+	height: '40%',
+	width: '40%'
 }
 
 const getFilterOptions = (data, filters) => {
@@ -170,19 +170,21 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 								// onClose={handleOnCloseTags}
 							/>
 						</Grid>
-						<Grid item xs={6}>
+						<Grid item xs={6} style={{ paddingLeft: '3em' }}>
 							<MembersFiltersCheckList data={filters.members} />
 						</Grid>
-						<Grid item xs={6}>
+						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center' }}>
 							<Checkbox
 								onChange={handleChangeShowOnlySelectedMemberData}
 								checked={filters.showOnlySelectedMemberData}
 								disabled={filters.members.length === 0}
-							/>{' '}
-							Mostrar apenas dados de membros selecionados
+							/>
+							<Typography color='text.secondary'>Mostrar apenas dados de membros selecionados</Typography>
 						</Grid>
-						<Button onClick={() => applyFilters()}>Aplicar</Button>
-						<Button onClick={resetFilters}>Resetar</Button>
+						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center' }}>
+							<Button onClick={() => applyFilters()}>Aplicar</Button>
+							<Button onClick={resetFilters}>Resetar</Button>
+						</Grid>
 					</Grid>
 				</Card>
 			</Modal>
