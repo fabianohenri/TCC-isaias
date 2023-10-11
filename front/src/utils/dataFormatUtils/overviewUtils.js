@@ -16,7 +16,18 @@ const buildOverviewMetrics = (allTasks) => {
 	let totalTasks = allTasks.length
 	let openTasks = 0
 	let closedTasks = 0
+	let highPriority = 0
+	let normalPriority = 0
+	let hotfixTasks = 0
 	allTasks.forEach((task) => {
+		if (task.title.includes('[HOTFIX]')) {
+			hotfixTasks += 1
+		}
+		if (task.priority === '1') {
+			normalPriority += 1
+		} else if (task.priority === '2') {
+			highPriority += 1
+		}
 		if (task.closedDate) {
 			closedTasks += 1
 		} else {
@@ -24,7 +35,7 @@ const buildOverviewMetrics = (allTasks) => {
 		}
 	})
 
-	const finalData = { totalTasks, openTasks, closedTasks }
+	const finalData = { totalTasks, openTasks, closedTasks, highPriority, normalPriority, hotfixTasks }
 
 	return finalData
 }
@@ -72,6 +83,7 @@ const buildGraphsMetrics = (allTasks) => {
 				// taskId: task.id,
 				responsibleId: task.responsible.id,
 				responsibleName: task.responsible.name,
+				tags: task.tags,
 				// completionTime: moment(closed).diff(created),
 				completionTimeHours: moment(closed).diff(created, 'hours', true)
 				// createdDate: task.createdDate,
@@ -97,11 +109,26 @@ const buildGraphsMetrics = (allTasks) => {
 		.map(([key, value]) => ({ key, value }))
 		.map((obj) => ({ ...obj, key: users.find((user) => user.id === obj.key) }))
 
-	const groupedAvg = lodash.groupBy(averageCompletionTime, 'responsibleId')
-	const avgMemberTime = lodash.map(groupedAvg, (g) => ({
+	const groupedMembersAvg = lodash.groupBy(averageCompletionTime, 'responsibleId')
+	const avgMemberTime = lodash.map(groupedMembersAvg, (g) => ({
 		key: {
 			id: g[0].responsibleId,
 			name: g[0].responsibleName
+		},
+		value: Math.round((lodash.sumBy(g, 'completionTimeHours') / g.length) * 10) / 10
+	}))
+
+	const tagsCompletion = []
+	averageCompletionTime.forEach((item) => {
+		item.tags.forEach((it) => {
+			tagsCompletion.push({ id: it.id, name: it.title, completionTimeHours: item.completionTimeHours })
+		})
+	})
+	const groupedTagsAvg = lodash.groupBy(tagsCompletion, 'id')
+	const avgTagTime = lodash.map(groupedTagsAvg, (g) => ({
+		key: {
+			id: g[0].id,
+			name: g[0].name
 		},
 		value: Math.round((lodash.sumBy(g, 'completionTimeHours') / g.length) * 10) / 10
 	}))
@@ -118,7 +145,8 @@ const buildGraphsMetrics = (allTasks) => {
 			popular: formatToSeries(tags, ['Tags'], 'desc')
 		},
 		completionGraphData: {
-			averageTime: formatToSeries(avgMemberTime, ['Média de finalização de tarefas (em horas)'], 'desc')
+			averagePersonTime: formatToSeries(avgMemberTime, ['Média de tempo para finalização de tarefas por pessoa (em horas)'], 'desc'),
+			averageTagTime: formatToSeries(avgTagTime, ['Média de tempo para finalização de tarefas por tag (em horas)'], 'desc')
 		}
 	}
 

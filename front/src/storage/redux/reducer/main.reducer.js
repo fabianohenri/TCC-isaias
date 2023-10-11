@@ -6,7 +6,9 @@ const DEFAULT_DASHBOARD_FILTERS = {
 	members: [],
 	groups: [],
 	tags: [],
-	showOnlySelectedMemberData: false
+	showOnlySelectedMemberData: false,
+	showOnlyHotfixData: false,
+	showOnlyHighPriorityData: false
 }
 const DEFAULT_DASHBOARD_DATE_FILTERS = {
 	fromDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),

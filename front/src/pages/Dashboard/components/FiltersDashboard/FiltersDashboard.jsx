@@ -25,13 +25,23 @@ const getFilterOptions = (data, filters) => {
 	let membersOptions = data.members
 	let groupsOptions = data.groups
 	let tagsOptions = data.tags
-	if (tasksFiltered?.length > 1 && (filters.members.length > 0 || filters.groups.length > 0 || filters.tags.length > 0)) {
+	if (
+		tasksFiltered?.length > 1 &&
+		(filters.members.length > 0 ||
+			filters.groups.length > 0 ||
+			filters.tags.length > 0 ||
+			filters?.showOnlyHotfixData ||
+			filters?.showOnlyHighPriorityData)
+	) {
 		//filtra pelos membros, grupos e tags
 		const membersIdsInFilter = filters?.members?.map((m) => m.id)
 		tasksFiltered = tasksFiltered.filter((task) => {
 			let cond1 = true
 			let cond2 = true
 			let cond3 = true
+			let cond4 = true
+			let cond5 = true
+
 			if (membersIdsInFilter.length > 0) {
 				cond1 = task.allUsers.some((i) => membersIdsInFilter.includes(i))
 			}
@@ -41,8 +51,14 @@ const getFilterOptions = (data, filters) => {
 			if (filters.tags.length > 0) {
 				cond3 = task.tags.some((taskTags) => filters.tags.some((filterTag) => filterTag.id === taskTags.id))
 			}
+			if (filters?.showOnlyHotfixData) {
+				cond4 = task.title.includes('[HOTFIX]')
+			}
+			if (filters?.showOnlyHighPriorityData) {
+				cond5 = task.priority === '2'
+			}
 
-			return cond1 && cond2 && cond3
+			return cond1 && cond2 && cond3 && cond4 && cond5
 		})
 		//filtra pra mostrar somente dados dos itens selecionados nos filtros
 		if (filters.showOnlySelectedMemberData) {
@@ -130,8 +146,15 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 		handleChangeFilter(data, DEFAULT_DASHBOARD_FILTERS)
 	}
 
-	const handleChangeShowOnlySelectedMemberData = (event) => {
-		const newFilters = { ...filters, showOnlySelectedMemberData: event.target.checked }
+	const handleChangeShowOnlyData = (event, type) => {
+		let newFilters = { ...filters }
+		if (type === 'members') {
+			newFilters.showOnlySelectedMemberData = event.target.checked
+		} else if (type === 'hotfix') {
+			newFilters.showOnlyHotfixData = event.target.checked
+		} else if (type === 'highPriority') {
+			newFilters.showOnlyHighPriorityData = event.target.checked
+		}
 		setFilters(newFilters)
 		handleChangeFilter(data, newFilters)
 	}
@@ -153,7 +176,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 			</Button>
 			<Modal open={open} onClose={handleClose}>
 				<Card sx={style}>
-					<Grid container spacing={3}>
+					<Grid container spacing={0}>
 						<Grid item xs={6}>
 							<SelectTag
 								label='Grupos'
@@ -182,13 +205,21 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 						</Grid>
 						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center' }}>
 							<Checkbox
-								onChange={handleChangeShowOnlySelectedMemberData}
+								onChange={(e) => handleChangeShowOnlyData(e, 'members')}
 								checked={filters.showOnlySelectedMemberData}
 								disabled={filters.members.length === 0}
 							/>
-							<Typography color='text.secondary'>Mostrar apenas dados de membros selecionados</Typography>
+							<Typography>Mostrar apenas dados de membros selecionados</Typography>
 						</Grid>
 						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center' }}>
+							<Checkbox onChange={(e) => handleChangeShowOnlyData(e, 'hotfix')} checked={filters.showOnlyHotfixData} />
+							<Typography>Mostrar apenas dados de hotfix</Typography>
+						</Grid>
+						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center' }}>
+							<Checkbox onChange={(e) => handleChangeShowOnlyData(e, 'highPriority')} checked={filters.showOnlyHighPriorityData} />
+							<Typography>Mostrar apenas dados de alta prioridade</Typography>
+						</Grid>
+						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center', marginTop: '2em', paddingLeft: '0.3em' }}>
 							<Button onClick={() => applyFilters()}>Aplicar</Button>
 							<Button onClick={resetFilters}>Resetar</Button>
 						</Grid>

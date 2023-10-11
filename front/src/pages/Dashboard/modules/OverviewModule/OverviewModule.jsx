@@ -13,10 +13,13 @@ const OverviewModule = ({ data, loading }) => {
 	}, [data])
 
 	return (
-		<Grid container className='module'>
-			<CardMetric title='Tarefas Totais' number={metrics?.totalTasks} xs={4} loading={loading} />
-			<CardMetric title='Tarefas Abertas' number={metrics?.openTasks} xs={4} loading={loading} />
-			<CardMetric title='Tarefas Fechadas' number={metrics?.closedTasks} xs={4} loading={loading} />
+		<Grid container>
+			<CardMetric title='Tarefas totais' number={metrics?.totalTasks} xs={4} loading={loading} />
+			<CardMetric title='Tarefas abertas' number={metrics?.openTasks} xs={4} loading={loading} />
+			<CardMetric title='Tarefas fechadas' number={metrics?.closedTasks} xs={4} loading={loading} />
+			<CardMetric title='Tarefas em alta prioridade' number={metrics?.highPriority} xs={4} loading={loading} />
+			<CardMetric title='Tarefas em prioridade normal' number={metrics?.normalPriority} xs={4} loading={loading} />
+			<CardMetric title='Tarefas de hotfix' number={metrics?.hotfixTasks} xs={4} loading={loading} />
 		</Grid>
 	)
 }

@@ -39,13 +39,21 @@ const GraphsModule = ({ data, loading }) => {
 			labels: metrics?.tagsGraphData?.popular?.labels,
 			title: 'Tags',
 			additionalOptions: { formatterLabel: ' tarefas' },
+			xs: 12
+		},
+		{
+			canLoad: metrics?.completionGraphData?.averageTagTime?.series?.length > 0,
+			series: metrics?.completionGraphData?.averageTagTime?.series,
+			labels: metrics?.completionGraphData?.averageTagTime?.labels,
+			title: 'Média de tempo para finalização de tarefas por tag',
+			additionalOptions: { formatterLabel: ' h' },
 			xs: 6
 		},
 		{
-			canLoad: metrics?.completionGraphData?.averageTime?.series?.length > 0,
-			series: metrics?.completionGraphData?.averageTime?.series,
-			labels: metrics?.completionGraphData?.averageTime?.labels,
-			title: 'Média de finalização de tarefas',
+			canLoad: metrics?.completionGraphData?.averagePersonTime?.series?.length > 0,
+			series: metrics?.completionGraphData?.averagePersonTime?.series,
+			labels: metrics?.completionGraphData?.averagePersonTime?.labels,
+			title: 'Média de tempo para finalização de tarefas por pessoa',
 			additionalOptions: { formatterLabel: ' h' },
 			xs: 6
 		},
