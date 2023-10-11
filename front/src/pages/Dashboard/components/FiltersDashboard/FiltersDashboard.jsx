@@ -15,8 +15,8 @@ const style = {
 	bgcolor: 'background.paper',
 	boxShadow: 24,
 	p: 10,
-	height: '40%',
-	width: '40%'
+	height: '50%',
+	width: '50%'
 }
 
 const getFilterOptions = (data, filters) => {
@@ -175,32 +175,14 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 				+Filtros
 			</Button>
 			<Modal open={open} onClose={handleClose}>
-				<Card sx={style}>
+				<Card sx={style} style={{ overflow: 'auto' }}>
 					<Grid container spacing={0}>
 						<Grid item xs={6}>
-							<SelectTag
-								label='Grupos'
-								options={filterOptions.groups}
-								onChange={onChangeGroups}
-								selected={filters.groups}
-								// onClose={handleOnCloseGroups}
-							/>
-							<SelectTag
-								label='Membros'
-								options={filterOptions.members}
-								onChange={onChangeMembers}
-								selected={filters.members}
-								// onClose={handleOnCloseMembers}
-							/>
-							<SelectTag
-								label='Tags'
-								options={filterOptions.tags}
-								onChange={onChangeTags}
-								selected={filters.tags}
-								// onClose={handleOnCloseTags}
-							/>
+							<SelectTag label='Grupos' options={filterOptions.groups} onChange={onChangeGroups} selected={filters.groups} />
+							<SelectTag label='Membros' options={filterOptions.members} onChange={onChangeMembers} selected={filters.members} />
+							<SelectTag label='Tags' options={filterOptions.tags} onChange={onChangeTags} selected={filters.tags} />
 						</Grid>
-						<Grid item xs={6} style={{ paddingLeft: '3em' }}>
+						<Grid item xs={6} style={{ paddingLeft: '5em', maxHeight: '15em', overflow: 'auto' }}>
 							<MembersFiltersCheckList data={filters.members} />
 						</Grid>
 						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center' }}>
