@@ -118,8 +118,6 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 	groups = groups.sort((a, b) => a.name.localeCompare(b.name))
 	members = members.sort((a, b) => a.name.localeCompare(b.name))
 	tags = tags.sort((a, b) => a.name.localeCompare(b.name))
-	let a = allTasks.find((t) => t.id === '39892')
-	let b = members.find((s) => s.id === '300')
 
 	return { groups, members, tags, allTasks }
 }
