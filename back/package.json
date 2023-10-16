@@ -1,26 +1,24 @@
 {
-  "name": "tcc-node",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/server.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "apexcharts": "^3.38.0",
-    "axios": "^0.27.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.2",
-    "express": "^4.17.3",
-    "jsonwebtoken": "^9.0.0",
-    "lodash": "^4.17.21",
-    "moment-timezone": "^0.5.37",
-    "nodemon": "^2.0.15",
-    "npm": "^8.19.2",
-    "pg": "^8.8.0",
-    "react-apexcharts": "^1.4.0"
-  }
+	"name": "tcc-node",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon ./src/server.js"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"axios": "^0.27.2",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.2",
+		"express": "^4.17.3",
+		"jsonwebtoken": "^9.0.0",
+		"lodash": "^4.17.21",
+		"moment-timezone": "^0.5.37",
+		"nodemon": "^2.0.15",
+		"npm": "^8.19.2",
+		"pg": "^8.8.0"
+	}
 }
