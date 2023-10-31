@@ -53,11 +53,11 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 				<div
 					style={{
 						paddingLeft: '1.3em',
-						display: 'flex',
 						backgroundColor: '#ffffff',
 						borderRadius: '0px 0px 10px 10px',
 						boxShadow: 'inset 0px 0px 3px 0px rgba(0,0,0,0.3)',
-						height: '4em'
+						height: '4em',
+						display: selectedMenuItemRedux === 'account' ? 'none' : 'flex'
 					}}
 				>
 					<CalendarDatePicker onApplyDate={handleOnApplyDate} disabled={isLoading} />
