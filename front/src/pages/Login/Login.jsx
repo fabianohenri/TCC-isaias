@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import api from 'service/service'
 import { connect } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
-import { Button, TextField } from '@mui/material'
+import { Button, Card, CardHeader, Divider, Grid, TextField, Typography } from '@mui/material'
 import { loginAction } from 'storage/redux/actions/user.actions'
 
 const Login = ({ loginActionDispatch }) => {
@@ -39,17 +39,46 @@ const Login = ({ loginActionDispatch }) => {
 		setdomainBitrix(e.target.value)
 	}
 
+	const handleOnEnterDomain = (event) => {
+		if (event.key === 'Enter') {
+			getAuth()
+		}
+	}
+
 	return (
 		<div style={{ justifyContent: 'center', display: 'flex', height: '100vh', alignItems: 'center' }}>
-			<div style={{ display: 'block', border: '1px solid blue', height: '30em', width: '30em' }}>
-				<h3 style={{ justifyContent: 'center', display: 'flex' }}>Faça o login utilizando o seu Bitrix24</h3>
-				<div style={{ justifyContent: 'center', display: 'flex', marginTop: 'auto', marginBottom: 'auto' }}>
-					<TextField label='Domínio Bitrix' variant='outlined' onChange={handleOnChangeDomain} />
-					<Button onClick={getAuth} style={{ height: 'fit-content', marginTop: '10em' }} disabled={loading}>
-						{loading ? 'Carregando' : 'Entrar'}
-					</Button>
-				</div>
-			</div>
+			<Card style={{ height: '25em', width: '40em', padding: '0em 2em 0em 2em' }}>
+				{/* <Typography style={{ justifyContent: 'center', display: 'flex' }} color='text.secondary'>
+					Faça o login utilizando o seu Bitrix24
+				</Typography> */}
+				<CardHeader title='Login' subheader='Faça o login utilizando o seu Bitrix24' />
+
+				<Divider />
+
+				<Grid container style={{ marginTop: '5em', marginBottom: 'auto' }}>
+					<Grid item xs={8}>
+						<TextField
+							label='Domínio Bitrix'
+							variant='outlined'
+							onChange={handleOnChangeDomain}
+							fullWidth
+							onKeyDown={handleOnEnterDomain}
+						/>
+					</Grid>
+					<Grid item xs={2}>
+						<Button onClick={getAuth} disabled={loading} variant='contained' style={{ height: '100%', marginLeft: '3em' }}>
+							{loading ? 'Carregando' : 'Entrar'}
+						</Button>
+					</Grid>
+				</Grid>
+				<Grid container style={{ marginBottom: 'auto', marginTop: '0.3em' }}>
+					<Grid item xs>
+						<Typography style={{ marginLeft: '0.2em', opacity: '0.8' }} color='text.secondary'>
+							Domínio vinculado no Bitrix24, ex: teste123
+						</Typography>
+					</Grid>
+				</Grid>
+			</Card>
 		</div>
 	)
 }
