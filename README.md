@@ -1,15 +1,15 @@
-### TCC: Desenvolvimento de um sistema para análise de dados a partir da plataforma de gestão de projetos Bitrix24, utilizando React.js e Node.js
+# TCC: Desenvolvimento de um sistema para análise de dados a partir da plataforma de gestão de projetos Bitrix24, utilizando React.js e Node.js
 Este trabalho descreve a criação de um sistema de análise de dados integrado com a API de gerenciamento de tarefas do Bitrix24, utilizando as tecnologias React.js, 
 Node.js e PostgreSQL. Este projeto exemplifica a disponibilização de um dashboard por meio da aplicação de princípios de engenharia de software para aprimorar a 
 eficiência operacional e a tomada de decisões baseadas em dados em um ambiente real de colaboração que utiliza o Bitrix24 como plataforma de gerenciamento de tarefas, 
 para o funcionamento correto do sistema, são necessárias as seguintes configurações:
 
-###Configurações
+# Configurações
 O arquivo chamado “example.env” contém o nome das chaves necessárias para o sistema funcionar, esta configuração existe tanto no back-end no front-end e deverão ser configuradas de acordo com as chaves geradas pelo próprio usuário. 
 No caso de hosts em nuvem, será necessário preencher as chaves necessárias conforme permitido e configurado pelo ambiente específico.
 Se o host for local, basta realizar a configuração desses arquivos e renomeá-los para “.env”, e este vai ser o caso que eu vou exemplificar abaixo. 
 
-# Back-end
+### Back-end
 -DATABASE_USER, DATABASE_HOST, DATABASE_NAME, DATABASE_PASSWORD:
 1-Deve-se ter uma conexão válida com uma base de dados PostgreSQL seja local ou em nuvem.
 2-Executar o script de criação de tabela, disponibilizado pelo projeto dentro da pasta "db".
@@ -37,7 +37,7 @@ BITRIX_CLIENT_SECRET=A9aA99AAAaAAAaAaAaA9AAaa9AA9A9AAaaAAAAAAaA9aAAaaa9
 BITRIX_URL=bitrix24.com.br
 BASE_FRONT_URL=http://localhost:3000
 
-# Front-end
+### Front-end
 Existe apenas uma chave: REACT_APP_API_URL, este é o endereço que o back-end disponibiliza para a conexão do front-end, como padrão local, http://localhost:4000.
 Assim ficaria o arquivo .env do front-end (localhost, disponibilizado no example.env):
 
