@@ -1,8 +1,8 @@
 # TCC: Desenvolvimento de um sistema para análise de dados a partir da plataforma de gestão de projetos Bitrix24, utilizando React.js e Node.js
-Este trabalho descreve a criação de um sistema de análise de dados integrado com a API de gerenciamento de tarefas do Bitrix24, utilizando as tecnologias React.js, <br>
-Node.js e PostgreSQL. Este projeto exemplifica a disponibilização de um dashboard por meio da aplicação de princípios de engenharia de software para aprimorar a <br>
-eficiência operacional e a tomada de decisões baseadas em dados em um ambiente real de colaboração que utiliza o Bitrix24 como plataforma de gerenciamento de tarefas, <br>
-para o funcionamento correto do sistema, são necessárias as seguintes configurações: <br>
+Este trabalho descreve a criação de um sistema de análise de dados integrado com a API de gerenciamento de tarefas do Bitrix24, utilizando as tecnologias React.js, 
+Node.js e PostgreSQL. Este projeto exemplifica a disponibilização de um dashboard por meio da aplicação de princípios de engenharia de software para aprimorar a 
+eficiência operacional e a tomada de decisões baseadas em dados em um ambiente real de colaboração que utiliza o Bitrix24 como plataforma de gerenciamento de tarefas, 
+para o funcionamento correto do sistema, são necessárias as seguintes configurações:
 
 # Configurações
 O arquivo chamado “example.env” contém o nome das chaves necessárias para o sistema funcionar, esta configuração existe tanto no back-end no front-end e deverão ser configuradas de acordo com as chaves geradas pelo próprio usuário. <br>
@@ -21,8 +21,8 @@ Se o host for local, basta realizar a configuração desses arquivos e renomeá-
 caso for utilizado pela organização o bitrix24.com, esta chave deverá ser alterada para o próprio bitrix24.com. <br>
 -BASE_FRONT_URL, a URL de acesso do front-end, para o redirecionamento ao autenticar no Bitrix24 na parte do login do sistema. <br>
 
-Supondo que esteja rodando local, a conexão da base usa as mesmas chaves que são usadas como padrão por este sistema, o JWT não precise ser alterado, o site do domínio do Bitrix24 que vai integrar na aplicação <br>
-é o brasileiro (bitrix24.com.br) e o front-end esteja rodando em: http://localhost:3000, as únicas chaves que precisariam de atenção do usuário são as BITRIX_CLIENT_ID e BITRIX_CLIENT_SECRET, que a plataforma Bitrix24 <br>
+Supondo que esteja rodando local, a conexão da base usa as mesmas chaves que são usadas como padrão por este sistema, o JWT não precise ser alterado, o site do domínio do Bitrix24 que vai integrar na aplicação 
+é o brasileiro (bitrix24.com.br) e o front-end esteja rodando em: http://localhost:3000, as únicas chaves que precisariam de atenção do usuário são as BITRIX_CLIENT_ID e BITRIX_CLIENT_SECRET, que a plataforma Bitrix24 
 disponibiliza assim que o usuário cria um "aplicativo" dentro do Bitrix da organização, por meio de uma conta que tenha os privilégios. Lembrando que só a versão paga do Bitrix24 pode utilizar este recurso. <br>
 Atualmente (28/11/2023) esta criação fica na plataforma Bitrix24, após entrar no domínio da organização: no menu lateral na esquerda, em Aplicativos > Recursos para desenvolvedores > Aplicativo local. <br>
 Assim ficaria o arquivo .env do back-end (localhost, disponibilizado no example.env, ainda necessitando da mudança das duas chaves do Bitrix descritas acima): <br>
