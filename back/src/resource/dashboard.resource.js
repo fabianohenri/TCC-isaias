@@ -1,5 +1,4 @@
 const DashboardService = require('../service/dashboard.service')
-const { extractGlobalFiltersFromRequest } = require('../utils/utils')
 
 const getAllTasksAndGroupsWithMembers = async (req, res) => {
 	const fromDate = req.params.fromDate

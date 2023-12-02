@@ -21,14 +21,11 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 
 	const load = async () => {
 		setIsLoading(true)
-		api.get(`/dashboard/get-all-tasks-and-groups-with-members/${date.fromDate}/${date.toDate}`)
-			.then((res) => {
-				setOriginalFilterData(res?.data)
-				setTasksFiltered(res?.data?.allTasks)
-			})
-			.finally(() => {
-				setIsLoading(false)
-			})
+		api.get(`/dashboard/get-all-tasks-and-groups-with-members/${date.fromDate}/${date.toDate}`).then((res) => {
+			setOriginalFilterData(res?.data)
+			setTasksFiltered(res?.data?.allTasks)
+			setIsLoading(false)
+		})
 	}
 
 	useEffect(() => {

@@ -35,7 +35,12 @@ const baseAppBitrixUrlRefreshToken = (
 const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate) => {
 	const restUrl = baseAppBitrixRestUrlTask(bitrixAccess.fullDomain, bitrixAccess.accessToken)
 	const res = await axios
-		.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}&select[]=*&select[]=TAGS&select[]=UF_*`)
+		.get(
+			restUrl +
+				`&start=${start}&filter[>CREATED_DATE]=${fromDate + '00:00:00'}&filter[<CREATED_DATE]=${
+					toDate + '23:59:59'
+				}&select[]=*&select[]=TAGS&select[]=UF_*`
+		)
 		.catch(async (e) => {
 			if (e.response.status === 401) {
 				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken)).catch(async (e) => {

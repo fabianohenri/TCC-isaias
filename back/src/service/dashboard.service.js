@@ -18,6 +18,7 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 	let groups = []
 	let members = []
 	let tags = []
+
 	allTasks.forEach((task) => {
 		//Grupo (projeto)
 		const groupFoundIndex = groups.findIndex((g) => g.id === task.group.id)
@@ -38,7 +39,15 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 		allTaskUsers.forEach((atu) => {
 			const foundIndex = formattedAllTaskUsers.findIndex((fatu) => fatu.id === atu.id)
 			if (foundIndex === -1) {
-				formattedAllTaskUsers.push({ auditor: [], creator: [], responsible: [], closer: [], accomplice: [], groups: [task.group.id], ...atu })
+				formattedAllTaskUsers.push({
+					auditor: [],
+					creator: [],
+					responsible: [],
+					closer: [],
+					accomplice: [],
+					groups: [task.group.id],
+					...atu
+				})
 			} else {
 				atu.auditor && formattedAllTaskUsers[foundIndex].auditor.push(...atu.auditor)
 				atu.creator && formattedAllTaskUsers[foundIndex].creator.push(...atu.creator)
@@ -63,7 +72,6 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 			}
 		})
 	})
-
 	const users = await BitrixService.getBitrixUsersByIds(
 		members.map((it) => it.id),
 		bitrixAccess
@@ -71,17 +79,14 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 	members = members
 		.map((m) => ({ ...m, ...formatSimpleUser(users.find((u) => u.ID === m.id)) }))
 		.filter((mf) => mf.id && mf.name.trim() !== 'Não atribuído')
-
-	allTasks = allTasks
-		.map((task) => ({
-			...formatTask(task),
-			creator: getNameAndIdFromUser(members.find((m) => m.id == task.createdBy)),
-			responsible: getNameAndIdFromUser(members.find((m) => m.id == task.responsible.id)),
-			closer: getNameAndIdFromUser(members.find((m) => m.id == task.closedBy)),
-			auditors: task.auditors.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta))),
-			accomplices: task.accomplices.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta)))
-		}))
-		.filter((t) => (!!t.createdDate && !!t.closedDate ? !!t.responsible.id : true))
+	allTasks = allTasks.map((task) => ({
+		...formatTask(task),
+		creator: getNameAndIdFromUser(members.find((m) => m.id == task.createdBy)),
+		responsible: getNameAndIdFromUser(members.find((m) => m.id == task.responsible.id)),
+		closer: getNameAndIdFromUser(members.find((m) => m.id == task.closedBy)),
+		auditors: task.auditors.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta))),
+		accomplices: task.accomplices.map((ta) => getNameAndIdFromUser(members.find((m) => m.id == ta)))
+	}))
 
 	allTasks.forEach((task) => {
 		task.tags.forEach((taskTag) => {
@@ -94,6 +99,7 @@ const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 			}
 		})
 	})
+
 	//sort
 	groups = groups.sort((a, b) => a.name.localeCompare(b.name))
 	members = members.sort((a, b) => a.name.localeCompare(b.name))

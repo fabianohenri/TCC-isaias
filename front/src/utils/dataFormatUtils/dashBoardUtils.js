@@ -75,7 +75,7 @@ const buildGraphsMetrics = (allTasks) => {
 				tags[foundIndex].value += 1
 			}
 		})
-		if (task.createdDate && task.closedDate) {
+		if (task.createdDate && task.closedDate && task.responsible.id) {
 			const created = moment(task.createdDate)
 			const closed = moment(task.closedDate)
 			//tempo até fechar
@@ -117,7 +117,6 @@ const buildGraphsMetrics = (allTasks) => {
 		},
 		value: Math.round((lodash.sumBy(g, 'completionTimeHours') / g.length) * 10) / 10
 	}))
-
 	const tagsCompletion = []
 	averageCompletionTime.forEach((item) => {
 		item.tags.forEach((it) => {
