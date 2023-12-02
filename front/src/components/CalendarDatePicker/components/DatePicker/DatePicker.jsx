@@ -30,6 +30,10 @@ const DatePicker = ({ onChange, selectionValue }) => {
 	)
 
 	const handleSelect = ({ selection }) => {
+		const isValidEndDate = moment().isAfter(selection.endDate)
+		if (!isValidEndDate) {
+			selection.endDate = moment().toDate()
+		}
 		setSelectionRange(selection)
 	}
 	const onApply = () => {
