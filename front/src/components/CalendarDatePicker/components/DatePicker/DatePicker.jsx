@@ -4,6 +4,7 @@ import { pt } from 'date-fns/locale'
 import 'react-date-range/dist/styles.css' // main style file
 import 'react-date-range/dist/theme/default.css' // theme css file
 import { Button } from '@mui/material'
+import moment from 'moment-timezone'
 
 const defaultSelection = {
 	startDate: new Date(),
@@ -39,6 +40,8 @@ const DatePicker = ({ onChange, selectionValue }) => {
 		<>
 			<div style={{ boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)', width: 'fit-content', marginBottom: '2em' }}>
 				<DateRangePicker
+					maxDate={moment().tz('America/Sao_Paulo').toDate()}
+					minDate={moment.tz('2015-01-01', 'America/Sao_Paulo').toDate()}
 					ranges={[selectionRange]}
 					onChange={handleSelect}
 					locale={pt}
