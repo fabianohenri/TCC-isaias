@@ -52,12 +52,22 @@ const SelectTag = ({ label, options, onChange, selected, onClose }) => {
 				onClose={handleOnClose}
 				multiple
 				value={selectedOptions}
+				label={label}
 				onChange={handleChange}
-				input={<OutlinedInput label='Chip' />}
 				renderValue={(option) => (
 					<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxHeight: '5em', overflow: 'auto' }}>
 						{option.map((value) => (
-							<Chip key={value.id + value.name} label={value.name} />
+							<Chip
+								sx={{
+									height: 'auto',
+									'& .MuiChip-label': {
+										display: 'block',
+										whiteSpace: 'normal'
+									}
+								}}
+								key={value.id + value.name}
+								label={value.name}
+							/>
 						))}
 					</Box>
 				)}

@@ -13,8 +13,6 @@ const style = {
 	bgcolor: 'background.paper',
 	boxShadow: 24,
 	p: 10,
-	height: '50%',
-	width: '30.2%',
 	padding: '20px'
 }
 
