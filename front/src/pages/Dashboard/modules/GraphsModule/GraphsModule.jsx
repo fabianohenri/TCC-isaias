@@ -1,7 +1,7 @@
 import React, { useState, memo, useEffect } from 'react'
 import { Unstable_Grid2 as Grid } from '@mui/material'
 import BarChart from 'components/graphs/BarChart/BarChart'
-import { buildGraphsMetrics } from 'utils/dataFormatUtils/overviewUtils'
+import { buildGraphsMetrics } from 'utils/dataFormatUtils/dashBoardUtils'
 import GraphContainer from 'components/GraphContainer/GraphContainer'
 
 const graphHeight = 400

@@ -2,26 +2,6 @@ const BitrixService = require('./bitrix.service')
 const UserAccountService = require('./userAccount.service')
 const { formatSimpleUser, getNameAndIdFromUser, formatTask } = require('../utils/utils')
 
-const extractMembersFromGroups = (data) => {
-	const uniqueMembers = []
-	data.groups.forEach((it) =>
-		it.members.forEach((m) => {
-			const memberFoundIndex = uniqueMembers.findIndex((um) => um.id === m.id)
-			if (memberFoundIndex === -1) {
-				uniqueMembers.push(m)
-			} else {
-				uniqueMembers[memberFoundIndex].accomplice.push(m.accomplice)
-				uniqueMembers[memberFoundIndex].auditor.push(m.auditor)
-				uniqueMembers[memberFoundIndex].closer.push(m.closer)
-				uniqueMembers[memberFoundIndex].creator.push(m.creator)
-				uniqueMembers[memberFoundIndex].responsible.push(m.responsible)
-			}
-		})
-	)
-
-	return uniqueMembers
-}
-
 const getAllTasksAndGroupsWithMembers = async (userId, fromDate, toDate) => {
 	const [bitrixAccessInfo] = await UserAccountService.getUsersByIds(userId)
 	let bitrixAccess = {

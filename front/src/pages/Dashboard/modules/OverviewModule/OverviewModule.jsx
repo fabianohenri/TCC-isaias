@@ -1,7 +1,7 @@
 import React, { useState, memo, useEffect } from 'react'
 import { Unstable_Grid2 as Grid } from '@mui/material'
 import CardMetric from 'components/CardMetric/CardMetric'
-import { buildOverviewMetrics } from 'utils/dataFormatUtils/overviewUtils'
+import { buildOverviewMetrics } from 'utils/dataFormatUtils/dashBoardUtils'
 
 const OverviewModule = ({ data, loading }) => {
 	const [metrics, setMetrics] = useState({})
