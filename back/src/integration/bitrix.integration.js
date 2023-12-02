@@ -34,7 +34,6 @@ const baseAppBitrixUrlRefreshToken = (
 
 const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate) => {
 	const restUrl = baseAppBitrixRestUrlTask(bitrixAccess.fullDomain, bitrixAccess.accessToken)
-	//TODO verificar se os campos customs UF_ servem pra algo
 	const res = await axios
 		.get(restUrl + `&start=${start}&filter[>CREATED_DATE]=${fromDate}&filter[<CREATED_DATE]=${toDate}&select[]=*&select[]=TAGS&select[]=UF_*`)
 		.catch(async (e) => {

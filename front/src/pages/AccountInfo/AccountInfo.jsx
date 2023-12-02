@@ -18,9 +18,6 @@ const AccountInfo = () => {
 			.then((res) => {
 				setInfo(res.data)
 			})
-			.catch(() => {
-				//todo
-			})
 			.finally(() => setLoading(false))
 	}
 

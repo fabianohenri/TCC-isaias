@@ -12,26 +12,20 @@ const Login = ({ loginActionDispatch }) => {
 
 	const getAuth = () => {
 		setLoading(true)
-		api.get(`/login/get-url-auth/${domainBitrix}`)
-			.then((res) => {
-				window.location.href = res.data
-			})
-			.catch(() => {
-				//todo
-			})
+		api.get(`/login/get-url-auth/${domainBitrix}`).then((res) => {
+			window.location.href = res.data
+		})
 	}
 
 	useEffect(() => {
 		if (searchParams.get('code') && searchParams.get('scope')) {
 			setLoading(true)
-			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}&domain=${searchParams.get('domain')}`)
-				.then((res) => {
+			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}&domain=${searchParams.get('domain')}`).then(
+				(res) => {
 					setLoading(false)
 					loginActionDispatch(res.data)
-				})
-				.catch(() => {
-					//todo
-				})
+				}
+			)
 		}
 	}, [searchParams])
 
