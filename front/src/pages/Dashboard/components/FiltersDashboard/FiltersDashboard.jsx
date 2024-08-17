@@ -72,6 +72,12 @@ const getFilterOptions = (data, filters) => {
 				}
 			})
 		}
+
+		if (filters?.tags?.length > 0) {
+			tasksFiltered.forEach((it) => {
+				it.tags = it.tags.filter((tag) => filters.tags.map((t) => t.id).includes(tag.id))
+			})
+		}
 	}
 
 	const filterData = {

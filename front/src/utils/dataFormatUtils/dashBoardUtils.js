@@ -12,6 +12,34 @@ const formatToSeries = (formattedData, labels, orderBy) => {
 	return seriesDataObject
 }
 
+function formatToSeries2(formattedData, orderBy) {
+	let labels = new Set()
+	// if (orderBy) {
+	// 	formattedData = lodash.orderBy(formattedData, 'value', orderBy)
+	// }
+	const seriesDataObject = []
+
+	formattedData.forEach((item) => {
+		const name = item.key.name
+		const createdDate = new Date(item.key.createdDate).getTime()
+		const value = item.value
+
+		let seriesEntry = seriesDataObject.findIndex((entry) => entry.name === name)
+		labels.add(createdDate)
+		if (seriesEntry != -1) {
+			seriesDataObject[seriesEntry].data.push(value)
+		} else {
+			seriesDataObject.push({
+				name: name,
+				data: [value]
+			})
+		}
+	})
+	let labelsArray = Array.from(labels).map((label) => moment(label).format('MMM/YYYY'))
+	console.log('seriesDataObject', labelsArray)
+	return { series: seriesDataObject, labels: labelsArray }
+}
+
 const buildOverviewMetrics = (allTasks) => {
 	let totalTasks = allTasks.length
 	let openTasks = 0
@@ -48,6 +76,8 @@ const buildGraphsMetrics = (allTasks) => {
 	let accomplices = []
 	let tags = []
 	let averageCompletionTime = []
+	let tagsByTime = []
+
 	allTasks.forEach((task) => {
 		//Usuários dentro do grupo
 		const taskAuditors = task.auditors.filter((ta) => ta.id)
@@ -68,13 +98,29 @@ const buildGraphsMetrics = (allTasks) => {
 		}
 		//extrair tags
 		task.tags.forEach((tt) => {
-			const foundIndex = tags.findIndex((t) => t.key.id === tt.id)
+			const foundIndex = tags.findIndex((t) => {
+				const currentDate = new Date(task.createdDate)
+				const existingDate = new Date(t.key.createdDate)
+				return (
+					t.key.id === tt.id &&
+					currentDate.getMonth() === existingDate.getMonth() &&
+					currentDate.getFullYear() === existingDate.getFullYear()
+				)
+			})
 			if (foundIndex === -1) {
-				tags.push({ key: { id: tt.id, name: tt.title }, value: 1 })
+				tags.push({
+					key: {
+						id: tt.id,
+						name: tt.title,
+						createdDate: new Date(new Date(task.createdDate).getFullYear(), new Date(task.createdDate).getMonth(), 1)
+					},
+					value: 1
+				})
 			} else {
 				tags[foundIndex].value += 1
 			}
 		})
+
 		if (task.createdDate && task.closedDate && task.responsible.id) {
 			const created = moment(task.createdDate)
 			const closed = moment(task.closedDate)
@@ -141,7 +187,7 @@ const buildGraphsMetrics = (allTasks) => {
 			accomplices: formatToSeries(accomplicesFormatted, ['Participantes'], 'desc')
 		},
 		tagsGraphData: {
-			popular: formatToSeries(tags, ['Tags'], 'desc')
+			popular: formatToSeries2(tags, 'desc')
 		},
 		completionGraphData: {
 			averagePersonTime: formatToSeries(avgMemberTime, ['Média de tempo para finalização de tarefas por pessoa (em horas)'], 'desc'),

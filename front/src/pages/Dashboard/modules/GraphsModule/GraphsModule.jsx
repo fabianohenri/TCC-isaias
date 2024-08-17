@@ -1,6 +1,6 @@
 import React, { useState, memo, useEffect } from 'react'
 import { Unstable_Grid2 as Grid } from '@mui/material'
-import BarChart from 'components/graphs/BarChart/BarChart'
+import BarChart from 'components/Chart/BarChart/BarChart'
 import { buildGraphsMetrics } from 'utils/dataFormatUtils/dashBoardUtils'
 import GraphContainer from 'components/GraphContainer/GraphContainer'
 
@@ -31,7 +31,6 @@ const allGraphColors = [
 
 const GraphsModule = ({ data, loading }) => {
 	const [metrics, setMetrics] = useState({})
-
 	const graphsToRender = [
 		{
 			canLoad: metrics?.tagsGraphData?.popular?.series?.length > 0,

@@ -1,29 +1,30 @@
+import { add } from 'date-fns'
 import React, { memo } from 'react'
 import Chart from 'react-apexcharts'
 
 let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isStacked, seriesLength, additionalOptions) => {
 	let options = {
 		colors,
-		chart: {
-			toolbar: {
-				offsetX: 0,
-				offsetY: -30
-			}
-		},
-		tooltip: {
-			y: {
-				formatter: (val) => {
-					let newValue = val
-					if (additionalOptions?.decimal) {
-						newValue = newValue.toFixed(additionalOptions.decimal)
-					}
-					if (additionalOptions?.formatterLabel) {
-						newValue = newValue + additionalOptions?.formatterLabel
-					}
-					return newValue
-				}
-			}
-		},
+		// chart: {
+		// 	// toolbar: {
+		// 	// 	offsetX: 0,
+		// 	// 	offsetY: -30
+		// 	// }
+		// },
+		// tooltip: {
+		// 	y: {
+		// 		formatter: (val) => {
+		// 			let newValue = val
+		// 			if (additionalOptions?.decimal) {
+		// 				newValue = newValue.toFixed(additionalOptions.decimal)
+		// 			}
+		// 			if (additionalOptions?.formatterLabel) {
+		// 				newValue = newValue + additionalOptions?.formatterLabel
+		// 			}
+		// 			return newValue
+		// 		}
+		// 	}
+		// },
 		plotOptions: {
 			bar: {
 				horizontal: isHorizontal,
@@ -31,24 +32,24 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 				columnWidth: '70%'
 			}
 		},
-		dataLabels: {
-			enabled: true,
-			offsetY: 0,
-			offsetX: 0,
-			style: {
-				fontSize: '14px',
-				fontFamily: 'Roboto',
-				colors: ['#fff']
-			},
-			dropShadow: {
-				enabled: true,
-				top: 1,
-				left: 0,
-				blur: 1,
-				color: '#000',
-				opacity: 0.45
-			}
-		},
+		// dataLabels: {
+		// 	enabled: true,
+		// 	offsetY: 0,
+		// 	offsetX: 0,
+		// 	style: {
+		// 		fontSize: '14px',
+		// 		fontFamily: 'Roboto',
+		// 		colors: ['#fff']
+		// 	},
+		// 	dropShadow: {
+		// 		enabled: true,
+		// 		top: 1,
+		// 		left: 0,
+		// 		blur: 1,
+		// 		color: '#000',
+		// 		opacity: 0.45
+		// 	}
+		// },
 		stroke: {
 			width: 0,
 			colors: ['#fff']
@@ -76,8 +77,9 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 			show: false
 		},
 		legend: {
-			offsetY: isStacked ? -25 : 0,
-			showForSingleSeries: true
+			//offsetY: isStacked ? -25 : 0,
+			showForSingleSeries: true,
+			position: 'top'
 		}
 	}
 
@@ -89,13 +91,13 @@ let buildBarOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 	if (isStacked) {
 		options.chart = {
 			stacked: isStacked,
-			stackType: '100%',
-			offsetY: -30
+			stackType: '100%' //,
+			//offsetY: -30
 		}
 	}
 
 	if (hideXAxis) {
-		options.xaxis.labels.show = false
+		options.xaxis.labels.show = true
 		options.xaxis.axisBorder.show = false
 		options.xaxis.axisTicks.show = false
 	}
