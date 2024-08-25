@@ -95,7 +95,12 @@ const formatTask = (task) => ({
 	serviceCommentsCount: task.serviceCommentsCount,
 	status: task.status,
 	timeEstimate: task.timeEstimate,
-	title: task.title
+	title: task.title,
+	type: {
+		isCorrection: task.ufAuto205277867845 === '1',
+		isAdaptation: task.ufAuto408272125948 === '1',
+		isEvolution: task.ufAuto708206427689 === '1'
+	}
 })
 
 module.exports = {

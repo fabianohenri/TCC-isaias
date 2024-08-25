@@ -26,13 +26,16 @@ const getFinalAccessUrl = async (authCode, scope, fullDomain) => {
 //Metricas
 const baseAppBitrixRestUrlTask = (fullDomain, accessToken) => `https://${fullDomain}/rest/tasks.task.list.json?auth=${accessToken}`
 const baseAppBitrixRestUrlUser = (fullDomain, accessToken) => `https://${fullDomain}/rest/user.get.json?auth=${accessToken}`
-
 const baseAppBitrixUrlRefreshToken = (
 	refreshToken
 ) => `https://oauth.bitrix.info/oauth/token?grant_type=refresh_token&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${refreshToken}
 	`
 
 const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate) => {
+	// const fieldsUrl = `https://${bitrixAccess.fullDomain}/rest/tasks.task.getFields.json?auth=${bitrixAccess.accessToken}`
+
+	// const fields = await axios.get(fieldsUrl)
+
 	const restUrl = baseAppBitrixRestUrlTask(bitrixAccess.fullDomain, bitrixAccess.accessToken)
 	const res = await axios
 		.get(

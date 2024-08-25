@@ -18,7 +18,6 @@ function formatToSeries2(formattedData, orderBy) {
 	// 	formattedData = lodash.orderBy(formattedData, 'value', orderBy)
 	// }
 	const seriesDataObject = []
-
 	formattedData.forEach((item) => {
 		const name = item.key.name
 		const createdDate = new Date(item.key.createdDate).getTime()
@@ -36,7 +35,6 @@ function formatToSeries2(formattedData, orderBy) {
 		}
 	})
 	let labelsArray = Array.from(labels).map((label) => moment(label).format('MMM/YYYY'))
-	console.log('seriesDataObject', labelsArray)
 	return { series: seriesDataObject, labels: labelsArray }
 }
 
@@ -77,6 +75,8 @@ const buildGraphsMetrics = (allTasks) => {
 	let tags = []
 	let averageCompletionTime = []
 	let tagsByTime = []
+	let priorityTasks = []
+	let taskByType = []
 
 	allTasks.forEach((task) => {
 		//Usuários dentro do grupo
@@ -136,6 +136,79 @@ const buildGraphsMetrics = (allTasks) => {
 				// closedDate: task.closedDate
 			})
 		}
+
+		// Prioridade
+		for (let i = 1; i <= 5; i++) {
+			const priorityName = 'PRIORIDADE ' + i
+			if (task.title.toUpperCase().includes(priorityName)) {
+				const taskDate = new Date(task.createdDate)
+				const taskYear = taskDate.getFullYear()
+				const taskMonth = taskDate.getMonth()
+
+				const exists = priorityTasks.some(
+					(task) =>
+						task.key.name === priorityName &&
+						task.key.createdDate.getFullYear() === taskYear &&
+						task.key.createdDate.getMonth() === taskMonth
+				)
+
+				if (!exists) {
+					priorityTasks.push({
+						key: {
+							name: priorityName,
+							createdDate: new Date(taskYear, taskMonth, 1)
+						},
+						value: 1
+					})
+				} else {
+					const index = priorityTasks.findIndex(
+						(task) =>
+							task.key.name === priorityName &&
+							task.key.createdDate.getFullYear() === taskYear &&
+							task.key.createdDate.getMonth() === taskMonth
+					)
+					priorityTasks[index].value += 1
+				}
+				break
+			}
+		}
+
+		// Tipo de tarefa
+		let taskType = null
+		if (task.type.isCorrection) {
+			taskType = 'CORREÇÃO'
+		} else if (task.type.isEvolution) {
+			taskType = 'EVOLUÇÃO'
+		} else if (task.type.isAdaptation) {
+			taskType = 'ADAPTAÇÃO'
+		}
+
+		if (taskType) {
+			const taskDate = new Date(task.createdDate)
+			const taskYear = taskDate.getFullYear()
+			const taskMonth = taskDate.getMonth()
+
+			const exists = taskByType.some(
+				(task) =>
+					task.key.name === taskType && task.key.createdDate.getFullYear() === taskYear && task.key.createdDate.getMonth() === taskMonth
+			)
+
+			if (!exists) {
+				taskByType.push({
+					key: {
+						name: taskType,
+						createdDate: new Date(taskYear, taskMonth, 1)
+					},
+					value: 1
+				})
+			} else {
+				const index = taskByType.findIndex(
+					(task) =>
+						task.key.name === taskType && task.key.createdDate.getFullYear() === taskYear && task.key.createdDate.getMonth() === taskMonth
+				)
+				taskByType[index].value += 1
+			}
+		}
 	})
 
 	const users = lodash.uniqBy([...auditors, ...creators, ...responsibles, ...closers, ...accomplices], 'id')
@@ -177,7 +250,6 @@ const buildGraphsMetrics = (allTasks) => {
 		},
 		value: Math.round((lodash.sumBy(g, 'completionTimeHours') / g.length) * 10) / 10
 	}))
-
 	const finalData = {
 		usersGraphData: {
 			auditors: formatToSeries(auditorsFormatted, ['Observadores'], 'desc'),
@@ -192,6 +264,12 @@ const buildGraphsMetrics = (allTasks) => {
 		completionGraphData: {
 			averagePersonTime: formatToSeries(avgMemberTime, ['Média de tempo para finalização de tarefas por pessoa (em horas)'], 'desc'),
 			averageTagTime: formatToSeries(avgTagTime, ['Média de tempo para finalização de tarefas por tag (em horas)'], 'desc')
+		},
+		priorityGraphData: {
+			priorityTasks: formatToSeries2(priorityTasks, 'desc')
+		},
+		typeTaskGraphData: {
+			taskByType: formatToSeries2(taskByType, 'desc')
 		}
 	}
 
