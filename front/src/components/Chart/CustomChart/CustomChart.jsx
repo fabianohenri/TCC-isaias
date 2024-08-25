@@ -6,11 +6,38 @@ const CustomChart = ({ series, height, width, typeChart, labels, colors, additio
 	const buildOptions = () => {
 		switch (typeChart) {
 			case 'line':
-				return buildLineOptions()
+				return buildLineOptions(
+					colors,
+					labels,
+					additionalOptions.hideXAxis,
+					additionalOptions.hideYAxis,
+					additionalOptions.isHorizontal,
+					additionalOptions.isStacked,
+					series?.length,
+					additionalOptions
+				)
 			case 'bar':
-				return buildBarOptions()
+				return buildBarOptions(
+					colors,
+					labels,
+					additionalOptions.hideXAxis,
+					additionalOptions.hideYAxis,
+					additionalOptions.isHorizontal,
+					additionalOptions.isStacked,
+					series?.length,
+					additionalOptions
+				)
 			case 'pie':
-				return buildPieOptions()
+				return buildPieOptions(
+					colors,
+					labels,
+					additionalOptions.hideXAxis,
+					additionalOptions.hideYAxis,
+					additionalOptions.isHorizontal,
+					additionalOptions.isStacked,
+					series?.length,
+					additionalOptions
+				)
 			default:
 				throw new Error(`Unknown chart type: ${typeChart}`)
 		}
@@ -197,7 +224,6 @@ let buildPieOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 			}
 		]
 	}
-
 	return options
 }
 

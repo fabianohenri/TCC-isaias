@@ -1,9 +1,7 @@
 import React, { useState, memo, useEffect } from 'react'
 import { Unstable_Grid2 as Grid, MenuItem, Select } from '@mui/material'
-import BarChart from 'components/Chart/BarChart/BarChart'
 import { buildGraphsMetrics } from 'utils/dataFormatUtils/dashBoardUtils'
 import GraphContainer from 'components/GraphContainer/GraphContainer'
-import LineChart from 'components/Chart/LineChart/LineChart'
 import { render } from 'react-dom'
 import { id } from 'date-fns/locale'
 import CustomChart from 'components/Chart/CustomChart/CustomChart'
@@ -66,6 +64,16 @@ const GraphsModule = ({ data, loading }) => {
 		},
 		{
 			id: 2,
+			canLoad: metrics?.tagsGraphPie?.tags?.series?.length > 0,
+			series: metrics?.tagsGraphPie?.tags?.series,
+			labels: metrics?.tagsGraphPie?.tags?.labels,
+			title: 'Tags',
+			additionalOptions: { formatterLabel: ' tarefas' },
+			xs: 12,
+			typeChart: 'pie'
+		},
+		{
+			id: 3,
 			canLoad: metrics?.priorityGraphData?.priorityTasks?.series?.length > 0,
 			series: metrics?.priorityGraphData?.priorityTasks?.series,
 			labels: metrics?.priorityGraphData?.priorityTasks?.labels,
@@ -75,7 +83,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'line'
 		},
 		{
-			id: 3,
+			id: 4,
 			canLoad: metrics?.typeTaskGraphData?.taskByType?.series?.length > 0,
 			series: metrics?.typeTaskGraphData?.taskByType?.series,
 			labels: metrics?.typeTaskGraphData?.taskByType?.labels,
@@ -85,7 +93,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'line'
 		},
 		{
-			id: 4,
+			id: 5,
 			canLoad: metrics?.completionGraphData?.averageTagTime?.series?.length > 0,
 			series: metrics?.completionGraphData?.averageTagTime?.series,
 			labels: metrics?.completionGraphData?.averageTagTime?.labels,
@@ -95,7 +103,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'bar'
 		},
 		{
-			id: 5,
+			id: 6,
 			canLoad: metrics?.completionGraphData?.averagePersonTime?.series?.length > 0,
 			series: metrics?.completionGraphData?.averagePersonTime?.series,
 			labels: metrics?.completionGraphData?.averagePersonTime?.labels,
@@ -105,7 +113,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'bar'
 		},
 		{
-			id: 6,
+			id: 7,
 			canLoad: metrics?.usersGraphData?.responsibles?.series?.length > 0,
 			series: metrics?.usersGraphData?.responsibles?.series,
 			labels: metrics?.usersGraphData?.responsibles?.labels,
@@ -115,7 +123,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'bar'
 		},
 		{
-			id: 7,
+			id: 8,
 			canLoad: metrics?.usersGraphData?.creators?.series?.length > 0,
 			series: metrics?.usersGraphData?.creators?.series,
 			labels: metrics?.usersGraphData?.creators?.labels,
@@ -125,7 +133,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'bar'
 		},
 		{
-			id: 8,
+			id: 9,
 			canLoad: metrics?.usersGraphData?.closers?.series?.length > 0,
 			series: metrics?.usersGraphData?.closers?.series,
 			labels: metrics?.usersGraphData?.closers?.labels,
@@ -135,7 +143,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'bar'
 		},
 		{
-			id: 9,
+			id: 10,
 			canLoad: metrics?.usersGraphData?.accomplices?.series?.length > 0,
 			series: metrics?.usersGraphData?.accomplices?.series,
 			labels: metrics?.usersGraphData?.accomplices?.labels,
@@ -145,7 +153,7 @@ const GraphsModule = ({ data, loading }) => {
 			typeChart: 'bar'
 		},
 		{
-			id: 10,
+			id: 11,
 			canLoad: metrics?.usersGraphData?.auditors?.series?.length > 0,
 			series: metrics?.usersGraphData?.auditors?.series,
 			labels: metrics?.usersGraphData?.auditors?.labels,

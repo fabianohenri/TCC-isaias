@@ -12,6 +12,14 @@ const formatToSeries = (formattedData, labels, orderBy) => {
 	return seriesDataObject
 }
 
+const formatToSeriesPie = (formattedData) => {
+	const seriesDataObject = {
+		series: formattedData.map((it) => it.value),
+		labels: formattedData.map((it) => it.key.name)
+	}
+	return seriesDataObject
+}
+
 function formatToSeries2(formattedData, orderBy) {
 	let labels = new Set()
 	// if (orderBy) {
@@ -72,9 +80,9 @@ const buildGraphsMetrics = (allTasks) => {
 	let responsibles = []
 	let closers = []
 	let accomplices = []
+	let tagsByTime = []
 	let tags = []
 	let averageCompletionTime = []
-	let tagsByTime = []
 	let priorityTasks = []
 	let taskByType = []
 
@@ -96,9 +104,9 @@ const buildGraphsMetrics = (allTasks) => {
 		if (taskCloser.id) {
 			closers = taskCloser && closers.concat(taskCloser)
 		}
-		//extrair tags
+		//extrair tags por tempo
 		task.tags.forEach((tt) => {
-			const foundIndex = tags.findIndex((t) => {
+			const foundIndex = tagsByTime.findIndex((t) => {
 				const currentDate = new Date(task.createdDate)
 				const existingDate = new Date(t.key.createdDate)
 				return (
@@ -108,7 +116,7 @@ const buildGraphsMetrics = (allTasks) => {
 				)
 			})
 			if (foundIndex === -1) {
-				tags.push({
+				tagsByTime.push({
 					key: {
 						id: tt.id,
 						name: tt.title,
@@ -116,6 +124,16 @@ const buildGraphsMetrics = (allTasks) => {
 					},
 					value: 1
 				})
+			} else {
+				tagsByTime[foundIndex].value += 1
+			}
+		})
+
+		//extrair tags
+		task.tags.forEach((tt) => {
+			const foundIndex = tags.findIndex((t) => t.key.id === tt.id)
+			if (foundIndex === -1) {
+				tags.push({ key: { id: tt.id, name: tt.title }, value: 1 })
 			} else {
 				tags[foundIndex].value += 1
 			}
@@ -259,7 +277,7 @@ const buildGraphsMetrics = (allTasks) => {
 			accomplices: formatToSeries(accomplicesFormatted, ['Participantes'], 'desc')
 		},
 		tagsGraphData: {
-			popular: formatToSeries2(tags, 'desc')
+			popular: formatToSeries2(tagsByTime, 'desc')
 		},
 		completionGraphData: {
 			averagePersonTime: formatToSeries(avgMemberTime, ['Média de tempo para finalização de tarefas por pessoa (em horas)'], 'desc'),
@@ -270,6 +288,9 @@ const buildGraphsMetrics = (allTasks) => {
 		},
 		typeTaskGraphData: {
 			taskByType: formatToSeries2(taskByType, 'desc')
+		},
+		tagsGraphPie: {
+			tags: formatToSeriesPie(tags)
 		}
 	}
 
