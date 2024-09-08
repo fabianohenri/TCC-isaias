@@ -60,7 +60,7 @@ const GraphsModule = ({ data, loading }) => {
 			title: 'Tags',
 			additionalOptions: { formatterLabel: ' tarefas' },
 			xs: 12,
-			typeChart: 'line'
+			typeChart: 'bar'
 		},
 		{
 			id: 2,
@@ -99,7 +99,7 @@ const GraphsModule = ({ data, loading }) => {
 			labels: metrics?.completionGraphData?.averageTagTime?.labels,
 			title: 'Média de tempo para finalização de tarefas por tag',
 			additionalOptions: { formatterLabel: ' h' },
-			xs: 6,
+			xs: 12,
 			typeChart: 'bar'
 		},
 		{
@@ -109,8 +109,8 @@ const GraphsModule = ({ data, loading }) => {
 			labels: metrics?.completionGraphData?.averagePersonTime?.labels,
 			title: 'Média de tempo para finalização de tarefas por pessoa',
 			additionalOptions: { formatterLabel: ' h' },
-			xs: 6,
-			typeChart: 'bar'
+			xs: 12,
+			typeChart: 'line'
 		},
 		{
 			id: 7,

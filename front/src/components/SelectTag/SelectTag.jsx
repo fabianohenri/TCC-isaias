@@ -26,12 +26,12 @@ const getStyles = (name, personName, theme) => {
 
 const SelectTag = ({ label, options, onChange, selected, onClose }) => {
 	const theme = useTheme()
-	const [selectedOptions, setSelectedOptions] = useState([])
+	const [selectedOptions, setSelectedOptions] = useState(selected || [])
+
 	const handleChange = (event) => {
-		onChange(event.target.value)
-		if (!selected) {
-			setSelectedOptions(event.target.value)
-		}
+		const value = event.target.value
+		setSelectedOptions(value)
+		onChange(value)
 	}
 
 	useEffect(() => {
@@ -73,7 +73,7 @@ const SelectTag = ({ label, options, onChange, selected, onClose }) => {
 				MenuProps={MenuProps}
 			>
 				{options.map((obj) => (
-					<MenuItem key={obj.id + obj.name} value={obj} style={getStyles(obj, selectedOptions, theme)} disabled={obj.disabled}>
+					<MenuItem key={obj.id + obj.name} value={obj} style={getStyles(obj.name, selectedOptions, theme)} disabled={obj.disabled}>
 						{obj.name}
 					</MenuItem>
 				))}

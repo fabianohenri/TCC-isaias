@@ -9,7 +9,7 @@ const USER_ACTION_TYPES = {
 
 //pode ser usado tanto no login quanto ao atualizar algum dado do usuário dentro do sistema
 const loginAction = (user) => {
-	setLoggedUser(user) //salva no local storage
+	setLoggedUser(user)
 	return { type: USER_ACTION_TYPES.LOGIN, payload: { user } }
 }
 

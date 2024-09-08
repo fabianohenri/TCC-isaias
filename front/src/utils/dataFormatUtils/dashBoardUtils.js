@@ -20,11 +20,8 @@ const formatToSeriesPie = (formattedData) => {
 	return seriesDataObject
 }
 
-function formatToSeries2(formattedData, orderBy) {
+function formatToSeries2(formattedData) {
 	let labels = new Set()
-	// if (orderBy) {
-	// 	formattedData = lodash.orderBy(formattedData, 'value', orderBy)
-	// }
 	const seriesDataObject = []
 	formattedData.forEach((item) => {
 		const name = item.key.name
@@ -54,7 +51,7 @@ const buildOverviewMetrics = (allTasks) => {
 	let normalPriority = 0
 	let hotfixTasks = 0
 	allTasks.forEach((task) => {
-		if (task.title.includes('[HOTFIX]')) {
+		if (task.title.toUpperCase().includes('[HOTFIX]')) {
 			hotfixTasks += 1
 		}
 		if (task.priority === '1') {
@@ -149,16 +146,18 @@ const buildGraphsMetrics = (allTasks) => {
 				responsibleName: task.responsible.name,
 				tags: task.tags,
 				// completionTime: moment(closed).diff(created),
-				completionTimeHours: moment(closed).diff(created, 'hours', true)
-				// createdDate: task.createdDate,
-				// closedDate: task.closedDate
+				completionTimeHours: moment(closed).diff(created, 'hours', true),
+				createdDate: task.createdDate,
+				closedDate: task.closedDate
 			})
 		}
-
 		// Prioridade
 		for (let i = 1; i <= 5; i++) {
-			const priorityName = 'PRIORIDADE ' + i
-			if (task.title.toUpperCase().includes(priorityName)) {
+			let priorityName = 'PRIORIDADE ' + i
+			if (task.title.toUpperCase().includes(priorityName) || task.title.toUpperCase().includes('HOTFIX')) {
+				if (task.title.toUpperCase().includes('HOTFIX')) {
+					priorityName = 'HOTFIX'
+				}
 				const taskDate = new Date(task.createdDate)
 				const taskYear = taskDate.getFullYear()
 				const taskMonth = taskDate.getMonth()
@@ -247,13 +246,39 @@ const buildGraphsMetrics = (allTasks) => {
 		.map((obj) => ({ ...obj, key: users.find((user) => user.id === obj.key) }))
 
 	const groupedMembersAvg = lodash.groupBy(averageCompletionTime, 'responsibleId')
-	const avgMemberTime = lodash.map(groupedMembersAvg, (g) => ({
-		key: {
-			id: g[0].responsibleId,
-			name: g[0].responsibleName
-		},
-		value: Math.round((lodash.sumBy(g, 'completionTimeHours') / g.length) * 10) / 10
-	}))
+	const avgMemberTimeByMonth = []
+
+	Object.values(groupedMembersAvg).forEach((members) => {
+		members.forEach((g) => {
+			const currentDate = new Date(g.closedDate)
+			const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+			const foundIndex = avgMemberTimeByMonth.findIndex((t) => {
+				const existingDate = new Date(t.key.createdDate)
+				return (
+					t.key.id === g.responsibleId &&
+					currentDate.getMonth() === existingDate.getMonth() &&
+					currentDate.getFullYear() === existingDate.getFullYear()
+				)
+			})
+
+			if (foundIndex === -1) {
+				avgMemberTimeByMonth.push({
+					key: {
+						id: g.responsibleId,
+						name: g.responsibleName,
+						createdDate: monthStart
+					},
+					value: Math.round(g.completionTimeHours * 10) / 10,
+					count: 1
+				})
+			} else {
+				const existingEntry = avgMemberTimeByMonth[foundIndex]
+				const totalHours = existingEntry.value * existingEntry.count + g.completionTimeHours
+				existingEntry.count += 1
+				existingEntry.value = Math.round((totalHours / existingEntry.count) * 10) / 10
+			}
+		})
+	})
 	const tagsCompletion = []
 	averageCompletionTime.forEach((item) => {
 		item.tags.forEach((it) => {
@@ -280,14 +305,14 @@ const buildGraphsMetrics = (allTasks) => {
 			popular: formatToSeries2(tagsByTime, 'desc')
 		},
 		completionGraphData: {
-			averagePersonTime: formatToSeries(avgMemberTime, ['Média de tempo para finalização de tarefas por pessoa (em horas)'], 'desc'),
+			averagePersonTime: formatToSeries2(avgMemberTimeByMonth),
 			averageTagTime: formatToSeries(avgTagTime, ['Média de tempo para finalização de tarefas por tag (em horas)'], 'desc')
 		},
 		priorityGraphData: {
-			priorityTasks: formatToSeries2(priorityTasks, 'desc')
+			priorityTasks: formatToSeries2(priorityTasks)
 		},
 		typeTaskGraphData: {
-			taskByType: formatToSeries2(taskByType, 'desc')
+			taskByType: formatToSeries2(taskByType)
 		},
 		tagsGraphPie: {
 			tags: formatToSeriesPie(tags)

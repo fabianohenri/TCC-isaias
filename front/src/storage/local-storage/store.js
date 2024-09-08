@@ -9,7 +9,7 @@ export const getLoggedUser = () => {
 	}
 }
 export const getLoggedUserToken = () => (localStorage.getItem(auth) ? JSON.parse(localStorage.getItem(auth))?.token : null)
-export const clearLocalStorage = () => localStorage.removeItem(auth)
-
-//Unused
-export const clearLoggedUser = () => localStorage.removeItem(auth)
+export const clearLocalStorage = () => {
+	localStorage.removeItem(auth)
+	localStorage.removeItem('persist:root')
+}

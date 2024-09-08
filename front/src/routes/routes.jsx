@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import Login from 'pages/Login/Login'
 import Dashboard from 'pages/Dashboard/Dashboard'
 import { restoreLoggedUserAction } from 'storage/redux/actions/user.actions'
+import { is } from 'date-fns/locale'
 
 const routes = [
 	//Public

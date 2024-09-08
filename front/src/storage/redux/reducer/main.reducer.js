@@ -6,6 +6,7 @@ const DEFAULT_DASHBOARD_FILTERS = {
 	members: [],
 	groups: [],
 	tags: [],
+	priority: [],
 	showOnlySelectedMemberData: false,
 	showOnlyHotfixData: false,
 	showOnlyHighPriorityData: false
@@ -50,14 +51,6 @@ export default (state = initialState, action) => {
 					filters: { ...state.dashboard.filters, ...action.payload.newFilters }
 				}
 			}
-		// case DASHBOARD_ACTION_TYPES.RESET_FILTERS:
-		// 	return {
-		// 		...state,
-		// 		dashboard: {
-		// 			...state.dashboard,
-		// 			filters: DEFAULT_DASHBOARD_FILTERS
-		// 		}
-		// 	}
 		case DASHBOARD_ACTION_TYPES.CHANGE_MENU_ITEM:
 			return {
 				...state,

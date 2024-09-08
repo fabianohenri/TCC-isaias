@@ -4,10 +4,9 @@ const DASHBOARD_ACTION_TYPES = {
 	CHANGE_MENU_ITEM: 'CHANGE_MENU_ITEM'
 }
 
-const addOnFiltersAction = (newFilters) => ({
-	type: DASHBOARD_ACTION_TYPES.ADD_ON_FILTERS,
-	payload: { newFilters }
-})
+const addOnFiltersAction = (newFilters) => {
+	return { type: DASHBOARD_ACTION_TYPES.ADD_ON_FILTERS, payload: { newFilters } }
+}
 
 const changeMenuItemAction = (selectedMenuItem) => ({
 	type: DASHBOARD_ACTION_TYPES.CHANGE_MENU_ITEM,

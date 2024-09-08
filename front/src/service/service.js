@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { logoutAction } from 'storage/redux/actions/user.actions'
-import store from 'storage/redux/store'
+import { store } from 'storage/redux/store'
 import { getLoggedUserToken, clearLocalStorage } from 'storage/local-storage/store'
 
 const baseURL = process.env.REACT_APP_API_URL

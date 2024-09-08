@@ -12,12 +12,13 @@ import GraphsModule from './modules/GraphsModule/GraphsModule'
 import CalendarDatePicker from 'components/CalendarDatePicker/CalendarDatePicker'
 import { LoadingIcon } from 'utils/SystemIcons/SystemIcons'
 
-const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
+const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux, fromDate, toDate }) => {
 	const [originalFilterData, setOriginalFilterData] = useState(null)
 	const [tasksFiltered, setTasksFiltered] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
 
-	const [date, setDate] = useState(DEFAULT_DASHBOARD_DATE_FILTERS)
+	const [date, setDate] = useState({ fromDate, toDate })
+	console.log('date', date)
 
 	const load = async () => {
 		setIsLoading(true)
@@ -57,7 +58,7 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux }) => {
 						display: selectedMenuItemRedux === 'account' ? 'none' : 'flex'
 					}}
 				>
-					<CalendarDatePicker onApplyDate={handleOnApplyDate} disabled={isLoading} />
+					<CalendarDatePicker onApplyDate={handleOnApplyDate} disabled={isLoading} controlledDate={date} />
 					<div style={{ marginLeft: '1.5em', display: 'flex', alignItems: 'center' }}>
 						{isLoading ? (
 							<LoadingIcon thickness={2} style={{ color: '#1976D2', width: '25px', height: '25px', marginLeft: '2em' }} />
@@ -83,7 +84,9 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const mapStateToProps = ({ store }) => ({
-	selectedMenuItemRedux: store?.dashboard?.selectedMenuItem
+	selectedMenuItemRedux: store?.dashboard?.selectedMenuItem,
+	fromDate: store?.dashboard?.filters?.fromDate,
+	toDate: store?.dashboard?.filters?.toDate
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(memo(Dashboard))

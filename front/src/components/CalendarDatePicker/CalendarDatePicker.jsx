@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DEFAULT_DASHBOARD_DATE_FILTERS } from 'storage/redux/reducer/main.reducer'
 import DatePicker from 'components/CalendarDatePicker/components/DatePicker/DatePicker'
 import { CalendarMonth } from '@mui/icons-material'
@@ -16,9 +16,13 @@ const style = {
 	padding: '20px'
 }
 
-const CalendarDatePicker = ({ onApplyDate, disabled }) => {
-	const [date, setDate] = useState(DEFAULT_DASHBOARD_DATE_FILTERS)
+const CalendarDatePicker = ({ onApplyDate, disabled, controlledDate }) => {
+	const [date, setDate] = useState(controlledDate || DEFAULT_DASHBOARD_DATE_FILTERS)
 	const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
+
+	useEffect(() => {
+		setDate(controlledDate)
+	}, [controlledDate])
 
 	const toggleIsOpenDatePicker = () => {
 		setIsOpenDatePicker(!isOpenDatePicker)
@@ -29,7 +33,6 @@ const CalendarDatePicker = ({ onApplyDate, disabled }) => {
 			fromDate: moment(fromDate).format('YYYY-MM-DD'),
 			toDate: moment(toDate).format('YYYY-MM-DD')
 		}
-		setDate(newDate)
 		onApplyDate(newDate)
 		setIsOpenDatePicker(false)
 	}

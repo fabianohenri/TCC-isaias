@@ -4,7 +4,7 @@ import { Button, Card, Modal, Grid, Checkbox, Typography } from '@mui/material'
 //system libs
 import SelectTag from 'components/SelectTag/SelectTag'
 import { addOnFiltersAction } from 'storage/redux/actions/dashboard.actions'
-import { DEFAULT_DASHBOARD_FILTERS } from 'storage/redux/reducer/main.reducer'
+import { DEFAULT_DASHBOARD_FILTERS, savedFilters } from 'storage/redux/reducer/main.reducer'
 import MembersFiltersCheckList from './components/MembersFiltersCheckList/MembersFiltersCheckList'
 
 const style = {
@@ -18,28 +18,47 @@ const style = {
 	width: '50%'
 }
 
+const priorityOptions = [
+	{ id: 1, name: 'PRIORIDADE 1' },
+	{ id: 2, name: 'PRIORIDADE 2' },
+	{ id: 3, name: 'PRIORIDADE 3' },
+	{ id: 4, name: 'PRIORIDADE 4' },
+	{ id: 5, name: 'PRIORIDADE 5' }
+]
+
 const getFilterOptions = (data, filters) => {
 	//Verifica a partir das tags selecionados quais membros serão mostrados no select
 	let tasksFiltered = data.allTasks
 	let membersOptions = data.members
 	let groupsOptions = data.groups
 	let tagsOptions = data.tags
+	// Adiciona a verificação para filtrar tagsOptions com base nos grupos selecionados
+	if (filters.groups.length > 0) {
+		const selectedGroupIds = filters.groups.map((g) => g.id)
+		tagsOptions = tagsOptions.filter((tag) =>
+			tag.tasks.some((taskId) => data.allTasks.some((task) => task.id === taskId && selectedGroupIds.includes(task.group.id)))
+		)
+	}
+
 	if (
 		tasksFiltered?.length > 1 &&
 		(filters.members.length > 0 ||
 			filters.groups.length > 0 ||
 			filters.tags.length > 0 ||
 			filters?.showOnlyHotfixData ||
-			filters?.showOnlyHighPriorityData)
+			filters?.showOnlyHighPriorityData ||
+			filters?.priority.length > 0)
 	) {
 		//filtra pelos membros, grupos e tags
 		const membersIdsInFilter = filters?.members?.map((m) => m.id)
+		const priorityNames = filters?.priority?.map((p) => p.name.toUpperCase())
 		tasksFiltered = tasksFiltered.filter((task) => {
 			let cond1 = true
 			let cond2 = true
 			let cond3 = true
 			let cond4 = true
 			let cond5 = true
+			let cond6 = true
 
 			if (membersIdsInFilter.length > 0) {
 				cond1 = task.allUsers.some((i) => membersIdsInFilter.includes(i))
@@ -51,13 +70,16 @@ const getFilterOptions = (data, filters) => {
 				cond3 = task.tags.some((taskTags) => filters.tags.some((filterTag) => filterTag.id === taskTags.id))
 			}
 			if (filters?.showOnlyHotfixData) {
-				cond4 = task.title.includes('[HOTFIX]')
+				cond4 = task.title.toUpperCase().includes('[HOTFIX]')
 			}
 			if (filters?.showOnlyHighPriorityData) {
 				cond5 = task.priority === '2'
 			}
+			if (filters?.priority.length > 0) {
+				cond6 = priorityNames.some((priorityName) => task.title.toUpperCase().includes(priorityName))
+			}
 
-			return cond1 && cond2 && cond3 && cond4 && cond5
+			return cond1 && cond2 && cond3 && cond4 && cond5 && cond6
 		})
 		//filtra pra mostrar somente dados dos itens selecionados nos filtros
 		if (filters.showOnlySelectedMemberData) {
@@ -105,14 +127,15 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 	}, [open])
 
 	useEffect(() => {
-		applyFilters(DEFAULT_DASHBOARD_FILTERS)
+		//applyFilters(DEFAULT_DASHBOARD_FILTERS)
 		if (data) {
-			setFilterOptions({ groups: data.groups, members: data.members, tags: data.tags })
+			setFilterOptions({ groups: data.groups, members: data.members, tags: data.tags, priority: priorityOptions })
 		}
 	}, [data])
 
 	useEffect(() => {
 		setFilters(filtersDependantRedux)
+		applyFilters(filtersDependantRedux)
 	}, [filtersDependantRedux])
 
 	const onChangeGroups = (changedGroups) => {
@@ -135,14 +158,21 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 		handleChangeSelect(newFilters, 'tags')
 	}
 
+	const onChangePriority = (changedPriority) => {
+		const newFilters = { ...filters, priority: changedPriority }
+		setFilters(newFilters)
+		handleChangeSelect(newFilters, 'priority')
+	}
+
 	const handleOpen = () => setOpen(true)
 	const handleClose = () => setOpen(false)
 
-	const applyFilters = (defaultFilters) => {
-		addOnFiltersDispatch({ dependant: defaultFilters || filters })
+	const applyFilters = (filters) => {
+		addOnFiltersDispatch({ dependant: filters })
 		setOpen(false)
 		if (onApplyFilters) {
-			onApplyFilters(filteredTasks)
+			const tasks = handleChangeFilter(data, filters)
+			onApplyFilters(tasks)
 		}
 	}
 
@@ -172,6 +202,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 		const { options, tasks } = getFilterOptions(filterData, newFilters)
 		setFilteredTasks(tasks)
 		setFilterOptions(options)
+		return tasks
 	}
 
 	return (
@@ -186,6 +217,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 							<SelectTag label='Grupos' options={filterOptions.groups} onChange={onChangeGroups} selected={filters.groups} />
 							<SelectTag label='Membros' options={filterOptions.members} onChange={onChangeMembers} selected={filters.members} />
 							<SelectTag label='Tags' options={filterOptions.tags} onChange={onChangeTags} selected={filters.tags} />
+							<SelectTag label='Prioridades' options={priorityOptions} onChange={onChangePriority} selected={filters.priority} />
 						</Grid>
 						<Grid item xs={6} style={{ paddingLeft: '5em', maxHeight: '15em', overflow: 'auto' }}>
 							<MembersFiltersCheckList data={filters.members} />
@@ -207,7 +239,7 @@ const FiltersDashboard = ({ filtersDependantRedux, addOnFiltersDispatch, data, o
 							<Typography>Mostrar apenas dados de alta prioridade</Typography>
 						</Grid>
 						<Grid item xs={12} style={{ display: 'flex', alignItems: 'center', marginTop: '2em', paddingLeft: '0.3em' }}>
-							<Button onClick={() => applyFilters()}>Aplicar</Button>
+							<Button onClick={() => applyFilters(filters)}>Aplicar</Button>
 							<Button onClick={resetFilters}>Resetar</Button>
 						</Grid>
 					</Grid>

@@ -1,4 +1,5 @@
 import { Margin, Padding } from '@mui/icons-material'
+import { format } from 'date-fns'
 import React, { memo, useEffect, useState } from 'react'
 import Chart from 'react-apexcharts'
 
@@ -194,9 +195,9 @@ let buildLineOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSt
 		legend: {
 			position: 'top',
 			horizontalAlign: 'right',
-			floating: true,
-			offsetY: -25,
-			offsetX: -5
+			floating: false,
+			offsetY: 0,
+			offsetX: 0
 		}
 	}
 
@@ -210,6 +211,12 @@ let buildPieOptions = (colors, labels, hideXAxis, hideYAxis, isHorizontal, isSta
 			type: 'pie'
 		},
 		labels: labels,
+		dataLabels: {
+			enabled: true,
+			formatter: function (val, opts) {
+				return opts.w.config.series[opts.seriesIndex]
+			}
+		},
 		responsive: [
 			{
 				breakpoint: 480,
