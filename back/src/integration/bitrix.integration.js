@@ -31,11 +31,33 @@ const baseAppBitrixUrlRefreshToken = (
 ) => `https://oauth.bitrix.info/oauth/token?grant_type=refresh_token&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${refreshToken}
 	`
 
+const baseAppBitrixRestUrlTaskHistory = (fullDomain, accessToken, taskId) =>
+	`https://${fullDomain}/rest/tasks.task.history.list.json?auth=${accessToken}&taskId=${taskId}`
+
+const getTaskHistory = async (bitrixAccess, taskId) => {
+	const restUrl = baseAppBitrixRestUrlTaskHistory(bitrixAccess.fullDomain, bitrixAccess.accessToken, taskId)
+	try {
+		const res = await axios.get(restUrl)
+		return res.data
+	} catch (e) {
+		if (e.response.status === 401) {
+			try {
+				const { data } = await axios.get(baseAppBitrixUrlRefreshToken(bitrixAccess.refreshToken))
+				bitrixAccess.accessToken = data.access_token
+				const res = await axios.get(restUrl)
+				return res.data
+			} catch (refreshError) {
+				console.error('Error refreshing token:', refreshError)
+				throw refreshError
+			}
+		} else {
+			console.error('Error fetching task history:', e)
+			throw e
+		}
+	}
+}
+
 const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate) => {
-	// const fieldsUrl = `https://${bitrixAccess.fullDomain}/rest/tasks.task.getFields.json?auth=${bitrixAccess.accessToken}`
-
-	// const fields = await axios.get(fieldsUrl)
-
 	const restUrl = baseAppBitrixRestUrlTask(bitrixAccess.fullDomain, bitrixAccess.accessToken)
 	const res = await axios
 		.get(
@@ -60,6 +82,13 @@ const getTasksWithFilters = async (bitrixAccess, start, fromDate, toDate) => {
 				return { data: { status: 401, newAccess: newBitrixAccess } }
 			}
 		})
+
+	// const tasks = res?.data?.result?.tasks || []
+	// for (const task of tasks) {
+	// 	const history = await getTaskHistory(bitrixAccess, task.id)
+	// 	task.history = history
+	// }
+
 	return res?.data || { total: null, result: { tasks: [] } }
 }
 

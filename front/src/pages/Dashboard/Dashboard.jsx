@@ -18,7 +18,6 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux, fromDate, toDa
 	const [isLoading, setIsLoading] = useState(true)
 
 	const [date, setDate] = useState({ fromDate, toDate })
-	console.log('date', date)
 
 	const load = async () => {
 		setIsLoading(true)

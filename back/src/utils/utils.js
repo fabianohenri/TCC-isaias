@@ -100,7 +100,8 @@ const formatTask = (task) => ({
 		isCorrection: task.ufAuto205277867845 === '1',
 		isAdaptation: task.ufAuto408272125948 === '1',
 		isEvolution: task.ufAuto708206427689 === '1'
-	}
+	},
+	history: task.history
 })
 
 module.exports = {

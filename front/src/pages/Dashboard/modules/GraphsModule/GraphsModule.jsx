@@ -100,7 +100,7 @@ const GraphsModule = ({ data, loading }) => {
 			title: 'Média de tempo para finalização de tarefas por tag',
 			additionalOptions: { formatterLabel: ' h' },
 			xs: 12,
-			typeChart: 'bar'
+			typeChart: 'line'
 		},
 		{
 			id: 6,
