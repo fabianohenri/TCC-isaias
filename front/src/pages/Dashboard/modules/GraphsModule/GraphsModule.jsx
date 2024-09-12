@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from 'react'
 import { Unstable_Grid2 as Grid, MenuItem, Select } from '@mui/material'
 import { buildGraphsMetrics } from 'utils/dataFormatUtils/dashBoardUtils'
 import GraphContainer from 'components/GraphContainer/GraphContainer'
-import { render } from 'react-dom'
+//import { render } from 'react-dom'
 import { id } from 'date-fns/locale'
 import CustomChart from 'components/Chart/CustomChart/CustomChart'
 
