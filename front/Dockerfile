@@ -11,7 +11,6 @@ WORKDIR /src
 # Usar as mudanças do package.json para forçar o Docker invalidar o cache
 # quando houver mudanças nas dependências
 COPY package.json /src
-COPY .env /src
 
 # Resolver as dependencias do projeto
 RUN set -eux; \
