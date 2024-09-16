@@ -15,7 +15,7 @@ const Login = ({ loginActionDispatch }) => {
 
 	const getAuth = () => {
 		setLoading(true)
-		api.get(`http://grafico-bitrix.projetusti.com.br/login/get-url-auth/${domainBitrix}`).then((res) => {
+		api.get(`/login/get-url-auth/${domainBitrix}`).then((res) => {
 			window.location.href = res.data
 		})
 	}
