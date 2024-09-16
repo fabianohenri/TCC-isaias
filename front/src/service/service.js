@@ -5,6 +5,8 @@ import { getLoggedUserToken, clearLocalStorage } from 'storage/local-storage/sto
 
 const baseURL = process.env.REACT_APP_API_URL
 
+console.log("API URL:", baseURL);
+
 const api = axios.create({ baseURL: `${baseURL}/api` })
 
 api.interceptors.request.use(async (config) => {
