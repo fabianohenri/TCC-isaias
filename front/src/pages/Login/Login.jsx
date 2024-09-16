@@ -5,14 +5,17 @@ import { useSearchParams } from 'react-router-dom'
 import { Button, Card, CardHeader, Divider, Grid, TextField, Typography } from '@mui/material'
 import { loginAction } from 'storage/redux/actions/user.actions'
 
+
+
 const Login = ({ loginActionDispatch }) => {
+
 	let [searchParams] = useSearchParams()
 	const [loading, setLoading] = useState(false)
 	const [domainBitrix, setdomainBitrix] = useState('')
 
 	const getAuth = () => {
 		setLoading(true)
-		api.get(`/login/get-url-auth/${domainBitrix}`).then((res) => {
+		api.get(`http://grafico-bitrix.projetusti.com.br/login/get-url-auth/${domainBitrix}`).then((res) => {
 			window.location.href = res.data
 		})
 	}
