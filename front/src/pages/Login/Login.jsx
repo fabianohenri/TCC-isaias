@@ -14,7 +14,9 @@ const Login = ({ loginActionDispatch }) => {
 	const getAuth = () => {
 		setLoading(true)
 		api.get(`/login/get-url-auth/${domainBitrix}`).then((res) => {
-			window.location.href = res.data
+			const url_data = new URL(res.data)
+			const uri_redirect = url_data.searchParams.get('redirect_uri')
+			// window.location.href = res.data
 		})
 	}
 
