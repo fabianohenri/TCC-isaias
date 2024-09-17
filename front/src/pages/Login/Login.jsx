@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import { Button, Card, CardHeader, Divider, Grid, TextField, Typography } from '@mui/material'
 import { loginAction } from 'storage/redux/actions/user.actions'
+import { WindowSharp } from '@mui/icons-material'
 
 const Login = ({ loginActionDispatch }) => {
 	let [searchParams] = useSearchParams()
@@ -13,6 +14,23 @@ const Login = ({ loginActionDispatch }) => {
 	const getAuth = () => {
 		setLoading(true)
 		api.get(`/login/get-url-auth/${domainBitrix}`).then((res) => {
+			// Coleta as informações para o redirecionamento de pagina após o login
+			const url = new URL(res.data)
+
+			// Extrai o valor desejado da resposta
+			const redirectUri = url.searchParams.get('redirect_uri')
+
+			// Valida se encontrou e rediciona, ou informa erro.
+			if (redirectUri) {
+				console.log('Redirect URI:', redirectUri)
+
+				// Redireciona para o redirect_uri se necessário
+				window.location.href = redirectUri
+			} else {
+				console.error('Parâmetro redirect_uri não encontrado na URL')
+			}
+
+			console.log('Redirect para: ', res.data)
 			window.location.href = res.data
 		})
 	}
