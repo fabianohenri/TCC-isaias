@@ -7,19 +7,12 @@ const config = require('./config')
 const app = express()
 const LoginResource = require('./resource/login.resource')
 const DashboardResource = require('./resource/dashboard.resource')
-const { method } = require('lodash')
 
 const port = 4000
 
 const PREFIX = '/api'
 
-const corsOptions = { 
-	origin: 'https://grafico-bitrix.projetusti.com.br',
-	method: ['GET', 'POST'],
-	allowedHeaders: ['Content-Type', 'Authorization']
-}
-
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
