@@ -26,12 +26,11 @@ const Login = ({ loginActionDispatch }) => {
 
 				// Redireciona para o redirect_uri se necessário
 				window.location.href = redirectUri
+				// console.log('Redirect para: ', res.data)
+				// window.location.href = res.data
 			} else {
 				console.error('Parâmetro redirect_uri não encontrado na URL')
 			}
-
-			console.log('Redirect para: ', res.data)
-			window.location.href = res.data
 		})
 	}
 
