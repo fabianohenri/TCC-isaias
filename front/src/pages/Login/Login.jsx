@@ -15,8 +15,9 @@ const Login = ({ loginActionDispatch }) => {
 		setLoading(true)
 		api.get(`/login/get-url-auth/${domainBitrix}`).then((res) => {
 			const url_data = new URL(res.data)
-			const uri_redirect = url_data.searchParams.get('redirect_uri')
-			window.location.href = res.data
+			// const uri_redirect = url_data.searchParams.get('redirect_uri')
+			const uri_redirect = 'https://grafico-bitrix.projetusti.com.br' + res.data
+			window.location.href = uri_redirect
 		})
 	}
 
