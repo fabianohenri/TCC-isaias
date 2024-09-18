@@ -25,7 +25,7 @@
 		"redux-persist": "^6.0.0"
 	},
 	"scripts": {
-		"start": "react-scripts start",
+		"start": "react-scripts start --inpect",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"

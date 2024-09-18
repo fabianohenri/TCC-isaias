@@ -8,6 +8,7 @@ const redirectUrl = config.ETC.BASE_FRONT_URL
 //1 passo login
 const getUrlAuth = async (domainBitrix) =>
 	`https://${domainBitrix + '.' + URL}/oauth/authorize/?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${redirectUrl}`
+	
 
 //2 passo login
 const buildFinalAccessUrl = (authCode, scope, fullDomain) =>
