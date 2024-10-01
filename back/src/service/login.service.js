@@ -10,7 +10,7 @@ const getUrlAuth = async (domainBitrix) => {
 const loginOrCreateAccount = async (authCode, scope, domain) => {
 	const accessBitrix = await BitrixService.getFinalAccessUrl(authCode, scope, domain)
 	const accountExists = await UserAccountRepository.findByUserIdBitrixAndDomain(accessBitrix.user_id, accessBitrix.domain)
-
+	console.log("Retorno da pesquisa se a conta existe:" + accountExists)
 	let userData = {}
 	if (accountExists) {
 		userData = await UserAccountRepository.saveNewAccess(
@@ -20,6 +20,7 @@ const loginOrCreateAccount = async (authCode, scope, domain) => {
 			accountExists.id
 		)
 	} else {
+		console.log("Conta não existente, iniciando a criação")
 		const bitrixAccessFormatted = {
 			fullDomain: accessBitrix.domain,
 			accessToken: accessBitrix.access_token,

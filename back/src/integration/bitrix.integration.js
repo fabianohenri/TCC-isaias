@@ -21,6 +21,11 @@ const getFinalAccessUrl = async (authCode, scope, fullDomain) => {
 			const { access_token, refresh_token, scope, user_id, domain } = res.data
 			return { access_token, refresh_token, scope, user_id, domain }
 		})
+		.then(
+			(res) => {
+				console.log(res.data)
+			}
+		)
 		.catch((e) => console.error(e))
 }
 
@@ -39,6 +44,7 @@ const getTaskHistory = async (bitrixAccess, taskId) => {
 	const restUrl = baseAppBitrixRestUrlTaskHistory(bitrixAccess.fullDomain, bitrixAccess.accessToken, taskId)
 	try {
 		const res = await axios.get(restUrl)
+		console.log(res.data)
 		return res.data
 	} catch (e) {
 		if (e.response.status === 401) {

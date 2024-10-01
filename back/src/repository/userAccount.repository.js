@@ -10,7 +10,7 @@ const saveNewAccess = async (accessToken, refreshToken, scope, accountId) => {
 	`,
 		[accessToken, refreshToken, scope, accountId]
 	)
-
+	console.log("Atualizando dados de acesso.")
 	return rows[0]
 }
 
@@ -24,6 +24,7 @@ const refreshAccess = async (accessToken, refreshToken, userIdBitrix) => {
 	`,
 		[accessToken, refreshToken, userIdBitrix]
 	)
+	console.log("Efetuando a renovação do acesso")
 	return rows[0]
 }
 
@@ -36,7 +37,7 @@ const createAccount = async (accessToken, refreshToken, scope, userIdBitrix, dom
     `,
 		[accessToken, refreshToken, scope, userIdBitrix, domainBitrix, userName]
 	)
-
+	console.log("Criação da conta no banco de dados. Retorno: " + rows[0])
 	return rows[0]
 }
 
@@ -47,6 +48,7 @@ const findByUserIdBitrixAndDomain = async (userId, domain) => {
     `,
 		[userId, domain]
 	)
+	console.log("Busca pelo usuário de id: $1", [userId])
 	return rows[0]
 }
 
@@ -58,7 +60,7 @@ const getUsersByIds = async (userIds) => {
     `,
 		[userIds]
 	)
-
+	console.log("Coletando dados do usuáiro: $1", [userId])
 	return rows
 }
 
