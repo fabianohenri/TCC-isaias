@@ -18,6 +18,11 @@ const AccountInfo = () => {
 			.then((res) => {
 				setInfo(res.data)
 			})
+			.then(
+				(res) => {
+					console.log(res.data)
+				}
+			)
 			.finally(() => setLoading(false))
 	}
 

@@ -26,6 +26,11 @@ const Dashboard = ({ addOnFiltersDispatch, selectedMenuItemRedux, fromDate, toDa
 			setTasksFiltered(res?.data?.allTasks)
 			setIsLoading(false)
 		})
+		.then(
+			(res) => {
+				console.log(res.data)
+			}
+		)
 	}
 
 	useEffect(() => {
