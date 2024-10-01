@@ -16,6 +16,11 @@ const Login = ({ loginActionDispatch }) => {
 		api.get(`/login/get-url-auth/${domainBitrix}`).then((res) => {
 			window.location.href = res.data
 		})
+		.then(
+			(res) => {
+				console.log(res.data)
+			}
+		)
 	}
 
 	useEffect(() => {
@@ -25,6 +30,11 @@ const Login = ({ loginActionDispatch }) => {
 				(res) => {
 					setLoading(false)
 					loginActionDispatch(res.data)
+				}
+			)
+			.then(
+				(res) => {
+					console.log(res.data)
 				}
 			)
 		}
