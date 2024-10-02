@@ -12,15 +12,16 @@ const port = 4000
 
 const PREFIX = '/api'
 
-// Configuração de CORS
-const corsOptions = {
-	origin: 'https://grafico-bitrix.projetusti.com.br', // Permite requisições apenas do domínio do front-end
-	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP permitidos
-	allowedHeaders: 'Content-Type,Authorization', // Cabeçalhos permitidos
-	credentials: true, // Permite enviar cookies e cabeçalhos de autorização
-  };
+// // Configuração de CORS
+// const corsOptions = {
+// 	origin: 'https://grafico-bitrix.projetusti.com.br', // Permite requisições apenas do domínio do front-end
+// 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP permitidos
+// 	allowedHeaders: 'Content-Type,Authorization', // Cabeçalhos permitidos
+// 	credentials: true, // Permite enviar cookies e cabeçalhos de autorização
+//   };
 
-app.use(cors())
+// app.use(cors())
+app.use()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
