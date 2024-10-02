@@ -3,12 +3,12 @@ const config = require('../config')
 const UserAccountRepository = require('../repository/userAccount.repository')
 
 const { CLIENT_ID, CLIENT_SECRET, URL } = config.BITRIX
-const redirectUrl = config.ETC.BASE_FRONT_URL
+// const redirectUrl = config.ETC.BASE_FRONT_URL
+const redirectUrl = 'https://grafico-projetusti.com.br'
 
 //1 passo login
 const getUrlAuth = async (domainBitrix) =>
 	`https://${domainBitrix + '.' + URL}/oauth/authorize/?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${redirectUrl}`
-	
 
 //2 passo login
 const buildFinalAccessUrl = (authCode, scope, fullDomain) =>
@@ -21,11 +21,9 @@ const getFinalAccessUrl = async (authCode, scope, fullDomain) => {
 			const { access_token, refresh_token, scope, user_id, domain } = res.data
 			return { access_token, refresh_token, scope, user_id, domain }
 		})
-		.then(
-			(res) => {
-				console.log(res.data)
-			}
-		)
+		.then((res) => {
+			console.log(res.data)
+		})
 		.catch((e) => console.error(e))
 }
 
