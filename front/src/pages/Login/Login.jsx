@@ -14,6 +14,7 @@ const Login = ({ loginActionDispatch }) => {
 	const getAuth = () => {
 		setLoading(true)
 		console.log('Domínio bitrix', domainBitrix)
+		console.log(api)
 		api.get(`/login/get-url-auth/${domainBitrix}`)
 			.then((res) => {
 				window.location.href = res.data
