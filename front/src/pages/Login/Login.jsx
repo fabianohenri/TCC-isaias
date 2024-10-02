@@ -24,6 +24,9 @@ const Login = ({ loginActionDispatch }) => {
 	}
 
 	useEffect(() => {
+		console.log('Parametro code:', searchParams.get('code'))
+		console.log('Parametro scope:', searchParams.get('scope'))
+
 		if (searchParams.get('code') && searchParams.get('scope')) {
 			setLoading(true)
 			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}&domain=${searchParams.get('domain')}`)
@@ -34,6 +37,10 @@ const Login = ({ loginActionDispatch }) => {
 				.then((res) => {
 					console.log(res.data)
 				})
+		} else {
+			// Ação para o caso em que 'code' ou 'scope' não estão presentes
+			console.error('Parâmetros "code" ou "scope" não estão definidos.')
+			// Você pode adicionar outra lógica aqui, como redirecionar ou mostrar uma mensagem ao usuário
 		}
 	}, [searchParams])
 
