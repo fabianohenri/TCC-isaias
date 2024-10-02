@@ -14,7 +14,6 @@ const Login = ({ loginActionDispatch }) => {
 	const getAuth = () => {
 		setLoading(true)
 		console.log('Domínio bitrix', domainBitrix)
-		console.log(api)
 		api.get(`/login/get-url-auth/${domainBitrix}`)
 			.then((res) => {
 				window.location.href = res.data
@@ -25,9 +24,9 @@ const Login = ({ loginActionDispatch }) => {
 	}
 
 	useEffect(() => {
-		if (searchParams.get('authCode') && searchParams.get('scope')) {
+		if (searchParams.get('code') && searchParams.get('scope')) {
 			setLoading(true)
-			api.get(`/login?authCode=${searchParams.get('authCode')}&scope=${searchParams.get('scope')}&domain=${searchParams.get('domain')}`)
+			api.get(`/login?authCode=${searchParams.get('code')}&scope=${searchParams.get('scope')}&domain=${searchParams.get('domain')}`)
 				.then((res) => {
 					setLoading(false)
 					loginActionDispatch(res.data)
