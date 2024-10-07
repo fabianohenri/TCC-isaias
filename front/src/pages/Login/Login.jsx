@@ -26,6 +26,7 @@ const Login = ({ loginActionDispatch }) => {
 	useEffect(() => {
 		console.log('Parametro code:', searchParams.get('code'))
 		console.log('Parametro scope:', searchParams.get('scope'))
+		console.log('Parametro domain:', searchParams.get('domain'))
 
 		if (searchParams.get('code') && searchParams.get('scope')) {
 			setLoading(true)
