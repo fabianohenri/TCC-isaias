@@ -16,7 +16,6 @@ COPY front/package.json /src
 # Resolver as dependencias do projeto
 RUN set -eux; \
       apt update; \
-      npm config set always-auth true; \
       npm install;
 
 #  Copiar o fonte do projeto para a imagem de build
