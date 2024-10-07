@@ -12,7 +12,7 @@ const loginOrCreateAccount = async (authCode, scope, domain) => {
 	console.log('scope: ', scope)
 	console.log('domain:', domain)
 	const accessBitrix = await BitrixService.getFinalAccessUrl(authCode, scope, domain)
-	console.log('Retorno de obter final acess: ', accessBitrix.user_id)
+	console.log('Retorno de obter final acess user_id: ', accessBitrix.user_id)
 	console.log('Retorno de obter final acess: ', accessBitrix.domain)
 
 	const accountExists = await UserAccountRepository.findByUserIdBitrixAndDomain(accessBitrix.user_id, accessBitrix.domain)
