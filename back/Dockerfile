@@ -2,7 +2,7 @@
 # Date: 2024/09/10
 
 # Utilizar a imagem oficial do NodeJS como base do build
-FROM node:16-bullseye-slim AS builder
+FROM node:20-bullseye-slim AS builder
 
 
 # Definir o diretório de trabalho
