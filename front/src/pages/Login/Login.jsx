@@ -36,7 +36,7 @@ const Login = ({ loginActionDispatch }) => {
 					loginActionDispatch(res.data)
 				})
 				.then((res) => {
-					console.log(res.data)
+					console.log('Retorno do useEffect: ', res.data)
 				})
 		} else {
 			// Ação para o caso em que 'code' ou 'scope' não estão presentes

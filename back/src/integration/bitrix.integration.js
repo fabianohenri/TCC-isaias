@@ -20,11 +20,12 @@ const getFinalAccessUrl = async (authCode, scope, fullDomain) => {
 	return axios
 		.get(buildFinalAccessUrl(authCode, scope, fullDomain))
 		.then((res) => {
+			console.log('Retorno da pesquisa de buildFinalAccessUrl: ', res.data)
 			const { access_token, refresh_token, scope, user_id, domain } = res.data
 			return { access_token, refresh_token, scope, user_id, domain }
 		})
 		.then((res) => {
-			console.log(res.data)
+			console.log('Log do retorno getFinalAccessUrl: ', res.data)
 		})
 		.catch((e) => console.error(e))
 }
