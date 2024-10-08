@@ -15,6 +15,8 @@ const buildFinalAccessUrl = (authCode, scope, fullDomain) =>
 	`https://${fullDomain}/oauth/token/?client_id=${CLIENT_ID}&grant_type=authorization_code&client_secret=${CLIENT_SECRET}&redirect_uri=${redirectUrl}&code=${authCode}&scope=${scope}`
 
 const getFinalAccessUrl = async (authCode, scope, fullDomain) => {
+	console.log('Parametro de consulta getFinalAcessUrl authCode: ', authCode)
+	console.log('Parametro de consulta getFinalAcessUrl CLIENT_ID: ', CLIENT_ID)
 	return axios
 		.get(buildFinalAccessUrl(authCode, scope, fullDomain))
 		.then((res) => {
